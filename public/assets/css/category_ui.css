@@ -68,14 +68,14 @@ main {
 .figma-welcome {
   text-align: center;
   padding: 4px 0 0;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   flex-shrink: 0;
 }
 
 .figma-ben-avatar {
-  width: 90px;
-  height: 72px;
-  margin: 0 auto 4px;
+  width: 80px;
+  height: 64px;
+  margin: 0 auto 2px;
   border-radius: 50%;
   background: transparent;
   border: 0;
@@ -94,7 +94,7 @@ main {
 .figma-welcome h1 {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight: 700;
-  font-size: 21px;
+  font-size: 20px;
   letter-spacing: -0.02em;
   line-height: 1.2;
   margin: 0 0 2px;
@@ -109,7 +109,7 @@ main {
 .figma-welcome .subtitle {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight: 500;
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 1.3;
   margin-bottom: 2px;
   color: #334155;
@@ -118,10 +118,111 @@ main {
 .figma-category-instruction {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight: 400;
-  font-size: 13.5px;
+  font-size: 12.5px;
   line-height: 1.3;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  color: #64748b;
+}
+
+/* Category Search Bar */
+.figma-search-wrap {
+  position: relative;
+  max-width: 480px;
+  margin: 0 auto 6px;
+}
+
+.figma-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  stroke: #94a3b8;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+#categorySearchInput {
+  width: 100%;
+  padding: 8px 36px 8px 38px;
+  border-radius: 20px;
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 12.5px;
+  color: #0f172a;
+  outline: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+#categorySearchInput:focus {
+  border-color: #3b82f6;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.15);
+}
+
+.figma-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: #cbd5e1;
   color: #475569;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.figma-search-clear:hover {
+  background: #94a3b8;
+  color: #fff;
+}
+
+/* Empty Search Results */
+.figma-search-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 16px;
+  text-align: center;
+  color: #64748b;
+}
+
+.figma-search-empty svg {
+  width: 36px;
+  height: 36px;
+  stroke: #94a3b8;
+  fill: none;
+  stroke-width: 1.5;
+  margin-bottom: 8px;
+}
+
+.figma-search-empty p {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #1e293b;
+}
+
+.figma-search-empty span {
+  font-size: 12px;
+  color: #64748b;
 }
 
 /* Figma Section Labels */
@@ -131,7 +232,7 @@ main {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  margin: 6px 0 4px;
+  margin: 4px 0 4px;
   color: #1e293b;
   flex-shrink: 0;
 }
@@ -147,54 +248,98 @@ main {
 
 /* Figma Category Cards */
 .figma-category-card {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border-radius: 10px;
-  padding: 9px 12px;
+  border-radius: 12px;
+  padding: 10px 12px;
   cursor: pointer;
-  transition: all 0.18s ease-in-out;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  height: 72px;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  height: 76px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
   box-sizing: border-box;
   text-align: left;
 }
 
 .figma-category-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(59, 130, 246, 0.12);
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.12);
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(59, 130, 246, 0.4);
 }
 
-.figma-category-card .figma-icon {
-  margin-bottom: 2px;
-  line-height: 1;
+.figma-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.figma-category-card .figma-icon svg {
-  width: 20px;
-  height: 20px;
-  stroke: #3b82f6;
+.figma-icon-box svg {
+  width: 19px;
+  height: 19px;
   fill: none;
-  stroke-width: 1.8;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+/* Color Themes for Icon Badges */
+.badge-blue .figma-icon-box { background: #eff6ff; }
+.badge-blue .figma-icon-box svg { stroke: #2563eb; }
+
+.badge-indigo .figma-icon-box { background: #eef2ff; }
+.badge-indigo .figma-icon-box svg { stroke: #4f46e5; }
+
+.badge-emerald .figma-icon-box { background: #ecfdf5; }
+.badge-emerald .figma-icon-box svg { stroke: #059669; }
+
+.badge-amber .figma-icon-box { background: #fffbeb; }
+.badge-amber .figma-icon-box svg { stroke: #d97706; }
+
+.badge-purple .figma-icon-box { background: #faf5ff; }
+.badge-purple .figma-icon-box svg { stroke: #9333ea; }
+
+.badge-cyan .figma-icon-box { background: #ecfeff; }
+.badge-cyan .figma-icon-box svg { stroke: #0891b2; }
+
+.badge-orange .figma-icon-box { background: #fff7ed; }
+.badge-orange .figma-icon-box svg { stroke: #ea580c; }
+
+.badge-rose .figma-icon-box { background: #fff1f2; }
+.badge-rose .figma-icon-box svg { stroke: #e11d48; }
+
+.badge-teal .figma-icon-box { background: #f0fdfa; }
+.badge-teal .figma-icon-box svg { stroke: #0d9488; }
+
+.badge-slate .figma-icon-box { background: #f8fafc; }
+.badge-slate .figma-icon-box svg { stroke: #475569; }
+
+.badge-sky .figma-icon-box { background: #f0f9ff; }
+.badge-sky .figma-icon-box svg { stroke: #0284c7; }
+
+.figma-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .figma-category-card h3 {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight: 600;
   color: #0f172a;
-  font-size: 12px;
-  margin: 0 0 1px;
-  line-height: 1.2;
+  font-size: 12.5px;
+  margin: 0 0 2px;
+  line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -204,8 +349,8 @@ main {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight: 400;
   color: #64748b;
-  font-size: 10px;
-  line-height: 1.2;
+  font-size: 10.5px;
+  line-height: 1.25;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;

@@ -205,96 +205,168 @@ $initials = mb_substr($initials, 0, 2);
         <div class="figma-ben-avatar">
           <img src="assets/images/ben_interactions%20vector/happybot.png" alt="Ben assistant">
         </div>
-        <h1>Goodmorning, <?= htmlspecialchars(explode(' ', $_SESSION['name'])[0]) ?>. I'm, <span class="ben">Ben</span></h1>
+        <h1>Goodmorning, <?= htmlspecialchars(explode(' ', $_SESSION['name'])[0]) ?>. I'm <span class="ben">Ben</span></h1>
         <div class="figma-subtitle">I'm here to help you with your concern.</div>
-        <div class="figma-category-instruction">Choose a category below to get started</div>
+        <div class="figma-category-instruction">Choose a category below or search your concern</div>
+
+        <div class="figma-search-wrap">
+          <svg class="figma-search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="categorySearchInput" placeholder="Search office, department, or concern (e.g. Grades, Tuition, WiFi)..." autocomplete="off">
+          <button type="button" id="categorySearchClear" class="figma-search-clear" style="display:none;" aria-label="Clear search">&times;</button>
+        </div>
       </section>
 
-      <div class="figma-section-label">General</div>
-      <div class="figma-category-grid">
-        <button class="figma-category-card" data-office="General">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-          <h3>General Inquiry</h3>
-          <p>Ask concern directly to ai.</p>
+      <div class="figma-section-label" data-section-for="General">General</div>
+      <div class="figma-category-grid" data-grid-section="General">
+        <button class="figma-category-card badge-blue" data-office="General" data-keywords="general inquiry ask question help ai assist chat">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>General Inquiry</h3>
+            <p>General questions &amp; AI help</p>
+          </div>
         </button>
       </div>
 
-      <div class="figma-section-label">Offices</div>
-      <div class="figma-category-grid">
-        <button class="figma-category-card" data-office="Registrar">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg></div>
-          <h3>Registrar</h3>
-          <p>Short details</p>
+      <div class="figma-section-label" data-section-for="Offices">Offices</div>
+      <div class="figma-category-grid" data-grid-section="Offices">
+        <button class="figma-category-card badge-indigo" data-office="Registrar" data-keywords="registrar grades transcript tor good moral diploma enrollment clear evaluation credentials record">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>Registrar</h3>
+            <p>Grades, TOR &amp; Enrollment</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="Finance">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-          <h3>Finance</h3>
-          <p>Short details</p>
+        <button class="figma-category-card badge-emerald" data-office="Finance" data-keywords="finance tuition payment balance fee receipt accounting cashier scholarship promissory bill">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>Finance</h3>
+            <p>Tuition &amp; Account Balances</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="SASO">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <h3>SASO</h3>
-          <p>Short details</p>
+        <button class="figma-category-card badge-amber" data-office="SASO" data-keywords="saso student affairs clubs discipline ID organization student council clearance violation sanction">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>SASO</h3>
+            <p>Student Affairs &amp; Services</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="Guidance">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
-          <h3>Guidance</h3>
-          <p>Ask concern directly to ai.</p>
+        <button class="figma-category-card badge-purple" data-office="Guidance" data-keywords="guidance counseling mental health advice career consultation exit interview wellness support behavior stress">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>Guidance</h3>
+            <p>Counseling &amp; Wellness</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="Library">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-          <h3>Library</h3>
-          <p>Short details</p>
+        <button class="figma-category-card badge-cyan" data-office="Library" data-keywords="library books borrow clearance research journal catalog reading study references e-books">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>Library</h3>
+            <p>Book Borrowing &amp; Resources</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="Property Custodian">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
-          <h3>Property Custodian</h3>
-          <p>Ask concern directly to ai.</p>
+        <button class="figma-category-card badge-orange" data-office="Property Custodian" data-keywords="property custodian lost found facilities equipment room key campus maintenance item item search">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>Property Custodian</h3>
+            <p>Lost &amp; Found, Campus Items</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="Clinic">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-          <h3>Clinic</h3>
-          <p>Ask concern directly to ai.</p>
+        <button class="figma-category-card badge-rose" data-office="Clinic" data-keywords="clinic medical health checkup doctor nurse certificate first aid prescription consultation medicine sick emergency">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>Clinic</h3>
+            <p>Medical Certs &amp; First Aid</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="ITCD">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-          <h3>ITCD</h3>
-          <p>Ask concern directly to ai.</p>
+        <button class="figma-category-card badge-teal" data-office="ITCD" data-keywords="itcd portal wifi login password account reset internet tech system support canvas email network credentials">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>ITCD</h3>
+            <p>Portal, WiFi &amp; Tech Support</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="Human Resources">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-          <h3>Human Resources</h3>
-          <p>Ask concern directly to ai.</p>
+        <button class="figma-category-card badge-slate" data-office="Human Resources" data-keywords="human resources hr staff internship employment job student assistant workplace personnel application">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>Human Resources</h3>
+            <p>Employment &amp; Internships</p>
+          </div>
         </button>
       </div>
 
-      <div class="figma-section-label">Departments</div>
-      <div class="figma-category-grid">
-        <button class="figma-category-card" data-office="CCS">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
-          <h3>CCS</h3>
-          <p>Ask concern directly to ai.</p>
+      <div class="figma-section-label" data-section-for="Departments">Departments</div>
+      <div class="figma-category-grid" data-grid-section="Departments">
+        <button class="figma-category-card badge-sky" data-office="CCS" data-keywords="ccs computer studies it cs computer science information technology programming coding software bsit bscs">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>CCS</h3>
+            <p>Computer Studies &amp; IT</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="CBE">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
-          <h3>CBE</h3>
-          <p>Ask concern directly to ai.</p>
+        <button class="figma-category-card badge-amber" data-office="CBE" data-keywords="cbe business accountancy management entrepreneurship finance marketing bsa bsba office admin">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>CBE</h3>
+            <p>Business &amp; Accountancy</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="CTE">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
-          <h3>CTE</h3>
-          <p>Ask concern directly to ai.</p>
+        <button class="figma-category-card badge-emerald" data-office="CTE" data-keywords="cte teacher education teaching elementary secondary education bsed beed pedagogy instructor">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>CTE</h3>
+            <p>Teacher Education</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="CCJE">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <h3>CCJE</h3>
-          <p>Ask concern directly to ai.</p>
+        <button class="figma-category-card badge-rose" data-office="CCJE" data-keywords="ccje criminology criminal justice law enforcement forensic police investigation bscrim">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>CCJE</h3>
+            <p>Criminology &amp; Criminal Justice</p>
+          </div>
         </button>
-        <button class="figma-category-card" data-office="PSYCH">
-          <div class="figma-icon"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg></div>
-          <h3>PSYCH</h3>
-          <p>Ask concern directly to ai.</p>
+        <button class="figma-category-card badge-purple" data-office="PSYCH" data-keywords="psych psychology behavioral science human behavior mental health counseling bspsych">
+          <div class="figma-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+          </div>
+          <div class="figma-card-body">
+            <h3>PSYCH</h3>
+            <p>Psychology Department</p>
+          </div>
         </button>
+      </div>
+
+      <div id="noCategoryResults" class="figma-search-empty" style="display:none;">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        <p>No matching categories found</p>
+        <span>Try searching for keywords like "Grades", "Tuition", "WiFi", or "Clinic"</span>
       </div>
     </div>
 
@@ -1205,6 +1277,53 @@ document.querySelectorAll('.figma-category-card').forEach(button => {
     }
   });
 });
+
+/* ---------- Category Search & Filtering ---------- */
+const categorySearchInput = document.getElementById('categorySearchInput');
+const categorySearchClear = document.getElementById('categorySearchClear');
+const noCategoryResults = document.getElementById('noCategoryResults');
+
+if (categorySearchInput) {
+  categorySearchInput.addEventListener('input', e => {
+    const q = e.target.value.toLowerCase().trim();
+    if (categorySearchClear) categorySearchClear.style.display = q ? 'block' : 'none';
+
+    let totalVisible = 0;
+    const cards = document.querySelectorAll('.figma-category-card');
+
+    cards.forEach(card => {
+      const office = (card.dataset.office || '').toLowerCase();
+      const keywords = (card.dataset.keywords || '').toLowerCase();
+      const title = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
+      const desc = card.querySelector('p') ? card.querySelector('p').textContent.toLowerCase() : '';
+
+      const matches = !q || office.includes(q) || keywords.includes(q) || title.includes(q) || desc.includes(q);
+      card.style.display = matches ? 'flex' : 'none';
+      if (matches) totalVisible++;
+    });
+
+    // Hide/show section labels and grids if all their cards are hidden
+    document.querySelectorAll('.figma-category-grid').forEach(grid => {
+      const visibleCards = Array.from(grid.querySelectorAll('.figma-category-card')).filter(c => c.style.display !== 'none');
+      const sectionName = grid.dataset.gridSection;
+      const label = document.querySelector(`.figma-section-label[data-section-for="${sectionName}"]`);
+      if (label) label.style.display = visibleCards.length > 0 ? 'block' : 'none';
+    });
+
+    if (noCategoryResults) {
+      noCategoryResults.style.display = (totalVisible === 0 && q) ? 'flex' : 'none';
+    }
+  });
+
+  if (categorySearchClear) {
+    categorySearchClear.addEventListener('click', () => {
+      categorySearchInput.value = '';
+      categorySearchInput.dispatchEvent(new Event('input'));
+      categorySearchInput.focus();
+    });
+  }
+}
+
 
 if (bfSend) bfSend.addEventListener('click', sendFreeText);
 if (bfInput) bfInput.addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendFreeText(); } });
