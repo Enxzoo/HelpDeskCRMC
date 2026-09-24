@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx *)",
+      "Bash(dir public/assets/css/design-system.css)",
+      "Bash(powershell -command \"Get-Item 'public/assets/css/design-system.css' | Select-Object LastWriteTime, CreationTime, Length\")",
+      "Bash(powershell -command \"Get-Item 'public/assets/css/design-system.css' | Select-Object VersionInfo\")"
+    ]
+  }
+}

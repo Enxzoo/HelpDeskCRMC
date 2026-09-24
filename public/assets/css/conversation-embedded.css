@@ -1,0 +1,582 @@
+main.conversation-active {
+  padding: 0;
+  max-width: none;
+  overflow: hidden;
+}
+
+main.conversation-active > .topbar {
+  display: none;
+}
+
+main.conversation-active #dashHome,
+main.conversation-active #dashConcerns {
+  display: none !important;
+}
+
+#benFlow.embedded {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+#benFlow.embedded .bf-modal {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+#benFlow.embedded #bfStep2 {
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+}
+
+#benFlow.embedded .bf-step2-head {
+  min-height: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  padding: 10px 26px;
+  border-bottom: 0;
+  background: transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#benFlow.embedded .bf-chat-avatar,
+#benFlow.embedded .bf-chat-name,
+#benFlow.embedded .bf-chat-status {
+  display: none;
+}
+
+#benFlow.embedded .bf-step2-head > button {
+  display: flex;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #51646D;
+  cursor: pointer;
+}
+
+#benFlow.embedded .bf-step2-head > button:hover {
+  background: rgba(255, 255, 255, 0.65);
+  color: #2171B5;
+}
+
+#benFlow.embedded .bf-step2-head > button svg {
+  width: 22px;
+  height: 22px;
+}
+
+#benFlow.embedded .bf-chat-identity {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+}
+
+#benFlow.embedded .bf-office-pill {
+  display: block;
+  margin: 0;
+  padding: 10px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  background: #328BC8;
+  color: #fff;
+}
+
+#benFlow.embedded .bf-thread {
+  min-height: 0;
+  flex: 1 1 auto;
+  padding: 16px 26px 18px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: linear-gradient(180deg, #D4F1F4 0%, #F4FBFC 58%, #FFFFFF 100%);
+}
+
+#benFlow.embedded .bf-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+#benFlow.embedded .bf-ben-ic,
+#benFlow.embedded .bf-ben-ic img {
+  width: 48px;
+  height: 48px;
+}
+
+#benFlow.embedded .bf-ben-ic {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0;
+  overflow: visible !important;
+  box-shadow: none;
+}
+
+#benFlow.embedded .bf-ben-ic img {
+  display: block;
+  width: 48px !important;
+  height: 48px !important;
+  object-fit: contain;
+  border-radius: 0;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#benFlow.embedded .bf-msg-card {
+  max-width: 480px;
+  width: auto;
+  padding: 14px 20px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  display: block;
+}
+
+#benFlow.embedded .bf-msg-card .q {
+  color: #111;
+  font-size: 15.5px;
+  line-height: 1.5;
+  font-weight: 500;
+  margin: 0;
+  display: block;
+}
+
+#benFlow.embedded .bf-msg-card .q strong {
+  font-weight: 700;
+  color: #000;
+}
+
+#benFlow.embedded .bf-msg-card .q em {
+  font-style: italic;
+}
+
+#benFlow.embedded .bf-msg-card .q a {
+  color: #2171B5;
+  text-decoration: underline;
+}
+
+#benFlow.embedded .bf-msg-card .q a:hover {
+  color: #1557A0;
+}
+
+#benFlow.embedded .bf-msg-card .q br {
+  content: "";
+  display: block;
+  margin: 8px 0;
+}
+
+#benFlow.embedded .bf-msg-card .sub {
+  font-size: 13px;
+  color: #666;
+  margin: 10px 0 0 0;
+  font-weight: 400;
+  display: block;
+  width: 100%;
+}
+
+#benFlow.embedded .bf-chip-grid {
+  margin-top: 14px;
+  display: block;
+  width: 100%;
+}
+
+#benFlow.embedded .bf-chip {
+  display: block;
+  width: 100%;
+  padding: 11px 18px;
+  margin-bottom: 10px;
+  border-radius: 20px;
+  background: rgba(181, 189, 196, 0.35);
+  border: 1px solid rgba(140, 174, 187, 0.5);
+  color: #1E2D33;
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+#benFlow.embedded .bf-chip:last-child {
+  margin-bottom: 0;
+}
+
+#benFlow.embedded .bf-chip:hover {
+  background: rgba(50, 139, 200, 0.15);
+  border-color: #328BC8;
+  color: #1E2D33;
+}
+
+#benFlow.embedded .bf-student-bubble {
+  max-width: 300px;
+  padding: 12px 20px;
+  border-radius: 18px 18px 4px 18px;
+  background: #328BC8;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.35;
+  margin-left: auto;
+  box-shadow: 0 2px 6px rgba(33, 113, 181, 0.25);
+}
+
+#benFlow.embedded .bf-input-bar {
+  flex: 0 0 auto;
+  padding: 14px 26px 28px;
+  background: transparent;
+}
+
+#benFlow.embedded .bf-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 5px 8px 5px 16px;
+  border: 1px solid #8CAEBB;
+  border-radius: 34px;
+  background: rgba(239, 253, 255, 0.72);
+}
+
+#benFlow.embedded .bf-attach-btn {
+  width: 38px;
+  height: 44px;
+  flex: 0 0 38px;
+  color: #1E2D33;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#benFlow.embedded .bf-attach-btn svg,
+#benFlow.embedded .bf-mic-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+#benFlow.embedded .bf-mic-btn {
+  width: 38px;
+  height: 44px;
+  flex: 0 0 38px;
+  color: #1E2D33;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#benFlow.embedded .bf-input-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+#benFlow.embedded .bf-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 4px;
+  color: #1E2D33;
+  font-size: 15px;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: inherit;
+}
+
+#benFlow.embedded .bf-input::placeholder {
+  color: #9FB0B8;
+}
+
+#benFlow.embedded .bf-send {
+  position: static;
+  transform: none;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  opacity: 1;
+  background: #2171F3;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: background 0.15s;
+}
+
+#benFlow.embedded .bf-send:hover {
+  background: #1557A0;
+}
+
+#benFlow.embedded .bf-send:disabled {
+  background: #9FC5E8;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+#benFlow.embedded .bf-send svg {
+  width: 22px;
+  height: 22px;
+}
+
+#dashboardView {
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#dashboardView > main {
+  min-width: 0;
+  min-height: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ============================================
+   Escalation Form Card (Submit Concern to Office)
+   ============================================ */
+.bf-escalation-card {
+  background: #FFFFFF;
+  border: 1px solid #D1E4EC;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 12px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 4px 12px rgba(33, 113, 181, 0.08);
+}
+
+.bf-esc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #EAEFF2;
+}
+
+.bf-esc-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1E2D33;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bf-esc-title svg {
+  width: 18px;
+  height: 18px;
+  color: #2171B5;
+}
+
+.bf-esc-office-select {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2171B5;
+  background: #EFF7FC;
+  border: 1px solid #B8D8E8;
+  border-radius: 20px;
+  padding: 4px 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.bf-esc-group {
+  margin-bottom: 14px;
+}
+
+.bf-esc-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #4A5568;
+  margin-bottom: 6px;
+}
+
+.bf-esc-input,
+.bf-esc-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: #1A202C;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E0;
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.bf-esc-input:focus,
+.bf-esc-textarea:focus {
+  background: #FFFFFF;
+  border-color: #2171B5;
+  box-shadow: 0 0 0 3px rgba(33, 113, 181, 0.12);
+}
+
+.bf-esc-textarea {
+  min-height: 90px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.bf-esc-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.bf-esc-priority-pills {
+  display: flex;
+  gap: 8px;
+}
+
+.bf-esc-pill-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 16px;
+  border: 1px solid #CBD5E0;
+  background: #F8FAFC;
+  color: #4A5568;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.bf-esc-pill-btn.active[data-val="normal"] {
+  background: #EBF8FF;
+  border-color: #3182CE;
+  color: #2B6CB0;
+}
+
+.bf-esc-pill-btn.active[data-val="urgent"] {
+  background: #FFF5F5;
+  border-color: #E53E3E;
+  color: #C53030;
+}
+
+.bf-esc-file-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: #2171B5;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #EFF7FC;
+  transition: background 0.15s;
+}
+
+.bf-esc-file-trigger:hover {
+  background: #DCEEF8;
+}
+
+.bf-esc-file-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.bf-esc-file-tag {
+  font-size: 11.5px;
+  background: #E2E8F0;
+  color: #2D3748;
+  padding: 3px 8px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bf-esc-file-tag span {
+  cursor: pointer;
+  color: #718096;
+  font-weight: 700;
+}
+
+.bf-esc-file-tag span:hover {
+  color: #E53E3E;
+}
+
+.bf-esc-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #EAEFF2;
+}
+
+.bf-esc-submit {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: #2171B5;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.bf-esc-submit:hover {
+  background: #1557A0;
+}
+
+.bf-esc-submit:disabled {
+  background: #9FC5E8;
+  cursor: not-allowed;
+}
+
+.bf-esc-cancel {
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #718096;
+  background: transparent;
+  border: 1px solid #CBD5E0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.bf-esc-cancel:hover {
+  background: #F7FAFC;
+  color: #2D3748;
+}

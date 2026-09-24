@@ -1,0 +1,278 @@
+<?php
+/**
+ * GeminiAiController.php
+ * Real AI chatbot using Google Gemini API
+ * Generates intelligent, contextual responses - NOT predefined answers
+ */
+
+class GeminiAiController
+{
+    private const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent';
+    private const TIMEOUT = 30;
+
+    private string $apiKey;
+    private string $systemPrompt;
+
+    public function __construct()
+    {
+        // Get API key from environment
+        $this->apiKey = defined('GEMINI_API_KEY') ? GEMINI_API_KEY : '';
+
+        if (empty($this->apiKey)) {
+            error_log('GEMINI_API_KEY not set in env.php');
+        }
+
+        // System prompt defines Ben's personality and knowledge
+        $this->systemPrompt = $this->buildSystemPrompt();
+    }
+
+    /**
+     * Generate AI response for student message
+     */
+    public function generateResponse(string $message, array $context = []): array
+    {
+        if (empty($this->apiKey)) {
+            return [
+                'success' => false,
+                'error' => 'Gemini API key not configured',
+                'fallback' => true
+            ];
+        }
+
+        try {
+            $response = $this->callGeminiApi($message, $context);
+
+            return [
+                'success' => true,
+                'answer' => $response,
+                'source' => 'gemini-ai',
+                'generated' => true // Flag that this is AI-generated, not predefined
+            ];
+
+        } catch (Exception $e) {
+            error_log("Gemini API Error: " . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+                'fallback' => true
+            ];
+        }
+    }
+
+    /**
+     * Call Gemini API
+     */
+    private function callGeminiApi(string $message, array $context): string
+    {
+        $url = self::GEMINI_API_URL . '?key=' . $this->apiKey;
+
+        // Build structured conversation contents array
+        $contents = [];
+
+        if (!empty($context['history'])) {
+            foreach ($context['history'] as $msg) {
+                if (empty($msg['message'])) continue;
+                $role = ($msg['role'] === 'student' || $msg['role'] === 'user') ? 'user' : 'model';
+
+                // Alternate roles (merge consecutive identical roles if any)
+                if (!empty($contents) && end($contents)['role'] === $role) {
+                    $lastIdx = count($contents) - 1;
+                    $contents[$lastIdx]['parts'][0]['text'] .= "\n" . $msg['message'];
+                } else {
+                    $contents[] = [
+                        'role' => $role,
+                        'parts' => [
+                            ['text' => $msg['message']]
+                        ]
+                    ];
+                }
+            }
+        }
+
+        // Add current student message
+        if (!empty($contents) && end($contents)['role'] === 'user') {
+            $lastIdx = count($contents) - 1;
+            $contents[$lastIdx]['parts'][0]['text'] .= "\n" . $message;
+        } else {
+            $contents[] = [
+                'role' => 'user',
+                'parts' => [
+                    ['text' => $message]
+                ]
+            ];
+        }
+
+        // Prepare request body with systemInstruction & generationConfig
+        $requestBody = [
+            'systemInstruction' => [
+                'parts' => [
+                    ['text' => $this->systemPrompt]
+                ]
+            ],
+            'contents' => $contents,
+            'generationConfig' => [
+                'temperature' => 0.7,
+                'maxOutputTokens' => 1000,
+                'topP' => 0.8,
+                'topK' => 40
+            ],
+            'safetySettings' => [
+                [
+                    'category' => 'HARM_CATEGORY_HARASSMENT',
+                    'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
+                ],
+                [
+                    'category' => 'HARM_CATEGORY_HATE_SPEECH',
+                    'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
+                ],
+                [
+                    'category' => 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+                    'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
+                ],
+                [
+                    'category' => 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                    'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
+                ]
+            ]
+        ];
+
+        $jsonData = json_encode($requestBody);
+
+        // Make API call
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, self::TIMEOUT);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if (curl_errno($ch)) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new Exception("cURL error: $error");
+        }
+
+        curl_close($ch);
+
+        if ($httpCode !== 200) {
+            throw new Exception("Gemini API returned HTTP $httpCode: $response");
+        }
+
+        // Parse response
+        $result = json_decode($response, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception("Invalid JSON response from Gemini API");
+        }
+
+        // Extract generated text
+        if (isset($result['candidates'][0]['content']['parts'][0]['text'])) {
+            return trim($result['candidates'][0]['content']['parts'][0]['text']);
+        }
+
+        throw new Exception("Unexpected response format from Gemini API");
+    }
+
+    /**
+     * Build system prompt with school knowledge
+     */
+    private function buildSystemPrompt(): string
+    {
+        return <<<PROMPT
+You are Ben, a friendly and helpful AI assistant for the CRMC (Cebu Roosevelt Memorial Colleges) Helpdesk. You help students with their school-related concerns.
+
+PERSONALITY:
+- Friendly, warm, and supportive
+- Professional but conversational
+- Patient and understanding
+- Concise but thorough
+- Use simple, clear language
+
+ABOUT CRMC:
+- Full name: Cebu Roosevelt Memorial Colleges, Inc. (CRMC/CRMCI)
+- Founded in 1947 in Bogo City, Cebu, Philippines
+- Main/College campus: San Vicente Street, Bogo City, Cebu 6000
+- Elementary campus: F. Manubag St., Lourdes, Bogo City, Cebu
+- Junior/Senior High School & Psychology campus: Upper Pandan, Bogo City, Cebu 6010
+- Colleges: College of Teacher Education (CTE), College of Business Education (CBE), College of Computer Studies (CCS), College of Criminal Justice Education (CJE), and the Psychology Program
+- Recognized by CHED and DepEd; motto/tagline: "Learning today, Leading tomorrow"
+- Online services run through the CRMC Unified Hub (crmc.wela.ph) and the CRMC mobile app (iOS/Android/Huawei)
+
+YOUR KNOWLEDGE BASE (School Policies & Procedures):
+
+REGISTRAR OFFICE:
+- Office hours: Monday-Friday, 8:00 AM - 5:00 PM
+- Located at the San Vicente St. main campus
+- Certificate of Good Moral: 2-3 working days processing. Bring validated ID to claim.
+- Honorable Dismissal: Requires fully signed clearance form and settled balance. 5 working days processing.
+- Transcript of Records: Submit request form and pay fee. 3-5 working days processing.
+- Certificate of Registration (COR): 2-3 working days processing.
+- Enrollment: Now processed mainly online via the CRMC Unified Hub (crmc.wela.ph) and the CRMC mobile app, where students can check their Enrollment Assessment. Opens ahead of each semester; late enrollment in the first week may carry a late fee.
+- New students/transferees register online first, then complete requirements at the Cashier's Office (located at CRMC Elementary) for college enrollment.
+
+FINANCE/CASHIER:
+- Refunds: Processed within 10 working days. Bring official receipt and valid ID.
+- Tuition balance: Check at the Cashier window, on the enrollment assessment slip, or via the Student Ledger on crmc.wela.ph.
+- Partial payment plans available on request.
+- New enrollees typically pay an entrance fee & Student ID fee first, plus program-specific fees (e.g., lab fees for Computer Studies, Chemistry, or Science courses) on top of per-unit tuition — exact amounts vary by course and are shown on the student's assessment.
+- Temporary receipts may be issued at admission time and later replaced with official receipts.
+
+SASO (Student Affairs and Services Office):
+- Missing grades: Usually caused by unencoded requirement. Coordinate with subject adviser first.
+- Scholarships: Applications open at start of semester. Need certificate of good moral and updated grades.
+
+LIBRARY:
+- Clearance holds: Usually unreturned books or unpaid fines. Settle at circulation desk.
+
+GUIDANCE OFFICE:
+- Counseling appointments: Request directly at office or ask me to forward your request.
+
+CLINIC:
+- Medical certificates: Need same-day or next-day visit. Walk-ins accepted during clinic hours.
+
+ACADEMIC DEPARTMENTS & CONTACTS:
+- CTE (College of Teacher Education) – Bachelor of Elementary Education; Bachelor of Secondary Education (English, Math, Science, Social Studies). Practice teaching coordinated through the Field Study office. Contact: cte@crmc.edu.ph, (032) 239-8406, FB: CRMCcteOfficial
+- CBE (College of Business Education) – BS Business Administration (Financial Mgmt), BS Accountancy, BS Accounting Technology, BS Hospitality Management, BS Tourism Management. Business practicum through the department office. Contact: cbe.crmc@edu.ph, (032) 239-8406
+- CCS (College of Computer Studies) – BS Information Technology. OJT/practicum coordinated through the OJT coordinator. Contact: ccs@crmc.edu.ph, (032) 262-4643, FB: CRMCCCSWARRIORS
+- CJE (College of Criminal Justice Education) – BS Criminology. Field Training (FTEP) through the department office. Contact: (032) 239-8406, FB: CrmcCrim
+- PSYCH (Psychology Program) – BS Psychology, based at the Upper Pandan campus. Practicum placements through the practicum supervisor. Contact: psychology@crmc.edu.ph, (032) 262-4643, FB: crmcpsychofficialpage
+
+BASIC EDUCATION:
+- Pre-elementary & Elementary – F. Manubag St., Lourdes, Bogo City. Contact: crmc.bed8399@gmail.com, (032) 328-1995, FB: CRMC.ElementaryInc
+- CRMC Roosevelt High (Junior & Senior High School) – Upper Pandan, Bogo City. SHS strands: STEM, TVL-ICT, TVL-Home Economics, HUMSS, ABM, GAS. Contact: crmchsadmission@gmail.com, (032) 262-4643 / 0917 145 6408, FB: crmchighschool
+
+STUDENT PORTAL:
+- Main student hub: crmc.wela.ph (also accessible via the CRMC mobile app)
+- Password reset: Click "Forgot Password" on the login page
+
+GENERAL/MAIN OFFICE:
+- Address: San Vicente St., Bogo City, Cebu 6000
+- Phone: (032) 434-8488
+- Email: crmc.enrollment@gmail.com
+
+GUIDELINES:
+1. Provide helpful, accurate responses based on the knowledge base.
+2. For greetings (hi, hello, hey), respond warmly and ask how you can help. Do NOT ask if your answer resolved anything.
+3. For simple follow-up questions, continue the conversation naturally.
+4. Only when you've provided a complete answer to a specific concern/inquiry and it feels like the user is satisfied, end your message with: "Did that answer your concern? If you need anything else, feel free to ask!"
+5. If you don't know something, offer to forward their inquiry to the relevant office.
+6. If a question involves a specific department, mention its correct name/contact from the knowledge base rather than a generic answer.
+7. Keep responses clean, natural, and friendly. Do NOT use prefixes like "Here's what I found:". Speak directly as Ben.
+8. If a student asks where CRMC is located, where the main campus is, or asks for the CRMC address, answer directly: "CRMC's main/college campus is located at San Vicente Street, Bogo City, Cebu 6000, Philippines."
+9. Never say you are unsure about CRMC's location when the question refers to the main/college campus.
+PROMPT;
+    }
+
+    /**
+     * Check if Gemini API is configured
+     */
+    public function isConfigured(): bool
+    {
+        return !empty($this->apiKey);
+    }
+}

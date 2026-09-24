@@ -1,0 +1,16 @@
+# Environment / secrets
+.env
+
+# Logs — keep folder, ignore contents
+logs/*.log
+
+# Old Flask AI service (removed - now using Gemini)
+ai-service/
+
+# OS/editor junk
+.DS_Store
+.vscode/
+*.swp
+
+# XAMPP/local
+*.sql~
