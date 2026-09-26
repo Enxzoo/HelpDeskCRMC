@@ -99,8 +99,8 @@ h1,h3,h4{letter-spacing:-0.01em;margin:0;}
 
 /* Sidebar */
 .sidebar{order:1;flex:0 0 230px;width:230px;background:#fdfcfa;color:var(--ink);padding:14px 12px;display:flex;flex-direction:column;min-width:0;overflow:hidden;border-right:1px solid var(--line);}
-.brand{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:0 2px;}
-.brand-mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--amber),var(--amber-dk));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink);font-size:11px;flex:none;}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:0 6px;}
+.brand img{height:28px;width:auto;flex:none;}
 .brand-name{font-weight:700;color:var(--ink);font-size:14px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .brand-name span{color:var(--amber-dk);}
 .brand-btn{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#a89f8c;flex:none;cursor:pointer;}
@@ -155,8 +155,8 @@ h1,h3,h4{letter-spacing:-0.01em;margin:0;}
 #chatView.active{display:flex;}
 
 .hero{text-align:center;padding:10px 0 12px;}
-.hero-avatar{width:52px;height:52px;margin:0 auto 10px;border-radius:14px;background:linear-gradient(145deg,#ffffff,#f3e9db);box-shadow:0 10px 22px -10px rgba(184,35,28,.25), inset 0 0 0 1px #fff;display:flex;align-items:center;justify-content:center;}
-.hero-avatar .icon{width:26px;height:26px;stroke:var(--amber-dk);}
+.hero-avatar{width:100px;height:100px;margin:0 auto 12px;background:transparent;display:flex;align-items:center;justify-content:center;overflow:visible;}
+.hero-avatar img{width:100%;height:100%;object-fit:contain;}
 .hero h1{font-size:24px;margin:0 0 4px;font-weight:700;}
 .hero h1 b{color:var(--amber-dk);font-weight:800;}
 .hero p{margin:0;color:var(--muted);font-size:14px;}
@@ -268,14 +268,10 @@ h1,h3,h4{letter-spacing:-0.01em;margin:0;}
 .day-divider{text-align:center;font-size:10.5px;color:#b0a996;margin:2px 0 4px;position:relative;}
 
 .msg{display:flex;gap:10px;max-width:82%;}
-.msg .m-avatar{width:28px;height:28px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;}
+.msg .m-avatar{width:32px;height:32px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;overflow:visible;background:transparent;padding:2px;}
+.msg .m-avatar img{width:100%;height:100%;object-fit:contain;}
 .msg .m-avatar .icon{width:15px;height:15px;}
-.msg.ben .m-avatar{background:linear-gradient(145deg,#ffffff,#f3e9db);box-shadow:0 6px 14px -8px rgba(184,35,28,.25), inset 0 0 0 1px #fff;position:relative;overflow:hidden;}
-.ben-face{width:18px;height:18px;position:relative;display:flex;align-items:center;justify-content:center;}
-.ben-face .face-circle{width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-dk));position:relative;}
-.ben-face .eyes{position:absolute;top:6px;left:50%;transform:translateX(-50%);display:flex;gap:4px;}
-.ben-face .eye{width:2.5px;height:2.5px;border-radius:50%;background:var(--ink);}
-.ben-face .smile{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:7px;height:3.5px;border:1px solid;border-color:transparent transparent var(--ink) transparent;border-radius:0 0 100px 100px;}
+.msg.ben .m-avatar{background:transparent;box-shadow:none;}
 .msg .bubble-wrap{display:flex;flex-direction:column;gap:3px;}
 .msg .bubble{border-radius:14px;padding:10px 13px;font-size:13px;line-height:1.5;}
 .msg.ben .bubble{background:#fff;border:1px solid var(--line);border-top-left-radius:4px;box-shadow:0 8px 18px -14px rgba(28,27,24,.15);}
@@ -368,7 +364,7 @@ h1,h3,h4{letter-spacing:-0.01em;margin:0;}
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark">CR</div>
+      <img src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
       <div class="brand-name">Helpdesk<span>CRMC</span></div>
     </div>
 
@@ -445,7 +441,7 @@ h1,h3,h4{letter-spacing:-0.01em;margin:0;}
 
     <div id="heroView">
       <div class="hero">
-        <div class="hero-avatar"><svg class="icon"><use href="#i-chat"/></svg></div>
+        <div class="hero-avatar"><img src="assets/images/ben-model.png" alt="Ben"></div>
         <h1>Good morning, <?= htmlspecialchars($firstName) ?>. I'm <b>Ben</b></h1>
         <p>I'm here to help you with your concern.</p>
         <p class="sub">Choose a category below to get started</p>
@@ -647,7 +643,7 @@ function showChatView(category) {
   document.getElementById('chatInput').focus();
 }
 
-function addBenMessage(html, showTyping = false) {
+function addBenMessage(html, showTyping = false, expression = 'happy') {
   const threadInner = document.getElementById('chatThreadInner');
   const msg = document.createElement('div');
   msg.className = 'msg ben';
@@ -657,12 +653,7 @@ function addBenMessage(html, showTyping = false) {
 
   msg.innerHTML = `
     <div class="m-avatar">
-      <div class="ben-face">
-        <div class="face-circle">
-          <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
-          <div class="smile"></div>
-        </div>
-      </div>
+      <img src="assets/images/ben-model.png" alt="Ben">
     </div>
     <div class="bubble-wrap">
       <span class="name">Ben</span>
@@ -706,12 +697,7 @@ function addTypingIndicator() {
 
   msg.innerHTML = `
     <div class="m-avatar">
-      <div class="ben-face">
-        <div class="face-circle">
-          <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
-          <div class="smile"></div>
-        </div>
-      </div>
+      <img src="assets/images/ben-model.png" alt="Ben">
     </div>
     <div class="bubble-wrap">
       <div class="bubble typing"><span></span><span></span><span></span></div>

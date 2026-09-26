@@ -288,7 +288,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <header class="site-nav">
         <a class="site-brand" href="index_new.php">
-            <img src="assets/helpdeskcrmc_logo.png" alt="HelpdeskCRMC">
+            <img src="assets/images/helpdesk-logo.png" alt="HelpdeskCRMC">
         </a>
         <nav class="site-links" aria-label="Primary navigation">
             <a href="index_new.php#features">Features</a>
@@ -322,7 +322,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Login card -->
         <div class="login-card">
             <div class="logo-container">
-                <img src="assets/helpdeskcrmc_logo.png" alt="CRMC Helpdesk" class="logo-image">
+                <img src="assets/images/helpdesk-logo.png" alt="CRMC Helpdesk" class="logo-image">
             </div>
             <div class="login-header">
                 <h1>Sign in</h1>

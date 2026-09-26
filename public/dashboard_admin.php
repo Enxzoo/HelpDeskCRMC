@@ -49,6 +49,7 @@ $initials = strtoupper(substr($_SESSION['name'], 0, 1));
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="brand">
+            <img src="assets/images/helpdesk-logo.png" alt="CRMC Helpdesk" style="height:32px;width:auto;margin-bottom:4px;">
             <span class="n">CRMC Helpdesk</span>
             <span class="s">System Administration</span>
         </div>

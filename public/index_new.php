@@ -66,7 +66,7 @@
     <header class="sticky top-0 z-40 bg-[#EFF3FF]/95 backdrop-blur border-b border-[#E6E3EB]">
       <div class="max-w-[1440px] mx-auto px-8 lg:px-12 h-[88px] flex items-center justify-between">
         <a id="nav-brand" href="/" class="flex items-center gap-3">
-          <img src="assets/helpdeskcrmc_logo.png" alt="HelpdeskCRMC" class="w-[190px] h-auto">
+          <img src="assets/images/helpdesk-logo.png" alt="HelpdeskCRMC" class="w-[190px] h-auto">
         </a>
         <nav class="hidden md:flex items-center gap-9 text-sm font-medium text-[#7A7485]">
           <a id="nav-features" href="#features" class="hover:text-[#2171B5] transition-colors">Features</a>
