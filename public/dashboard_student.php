@@ -11,541 +11,550 @@ requireRole('student');
 $studentId = (int) $_SESSION['user_id'];
 $controller = new InquiryController();
 
-// Fetch offices from the database for the Ben Flow office picker
 $dbConn = getDbConnection();
 $officeResult = $dbConn->query('SELECT office_id, office_name FROM offices WHERE is_active = 1 ORDER BY office_name');
 $offices = $officeResult->fetch_all(MYSQLI_ASSOC);
 
 $inquiries = $controller->listForStudent($studentId);
 
-function statusLabel(string $status): string
-{
-    return match ($status) {
-        'Pending' => 'Pending',
-        'In Progress' => 'In Progress',
-        'Resolved' => 'Resolved',
-        default => ucfirst($status),
-    };
-}
+// Fetch recent staff replies grouped by office
+$repliesQuery = "
+    SELECT
+        ir.response_id,
+        ir.inquiry_id,
+        ir.message,
+        ir.created_at,
+        i.subject,
+        o.office_name,
+        CONCAT(u.first_name, ' ', u.last_name) AS staff_name
+    FROM inquiry_responses ir
+    JOIN inquiries i ON ir.inquiry_id = i.inquiry_id
+    JOIN offices o ON i.office_id = o.office_id
+    JOIN users u ON ir.staff_id = u.user_id
+    WHERE i.student_id = ?
+    ORDER BY ir.created_at DESC
+    LIMIT 10
+";
+$stmt = $dbConn->prepare($repliesQuery);
+$stmt->bind_param('i', $studentId);
+$stmt->execute();
+$repliesResult = $stmt->get_result();
+$recentReplies = $repliesResult->fetch_all(MYSQLI_ASSOC);
 
-$statusCounts = ['Pending' => 0, 'In Progress' => 0, 'Resolved' => 0];
-foreach ($inquiries as $inquiry) {
-    if (isset($statusCounts[$inquiry['status']])) {
-        $statusCounts[$inquiry['status']]++;
+// Group replies by office
+$repliesByOffice = [];
+foreach ($recentReplies as $reply) {
+    $office = $reply['office_name'];
+    if (!isset($repliesByOffice[$office])) {
+        $repliesByOffice[$office] = [];
     }
+    $repliesByOffice[$office][] = $reply;
 }
 
 $initials = '';
-foreach (preg_split('/\s+/', trim((string) $_SESSION['name'])) as $part) {
+$nameParts = preg_split('/\s+/', trim((string) $_SESSION['name']));
+foreach ($nameParts as $part) {
     if ($part !== '') {
         $initials .= mb_strtoupper(mb_substr($part, 0, 1));
     }
 }
 $initials = mb_substr($initials, 0, 2);
+$firstName = $nameParts[0] ?? 'Student';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ask Ben - HELPDESKCRMC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/design-system.css">
-<link rel="stylesheet" href="assets/css/student-dashboard.css">
-<link rel="stylesheet" href="assets/css/category_ui.css">
-<link rel="stylesheet" href="assets/css/conversation-embedded.css">
 <meta name="csrf-token" content="<?= htmlspecialchars(csrf_token()) ?>">
+<style>
+:root{
+  --ink:#1c1b18;
+  --ink-2:#26241f;
+  --amber:#ecc94b;
+  --amber-dk:#c98a06;
+  --red:#b8231c;
+  --teal:#1e7a8c;
+  --cream:#fbf6ee;
+  --card:#ffffff;
+  --line:#ece3d6;
+  --muted:#847c6e;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;max-width:100%;overflow-x:hidden;height:100%;}
+body{
+  font-family:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+  background:var(--cream);color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+h1,h3,h4{letter-spacing:-0.01em;margin:0;}
+.icon{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;display:block;}
+
+.app{display:flex;align-items:stretch;height:100vh;}
+
+/* Sidebar */
+.sidebar{order:1;flex:0 0 230px;width:230px;background:#fdfcfa;color:var(--ink);padding:14px 12px;display:flex;flex-direction:column;min-width:0;overflow:hidden;border-right:1px solid var(--line);}
+.brand{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:0 2px;}
+.brand-mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--amber),var(--amber-dk));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink);font-size:11px;flex:none;}
+.brand-name{font-weight:700;color:var(--ink);font-size:14px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.brand-name span{color:var(--amber-dk);}
+.brand-btn{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#a89f8c;flex:none;cursor:pointer;}
+.brand-btn .icon{width:14px;height:14px;}
+.brand-btn:hover{background:#f1ede4;}
+
+.nav-label{font-size:10px;font-weight:700;letter-spacing:.05em;color:#a89f8c;margin:10px 4px 6px;display:flex;align-items:center;justify-content:space-between;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;color:#5c5648;text-decoration:none;font-size:13px;margin-bottom:1px;cursor:pointer;}
+.nav-item .icon{color:#9a9182;stroke:currentColor;}
+.nav-item:hover{background:#f1ede4;}
+.nav-item.active{color:var(--amber-dk);font-weight:600;background:#faf1dc;}
+.nav-item.active .icon{color:var(--amber-dk);}
+
+.group{margin-top:2px;margin-bottom:2px;}
+.group-head{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;background:#fdece9;margin-bottom:2px;}
+.group-head .badge{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;flex:none;}
+.group-head span{font-size:13px;font-weight:700;color:var(--ink);}
+.channel{display:flex;align-items:center;gap:9px;padding:6px 8px 6px 30px;border-radius:8px;color:#7a7362;text-decoration:none;font-size:12.5px;margin-bottom:1px;cursor:pointer;}
+.channel:hover{background:#f1ede4;}
+.channel .icon{width:15px;height:15px;color:#a89f8c;}
+.channel .snippet{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.channel .time{font-size:10px;color:#b0a996;font-weight:400;flex:none;}
+
+.empty-replies{text-align:center;padding:14px 10px;color:#a89f8c;}
+.empty-replies .icon{display:block;margin:0 auto 6px;}
+.empty-replies p{margin:0 0 3px;font-size:11.5px;font-weight:600;}
+.empty-replies span{display:block;font-size:10px;color:#c4bba6;line-height:1.35;}
+
+.sidebar-spacer{flex:1;}
+.sidebar-foot{border-top:1px solid var(--line);margin-top:6px;padding-top:6px;}
+.sidebar-profile{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:8px;cursor:pointer;}
+.sidebar-profile:hover{background:#f1ede4;}
+.avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-dk));color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex:none;}
+.user-name{font-size:12.5px;font-weight:700;color:var(--ink);}
+.user-sub{font-size:10.5px;color:var(--muted);}
+.urgent-card{background:#fff9ec;border:1px solid #f0e2bd;border-radius:12px;padding:10px;margin-top:8px;}
+.urgent-card h4{margin:0 0 3px;font-size:11.5px;color:var(--ink);}
+.urgent-card p{margin:0 0 7px;font-size:10.5px;line-height:1.35;color:var(--muted);}
+.urgent-btn{display:inline-block;background:var(--amber-dk);color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:16px;text-decoration:none;cursor:pointer;border:none;}
+
+/* Main */
+.main{order:2;flex:1 1 auto;position:relative;min-width:0;height:100vh;overflow:hidden;}
+.main.with-padding{padding:10px 24px 10px;}
+.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.35;z-index:0;pointer-events:none;}
+.blob-1{width:300px;height:300px;background:var(--amber);top:-120px;left:100px;}
+.blob-2{width:260px;height:260px;background:var(--teal);top:20px;right:-90px;opacity:.25;}
+.main > *:not(.blob){position:relative;z-index:1;}
+
+#heroView{display:block;overflow-y:auto;height:100%;padding:10px 24px 20px;}
+#concernsView{display:none;overflow-y:auto;height:100%;padding:10px 24px 20px;}
+#chatView{position:absolute;top:0;left:0;right:0;bottom:0;z-index:10;background:var(--cream);flex-direction:column;display:none;}
+#chatView.active{display:flex;}
+
+.hero{text-align:center;padding:10px 0 12px;}
+.hero-avatar{width:52px;height:52px;margin:0 auto 10px;border-radius:14px;background:linear-gradient(145deg,#ffffff,#f3e9db);box-shadow:0 10px 22px -10px rgba(184,35,28,.25), inset 0 0 0 1px #fff;display:flex;align-items:center;justify-content:center;}
+.hero-avatar .icon{width:26px;height:26px;stroke:var(--amber-dk);}
+.hero h1{font-size:24px;margin:0 0 4px;font-weight:700;}
+.hero h1 b{color:var(--amber-dk);font-weight:800;}
+.hero p{margin:0;color:var(--muted);font-size:14px;}
+.hero p.sub{margin-top:2px;font-size:12.5px;color:#a49a86;}
+
+.search-pill{max-width:520px;margin:14px auto 0;background:#fff;border-radius:999px;display:flex;align-items:center;gap:10px;padding:10px 18px;box-shadow:0 8px 20px -12px rgba(28,27,24,.15);border:1px solid var(--line);cursor:text;}
+.search-pill input{border:none;outline:none;flex:1;font-size:14px;color:var(--ink);background:transparent;min-width:0;}
+.search-pill .icon{color:#b0a996;width:19px;height:19px;}
+
+.content{max-width:1040px;margin:0 auto;width:100%;}
+
+.section-title{font-size:10.5px;font-weight:700;letter-spacing:.02em;color:#7a7362;margin:8px 0 5px;text-align:left;}
+
+.general-card{background:var(--card);border-radius:14px;padding:9px 12px;max-width:320px;margin:0;box-shadow:0 10px 24px -16px rgba(28,27,24,.18);display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);cursor:pointer;transition:transform .15s;}
+.general-card:hover{transform:translateY(-2px);}
+.general-card .ic{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--amber),var(--amber-dk));display:flex;align-items:center;justify-content:center;flex:none;}
+.general-card .ic .icon{stroke:var(--ink);width:15px;height:15px;}
+.general-card h3{margin:0 0 2px;font-size:13px;}
+.general-card p{margin:0;font-size:11px;color:var(--muted);}
+
+.grid{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-start;}
+.tile{background:linear-gradient(160deg,var(--ink-2),#141310);border-radius:12px;padding:9px 14px;color:#fff;display:flex;flex:0 0 auto;flex-direction:column;gap:4px;box-shadow:0 10px 20px -16px rgba(20,19,16,.55);border:1px solid rgba(255,255,255,.05);width:170px;white-space:normal;cursor:pointer;transition:transform .15s;}
+.tile:hover{transform:translateY(-2px);}
+.tile .ic{width:24px;height:24px;border-radius:8px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:var(--amber-dk);}
+.tile .ic .icon{width:13px;height:13px;stroke:currentColor;}
+.tile.alt .ic{color:var(--teal);}
+.tile h4{margin:0;font-size:12px;font-weight:600;}
+.tile p{margin:0;font-size:10px;color:#a79f8f;}
+
+/* Right panel */
+.panel{order:3;flex:0 0 210px;width:210px;background:#fff;border-left:1px solid var(--line);padding:16px 13px;min-width:0;overflow-y:auto;}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.bell{margin-left:auto;width:28px;height:28px;border-radius:50%;background:#f6f1e8;display:flex;align-items:center;justify-content:center;color:#7a7362;}
+.bell .icon{width:14px;height:14px;}
+.panel h3{font-size:13px;margin:0;}
+.search-mini{background:#f6f1e8;border-radius:10px;padding:7px 11px;display:flex;align-items:center;gap:7px;color:#a89f8c;font-size:11.5px;margin-bottom:12px;}
+.empty-state{text-align:center;padding:18px 8px;color:#a89f8c;}
+.empty-state .icon{width:24px;height:24px;margin:0 auto 7px;color:#c4bba6;}
+.empty-state p{margin:0;font-size:11.5px;}
+.empty-state span{display:block;font-size:10.5px;color:#c4bba6;margin-top:3px;}
+
+.concern-row{padding:8px 10px;border-radius:8px;margin-bottom:6px;cursor:pointer;background:#fafaf9;border:1px solid var(--line);}
+.concern-row:hover{background:#f5f4f0;}
+.concern-title{font-size:11.5px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.concern-meta{font-size:10px;color:var(--muted);}
+.tag{display:inline-block;padding:2px 7px;border-radius:12px;font-size:9px;font-weight:700;text-transform:uppercase;}
+.tag.pending{background:#FEF3C7;color:#92400E;}
+.tag.inprogress{background:#DBEAFE;color:#1E40AF;}
+.tag.resolved{background:#D1FAE5;color:#065F46;}
+
+/* Concerns view */
+#concernsView{display:none;}
+.concerns-header{margin-bottom:22px;}
+.concerns-header h1{font-size:24px;font-weight:800;margin:0 0 4px;}
+.concerns-header p{margin:0;color:var(--muted);font-size:13.5px;}
+.faq-card{background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--line);}
+.faq-row{padding:14px;border-radius:10px;background:#fafaf9;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+.faq-row:hover{background:#f5f4f0;}
+.faq-row .left{flex:1;min-width:0;}
+.faq-row .subject{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.faq-row .meta{font-size:11.5px;color:var(--muted);}
+.faq-row .right{display:flex;align-items:center;gap:8px;}
+.faq-row .chev{width:16px;height:16px;color:var(--muted);}
+.concern-detail{padding:12px 14px;background:#f9f8f6;border-radius:8px;margin-top:6px;margin-bottom:8px;display:none;}
+.faq-row.open + .concern-detail{display:block;}
+.reply-box{padding:10px;background:#fff;border-radius:8px;border:1px solid var(--line);}
+.reply-head{font-size:11px;font-weight:700;color:var(--amber-dk);margin-bottom:6px;}
+.reply-msg{font-size:12px;color:var(--ink);line-height:1.5;}
+.reply-empty{font-size:12px;color:var(--muted);font-style:italic;}
+
+/* Ben conversation overlay */
+.ben-overlay{display:none;position:fixed;inset:0;background:rgba(28,27,24,.6);z-index:999;align-items:center;justify-content:center;}
+.ben-overlay.active{display:flex;}
+.ben-modal{background:var(--cream);width:min(92%,580px);max-height:85vh;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden;}
+.ben-header{padding:16px 20px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
+.ben-header h2{font-size:16px;font-weight:700;margin:0;color:var(--ink);}
+.ben-close{background:none;border:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);}
+.ben-close:hover{background:#f1ede4;}
+.ben-close .icon{width:16px;height:16px;}
+.ben-body{flex:1;overflow-y:auto;padding:16px 20px;}
+.ben-thread{display:flex;flex-direction:column;gap:12px;}
+.ben-msg{display:flex;gap:10px;align-items:flex-start;}
+.ben-msg.student{flex-direction:row-reverse;}
+.ben-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-dk));display:flex;align-items:center;justify-content:center;flex:none;}
+.ben-avatar .icon{width:18px;height:18px;stroke:var(--ink);}
+.ben-bubble{background:var(--card);padding:10px 14px;border-radius:12px;border:1px solid var(--line);max-width:75%;font-size:13px;line-height:1.5;}
+.ben-msg.student .ben-bubble{background:linear-gradient(135deg,var(--amber),var(--amber-dk));color:var(--ink);border:none;}
+.ben-input-bar{padding:12px 16px;background:var(--card);border-top:1px solid var(--line);}
+.ben-input-wrap{display:flex;gap:8px;align-items:center;}
+.ben-input-wrap input{flex:1;padding:10px 14px;border:1px solid var(--line);border-radius:999px;font-size:13px;outline:none;}
+.ben-send{background:var(--amber-dk);color:#fff;border:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;}
+.ben-send .icon{width:18px;height:18px;stroke:currentColor;}
+.ben-send:disabled{background:#e5dcc8;cursor:not-allowed;}
+
+/* Chat view */
+.chat-header{display:flex;align-items:center;gap:12px;padding:12px 22px;border-bottom:1px solid var(--line);background:#fffdf9;flex:none;}
+.back-btn{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#7a7362;flex:none;cursor:pointer;background:transparent;border:none;}
+.back-btn:hover{background:#f1ede4;}
+.chat-header .ic{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--amber),var(--amber-dk));display:flex;align-items:center;justify-content:center;flex:none;}
+.chat-header .ic .icon{stroke:var(--ink);width:17px;height:17px;}
+.chat-header h2{margin:0;font-size:14.5px;}
+.chat-header p{margin:1px 0 0;font-size:11.5px;color:var(--muted);}
+.status-pill{margin-left:auto;display:flex;align-items:center;gap:6px;background:#eaf7ee;color:#1e7a44;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;flex:none;}
+.status-dot{width:6px;height:6px;border-radius:50%;background:#1e7a44;}
+
+.chat-thread{flex:1;overflow-y:auto;padding:22px 0 10px;background:var(--cream);}
+.thread-inner{max-width:640px;margin:0 auto;padding:0 24px;display:flex;flex-direction:column;gap:16px;}
+
+.day-divider{text-align:center;font-size:10.5px;color:#b0a996;margin:2px 0 4px;position:relative;}
+
+.msg{display:flex;gap:10px;max-width:82%;}
+.msg .m-avatar{width:28px;height:28px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;}
+.msg .m-avatar .icon{width:15px;height:15px;}
+.msg.ben .m-avatar{background:linear-gradient(145deg,#ffffff,#f3e9db);box-shadow:0 6px 14px -8px rgba(184,35,28,.25), inset 0 0 0 1px #fff;}
+.msg.ben .m-avatar .icon{stroke:var(--amber-dk);}
+.msg .bubble-wrap{display:flex;flex-direction:column;gap:3px;}
+.msg .bubble{border-radius:14px;padding:10px 13px;font-size:13px;line-height:1.5;}
+.msg.ben .bubble{background:#fff;border:1px solid var(--line);border-top-left-radius:4px;box-shadow:0 8px 18px -14px rgba(28,27,24,.15);}
+.msg .name{font-size:11px;font-weight:700;color:var(--muted);margin-left:2px;}
+.msg .time{font-size:10px;color:#b0a996;margin-left:2px;}
+.msg.user{align-self:flex-end;flex-direction:row-reverse;}
+.msg.user .m-avatar{background:linear-gradient(135deg,var(--amber),var(--amber-dk));color:var(--ink);font-size:10.5px;font-weight:700;}
+.msg.user .bubble{background:linear-gradient(135deg,var(--amber),var(--amber-dk));color:var(--ink);border-top-right-radius:4px;font-weight:500;}
+.msg.user .bubble-wrap{align-items:flex-end;}
+.msg.user .time{margin-right:2px;}
+
+.info-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12px;max-width:82%;box-shadow:0 8px 18px -14px rgba(28,27,24,.15);}
+.info-card .row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.info-card .row:last-child{margin-bottom:0;}
+.info-card .lbl{color:var(--muted);width:96px;flex:none;}
+.info-card .val{font-weight:600;}
+.info-card .head{display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:8px;color:var(--ink);font-size:12.5px;}
+.info-card .head .icon{width:15px;height:15px;color:#1e7a44;}
+
+.typing{display:flex;gap:4px;align-items:center;padding:10px 13px;}
+.typing span{width:5px;height:5px;border-radius:50%;background:#c7bfae;display:inline-block;animation:typing-bounce 1.4s infinite;}
+.typing span:nth-child(2){animation-delay:.2s;}
+.typing span:nth-child(3){animation-delay:.4s;}
+@keyframes typing-bounce{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-6px)}}
+
+.composer-wrap{flex:none;padding:12px 24px 18px;background:var(--cream);}
+.composer{max-width:640px;margin:0 auto;background:#fff;border-radius:22px;border:1px solid var(--line);box-shadow:0 10px 24px -16px rgba(28,27,24,.18);display:flex;align-items:center;gap:6px;padding:8px 8px 8px 16px;}
+.composer input{border:none;outline:none;flex:1;font-size:13.5px;color:var(--ink);background:transparent;min-width:0;}
+.composer input::placeholder{color:#b0a996;}
+.attach-btn{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#a89f8c;flex:none;background:transparent;border:none;cursor:pointer;}
+.attach-btn:hover{background:#f1ede4;}
+.send-btn{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-dk));display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 8px 16px -8px rgba(201,138,6,.5);cursor:pointer;border:none;}
+.send-btn .icon{stroke:var(--ink);width:16px;height:16px;}
+.send-btn:disabled{opacity:.5;cursor:not-allowed;}
+.composer-hint{text-align:center;font-size:10px;color:#b0a996;margin-top:8px;}
+
+.history-item{display:flex;align-items:center;gap:9px;padding:8px;border-radius:10px;text-decoration:none;cursor:pointer;}
+.history-item.active{background:#faf1dc;}
+.history-item .ic{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--amber),var(--amber-dk));display:flex;align-items:center;justify-content:center;flex:none;}
+.history-item .ic .icon{stroke:var(--ink);width:15px;height:15px;}
+.h-title{font-size:12.5px;font-weight:700;color:var(--ink);}
+.h-sub{font-size:10.5px;color:var(--muted);}
+
+
+@media (max-width:960px){
+  .app{flex-direction:column;height:auto;}
+  .main{height:auto;min-height:100vh;}
+  .sidebar,.panel{display:none;}
+}
+</style>
 </head>
 <body>
 
-<!-- Ben Flow Overlay -->
-<div id="benFlow">
-  <div class="bf-modal">
-    <!-- Step 1: Category Selection -->
-    <div id="bfStep1">
-      <div class="bf-header">
-        <button class="bf-back" id="bfExitToDash">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          Ask Ben
-        </button>
-        <img src="https://i.imgur.com/placeholder-logo.png" alt="HelpDesk CRMC" class="bf-logo" style="display:none;">
-      </div>
+<svg style="display:none" aria-hidden="true">
+<defs>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1v-9"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5"/><path d="M8.5 13h7M8.5 17h7"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3"/><path d="M14 8l4 4-4 4"/><path d="M18 12H9"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 10a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z"/><path d="M10 19a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z"/></symbol>
+  <symbol id="i-dollar" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 6.5c0-1.8-2-3-5-3s-5 1.4-5 3.2 2 2.8 5 3.3 5 1.5 5 3.3-2 3.2-5 3.2-5-1.2-5-3"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c1-3 3-4.5 5.5-4.5s4.5 1.5 5.5 4.5"/><circle cx="17" cy="8.5" r="2.3"/><path d="M15.5 14.2c2.2.4 3.5 1.8 4.4 4.3"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.01"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v18H6.5A2.5 2.5 0 0 1 4 18.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H12v18h5.5a2.5 2.5 0 0 0 2.5-2.5Z"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12 20 3"/><path d="M16 7l3 3"/><path d="M13 10l2.5 2.5"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke-width="3"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M9 21h6M12 17v4"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="1.5"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m9 8-4 4 4 4"/><path d="m15 8 4 4-4 4"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V6Z"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.8 1.8 0 0 0 .3 1.9l.1.1a2.1 2.1 0 1 1-3 3l-.1-.1a1.8 1.8 0 0 0-1.9-.3 1.8 1.8 0 0 0-1.1 1.6V21a2.1 2.1 0 1 1-4.2 0v-.1a1.8 1.8 0 0 0-1.1-1.6 1.8 1.8 0 0 0-1.9.3l-.1.1a2.1 2.1 0 1 1-3-3l.1-.1a1.8 1.8 0 0 0 .3-1.9 1.8 1.8 0 0 0-1.6-1.1H2.9a2.1 2.1 0 1 1 0-4.2H3a1.8 1.8 0 0 0 1.6-1.1 1.8 1.8 0 0 0-.3-1.9l-.1-.1a2.1 2.1 0 1 1 3-3l.1.1a1.8 1.8 0 0 0 1.9.3H9.3A1.8 1.8 0 0 0 10.4 3V2.9a2.1 2.1 0 1 1 4.2 0V3a1.8 1.8 0 0 0 1.1 1.6 1.8 1.8 0 0 0 1.9-.3l.1-.1a2.1 2.1 0 1 1 3 3l-.1.1a1.8 1.8 0 0 0-.3 1.9v.1a1.8 1.8 0 0 0 1.6 1.1h.1a2.1 2.1 0 1 1 0 4.2H21a1.8 1.8 0 0 0-1.6 1.1Z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7z"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+  <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M8 12.5l6-6a3 3 0 0 1 4.2 4.2l-8 8a5 5 0 1 1-7-7l7-7"/></symbol>
+  <symbol id="i-reply" viewBox="0 0 24 24"><path d="M9 8 4 12l5 4"/><path d="M4 12h9a6 6 0 0 1 6 6v1"/></symbol>
+  <symbol id="i-hash" viewBox="0 0 24 24"><path d="M9 4 7 20M17 4l-2 16M4 9h16M3.5 15h16"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-updown" viewBox="0 0 24 24"><path d="M8 9l4-4 4 4"/><path d="M16 15l-4 4-4-4"/></symbol>
+  <symbol id="i-collapse" viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6"/><path d="M19 6l-6 6 6 6"/></symbol>
+</defs>
+</svg>
 
-      <div class="bf-step1-head">
-          <h1>Hello, <?= htmlspecialchars(explode(' ', $_SESSION['name'])[0]) ?> — how can Ben help?</h1>
-          <div class="bf-mascot">
-            <img src="assets/images/ben_interactions%20vector/hi_bot.png" alt="Ben assistant">
-          </div>
-        <h2 id="bfChooseLabel">PLEASE CHOOSE WHAT YOU NEED HELP WITH</h2>
-        <button id="bfBackToCategories" class="bf-back-cats" style="display:none;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          Back to categories
-        </button>
-      </div>
-
-      <div class="bf-cat-scroll">
-        <div class="bf-cat-row" id="bfCatRow"></div>
-      </div>
-      <div class="bf-scroll-track" id="bfScrollTrack">
-        <div class="bf-scroll-thumb" id="bfScrollThumb"></div>
-      </div>
-    </div>
-
-    <!-- Step 2: Conversation Thread -->
-    <div id="bfStep2">
-      <div class="bf-step2-head">
-        <button id="bfBackToStep1">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        </button>
-        <div class="bf-chat-identity">
-          <div class="bf-chat-avatar">
-            <img src="assets/images/ben_interactions%20vector/hi_bot.png" alt="BenAI">
-          </div>
-          <div>
-            <div class="bf-chat-name">BenAI</div>
-            <div class="bf-chat-status"><span></span>Online now</div>
-          </div>
-          <div class="bf-office-pill" id="bfOfficePill">General</div>
-        </div>
-      </div>
-      <div class="bf-thread" id="bfThread"></div>
-      <div class="bf-input-bar">
-        <div class="bf-attach-chip" id="bfAttachChip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a1.5 1.5 0 0 1-2.12-2.12l8.49-8.48"/></svg>
-          <div class="bf-attach-info">
-            <div class="bf-attach-name" id="bfAttachName"></div>
-            <div class="bf-attach-size" id="bfAttachSize"></div>
-          </div>
-          <button class="bf-attach-remove" id="bfAttachRemove">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <div class="bf-input-row">
-          <input type="file" id="bfFileInput" style="display:none;" multiple>
-          <button class="bf-attach-btn" id="bfAttachBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a1.5 1.5 0 0 1-2.12-2.12l8.49-8.48"/></svg>
-          </button>
-          <div class="bf-input-wrap">
-            <textarea class="bf-input" id="bfInput" placeholder="Type your concern..." rows="1"></textarea>
-          </div>
-          <button class="bf-mic-btn" type="button" aria-label="Use microphone">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8"/></svg>
-          </button>
-          <button class="bf-send" id="bfSend">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Ask Ben workspace -->
-<div id="dashboardView" class="app app-three-col">
+<div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <img src="assets/helpdeskcrmc_logo.png" alt="Helpdesk CRMC" class="brand-logo">
-      <div class="s">Student Portal</div>
+      <div class="brand-mark">CR</div>
+      <div class="brand-name">Helpdesk<span>CRMC</span></div>
     </div>
 
-    <div class="nav-group">
-      <div class="nav-label">Main</div>
-      <nav>
-        <a class="nav-item active" href="#" id="navDashboard">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
-          Ask Ben
-        </a>
-        <a class="nav-item" href="#" id="navMyConcerns">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
-          My Concerns
-        </a>
-      </nav>
+    <a class="nav-item active" id="navAskBen"><svg class="icon"><use href="#i-home"/></svg> Ask Ben</a>
+    <a class="nav-item" id="navMyConcerns"><svg class="icon"><use href="#i-file"/></svg> My Concerns</a>
+    <a class="nav-item" id="navProfile"><svg class="icon"><use href="#i-user"/></svg> Profile</a>
+
+    <div class="nav-label">
+      <span>REPLIES FROM STAFF</span>
     </div>
 
-    <div class="nav-group">
-      <div class="nav-label">Other</div>
-      <nav>
-        <a class="nav-item" href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/></svg>
-          Profile
-        </a>
-        <a class="nav-item" href="logout.php">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
-          Logout
-        </a>
-      </nav>
-    </div>
+    <?php if (!empty($repliesByOffice)): ?>
+      <?php foreach (array_slice($repliesByOffice, 0, 2) as $officeName => $replies): ?>
+        <?php
+          $officeInitial = mb_strtoupper(mb_substr($officeName, 0, 1));
+          $colors = [
+            'Registrar' => ['#b8231c', '#8f1912'],
+            'SASO' => ['#ecc94b', '#c98a06'],
+            'Finance' => ['#1e7a8c', '#155e6d'],
+          ];
+          $gradient = $colors[$officeName] ?? ['#847c6e', '#5c5648'];
+          $latestReply = $replies[0];
+          $timeAgo = '';
+          $diff = time() - strtotime($latestReply['created_at']);
+          if ($diff < 3600) $timeAgo = floor($diff / 60) . 'm';
+          elseif ($diff < 86400) $timeAgo = floor($diff / 3600) . 'h';
+          else $timeAgo = floor($diff / 86400) . 'd';
+        ?>
+        <div class="group">
+          <div class="group-head">
+            <div class="badge" style="background:linear-gradient(135deg,<?= $gradient[0] ?>,<?= $gradient[1] ?>);"><?= htmlspecialchars($officeInitial) ?></div>
+            <span><?= htmlspecialchars($officeName) ?></span>
+          </div>
+          <a class="channel" data-inquiry-id="<?= $latestReply['inquiry_id'] ?>">
+            <svg class="icon" style="width:15px;height:15px;"><use href="#i-chat"/></svg>
+            <span class="snippet"><?= htmlspecialchars(mb_substr($latestReply['subject'], 0, 25)) ?></span>
+            <span class="time"><?= htmlspecialchars($timeAgo) ?></span>
+          </a>
+        </div>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <div class="empty-replies">
+        <svg class="icon" style="width:20px;height:20px;color:#c4bba6;margin:0 auto 6px;"><use href="#i-chat"/></svg>
+        <p>No replies yet</p>
+        <span>Staff will respond to your concerns within 2-3 working days</span>
+      </div>
+    <?php endif; ?>
 
-    <div class="side-promo">
+    <div class="sidebar-spacer"></div>
+
+    <div class="urgent-card">
       <h4>Need urgent help?</h4>
       <p>Walk-in concerns are still welcome at the Student Affairs office.</p>
-      <button>Visit SASO</button>
+      <button class="urgent-btn">Visit SASO</button>
+    </div>
+
+    <a href="logout.php" class="nav-item" style="margin-top:8px;"><svg class="icon"><use href="#i-logout"/></svg> Logout</a>
+
+    <div class="sidebar-foot">
+      <a class="nav-item"><svg class="icon"><use href="#i-gear"/></svg> Settings</a>
+      <div class="sidebar-profile">
+        <div class="avatar"><?= htmlspecialchars($initials) ?></div>
+        <div>
+          <div class="user-name"><?= htmlspecialchars($_SESSION['name']) ?></div>
+          <div class="user-sub">BSIT · 3rd Year</div>
+        </div>
+      </div>
     </div>
   </aside>
 
-  <!-- Topbar spanning main + chat history -->
-  <div class="topbar topbar-wide">
-    <div class="who">
-      <div class="n"><?= htmlspecialchars($_SESSION['name']) ?></div>
-      <div class="s">BSIT · 3rd Year</div>
-    </div>
-    <div class="top-actions">
-      <button class="icon-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-        <span class="dot"></span>
-      </button>
-      <div class="avatar"><?= htmlspecialchars($initials) ?></div>
-    </div>
-  </div>
+  <main class="main" id="mainView">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
 
-  <main>
-    <div id="dashHome" class="figma-dash">
-      <section class="figma-welcome">
-        <div class="figma-ben-avatar">
-          <img src="assets/images/ben_interactions%20vector/happybot.png" alt="Ben assistant">
+    <div id="heroView">
+      <div class="hero">
+        <div class="hero-avatar"><svg class="icon"><use href="#i-chat"/></svg></div>
+        <h1>Good morning, <?= htmlspecialchars($firstName) ?>. I'm <b>Ben</b></h1>
+        <p>I'm here to help you with your concern.</p>
+        <p class="sub">Choose a category below to get started</p>
+        <div class="search-pill" id="heroSearchPill">
+          <svg class="icon"><use href="#i-search"/></svg>
+          <input placeholder="Type your concern, e.g. 'I lost my student ID'" id="heroSearchInput" />
         </div>
-        <h1>Goodmorning, <?= htmlspecialchars(explode(' ', $_SESSION['name'])[0]) ?>. I'm <span class="ben">Ben</span></h1>
-        <div class="figma-subtitle">I'm here to help you with your concern.</div>
-        <div class="figma-category-instruction">Choose a category below or search your concern</div>
+      </div>
 
-        <div class="figma-search-wrap">
-          <svg class="figma-search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="categorySearchInput" placeholder="Search office, department, or concern (e.g. Grades, Tuition, WiFi)..." autocomplete="off">
-          <button type="button" id="categorySearchClear" class="figma-search-clear" style="display:none;" aria-label="Clear search">&times;</button>
-        </div>
-      </section>
-
-      <div class="figma-section-label" data-section-for="General">General</div>
-      <div class="figma-category-grid" data-grid-section="General">
-        <button class="figma-category-card badge-blue" data-office="General" data-keywords="general inquiry ask question help ai assist chat">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </div>
-          <div class="figma-card-body">
+      <div class="content">
+        <div class="section-title">GENERAL</div>
+        <div class="general-card" data-category="General">
+          <div class="ic"><svg class="icon"><use href="#i-chat"/></svg></div>
+          <div>
             <h3>General Inquiry</h3>
-            <p>General questions &amp; AI help</p>
+            <p>Ask a concern directly to Ben — no category needed.</p>
           </div>
-        </button>
-      </div>
+        </div>
 
-      <div class="figma-section-label" data-section-for="Offices">Offices</div>
-      <div class="figma-category-grid" data-grid-section="Offices">
-        <button class="figma-category-card badge-indigo" data-office="Registrar" data-keywords="registrar grades transcript tor good moral diploma enrollment clear evaluation credentials record">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>Registrar</h3>
-            <p>Grades, TOR &amp; Enrollment</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-emerald" data-office="Finance" data-keywords="finance tuition payment balance fee receipt accounting cashier scholarship promissory bill">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>Finance</h3>
-            <p>Tuition &amp; Account Balances</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-amber" data-office="SASO" data-keywords="saso student affairs clubs discipline ID organization student council clearance violation sanction">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>SASO</h3>
-            <p>Student Affairs &amp; Services</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-purple" data-office="Guidance" data-keywords="guidance counseling mental health advice career consultation exit interview wellness support behavior stress">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>Guidance</h3>
-            <p>Counseling &amp; Wellness</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-cyan" data-office="Library" data-keywords="library books borrow clearance research journal catalog reading study references e-books">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>Library</h3>
-            <p>Book Borrowing &amp; Resources</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-orange" data-office="Property Custodian" data-keywords="property custodian lost found facilities equipment room key campus maintenance item item search">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>Property Custodian</h3>
-            <p>Lost &amp; Found, Campus Items</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-rose" data-office="Clinic" data-keywords="clinic medical health checkup doctor nurse certificate first aid prescription consultation medicine sick emergency">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>Clinic</h3>
-            <p>Medical Certs &amp; First Aid</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-teal" data-office="ITCD" data-keywords="itcd portal wifi login password account reset internet tech system support canvas email network credentials">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>ITCD</h3>
-            <p>Portal, WiFi &amp; Tech Support</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-slate" data-office="Human Resources" data-keywords="human resources hr staff internship employment job student assistant workplace personnel application">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>Human Resources</h3>
-            <p>Employment &amp; Internships</p>
-          </div>
-        </button>
-      </div>
+        <div class="section-title">OFFICES</div>
+        <div class="grid">
+          <div class="tile" data-category="Registrar"><div class="ic"><svg class="icon"><use href="#i-folder"/></svg></div><h4>Registrar</h4><p>Enrollment, records, IDs</p></div>
+          <div class="tile alt" data-category="Finance"><div class="ic"><svg class="icon"><use href="#i-dollar"/></svg></div><h4>Finance</h4><p>Fees, payments, receipts</p></div>
+          <div class="tile" data-category="SASO"><div class="ic"><svg class="icon"><use href="#i-users"/></svg></div><h4>SASO</h4><p>Student affairs & orgs</p></div>
+          <div class="tile alt" data-category="Guidance"><div class="ic"><svg class="icon"><use href="#i-info"/></svg></div><h4>Guidance</h4><p>Counseling & support</p></div>
+          <div class="tile" data-category="Library"><div class="ic"><svg class="icon"><use href="#i-book"/></svg></div><h4>Library</h4><p>Books, fines, access</p></div>
+          <div class="tile alt" data-category="Property Custodian"><div class="ic"><svg class="icon"><use href="#i-key"/></svg></div><h4>Property Custodian</h4><p>Facilities & equipment</p></div>
+          <div class="tile" data-category="Clinic"><div class="ic"><svg class="icon"><use href="#i-cross"/></svg></div><h4>Clinic</h4><p>Medical certificates</p></div>
+          <div class="tile alt" data-category="ITCD"><div class="ic"><svg class="icon"><use href="#i-monitor"/></svg></div><h4>ITCD</h4><p>Portal & IT support</p></div>
+          <div class="tile" data-category="Human Resources"><div class="ic"><svg class="icon"><use href="#i-briefcase"/></svg></div><h4>Human Resources</h4><p>Employment inquiries</p></div>
+        </div>
 
-      <div class="figma-section-label" data-section-for="Departments">Departments</div>
-      <div class="figma-category-grid" data-grid-section="Departments">
-        <button class="figma-category-card badge-sky" data-office="CCS" data-keywords="ccs computer studies it cs computer science information technology programming coding software bsit bscs">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>CCS</h3>
-            <p>Computer Studies &amp; IT</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-amber" data-office="CBE" data-keywords="cbe business accountancy management entrepreneurship finance marketing bsa bsba office admin">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>CBE</h3>
-            <p>Business &amp; Accountancy</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-emerald" data-office="CTE" data-keywords="cte teacher education teaching elementary secondary education bsed beed pedagogy instructor">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>CTE</h3>
-            <p>Teacher Education</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-rose" data-office="CCJE" data-keywords="ccje criminology criminal justice law enforcement forensic police investigation bscrim">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>CCJE</h3>
-            <p>Criminology &amp; Criminal Justice</p>
-          </div>
-        </button>
-        <button class="figma-category-card badge-purple" data-office="PSYCH" data-keywords="psych psychology behavioral science human behavior mental health counseling bspsych">
-          <div class="figma-icon-box">
-            <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
-          </div>
-          <div class="figma-card-body">
-            <h3>PSYCH</h3>
-            <p>Psychology Department</p>
-          </div>
-        </button>
-      </div>
-
-      <div id="noCategoryResults" class="figma-search-empty" style="display:none;">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-        <p>No matching categories found</p>
-        <span>Try searching for keywords like "Grades", "Tuition", "WiFi", or "Clinic"</span>
+        <div class="section-title">DEPARTMENTS</div>
+        <div class="grid">
+          <div class="tile" data-category="CCS"><div class="ic"><svg class="icon"><use href="#i-code"/></svg></div><h4>CCS</h4><p>Computer science dept</p></div>
+          <div class="tile alt" data-category="CBE"><div class="ic"><svg class="icon"><use href="#i-chart"/></svg></div><h4>CBE</h4><p>Business education dept</p></div>
+          <div class="tile" data-category="CTE"><div class="ic"><svg class="icon"><use href="#i-book"/></svg></div><h4>CTE</h4><p>Teacher education dept</p></div>
+          <div class="tile alt" data-category="CCJE"><div class="ic"><svg class="icon"><use href="#i-shield"/></svg></div><h4>CCJE</h4><p>Criminal justice dept</p></div>
+        </div>
       </div>
     </div>
 
-    <div id="dashConcerns" style="display:none;">
-      <div style="margin-bottom:22px;">
-        <h1 style="font-size:24px;font-weight:800;margin:0 0 4px;">My Concerns</h1>
-        <p style="margin:0;color:var(--muted);font-size:13.5px;">Everything you've submitted or asked Ben about, including replies from staff.</p>
+    <div id="concernsView" class="concerns-header" style="display:none;">
+      <h1>My Concerns</h1>
+      <p>Everything you've submitted or asked Ben about, including replies from staff.</p>
+      <div class="faq-card" id="concernsListContainer"></div>
+    </div>
+
+    <div id="chatView">
+      <div class="chat-header">
+        <button class="back-btn" id="backToDashboard"><svg class="icon"><use href="#i-back"/></svg></button>
+        <div class="ic" id="chatCategoryIcon"><svg class="icon"><use href="#i-chat"/></svg></div>
+        <div>
+          <h2 id="chatCategoryName">General</h2>
+          <p id="chatCategoryDesc">Ask your concern</p>
+        </div>
       </div>
-      <div class="faq-card">
-        <div id="concernListFull"></div>
+
+      <div class="chat-thread">
+        <div class="thread-inner" id="chatThreadInner">
+          <div class="day-divider" id="chatDayDivider">Today</div>
+        </div>
+      </div>
+
+      <div class="composer-wrap">
+        <div class="composer">
+          <button class="attach-btn" id="chatAttachBtn"><svg class="icon"><use href="#i-paperclip"/></svg></button>
+          <input type="text" placeholder="Message Ben…" id="chatInput" />
+          <button class="send-btn" id="chatSendBtn"><svg class="icon"><use href="#i-arrow-up"/></svg></button>
+        </div>
+        <div class="composer-hint">Ben can make mistakes. For urgent concerns, visit the office directly.</div>
       </div>
     </div>
   </main>
 
-  <!-- Right Sidebar: Chat History -->
-  <aside class="chat-history-sidebar">
-    <h2 class="chat-hist-title">Chat history</h2>
-    <div class="chat-hist-search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="chatHistSearch" placeholder="Search conversations...">
+  <aside class="panel">
+    <div class="panel-head">
+      <h3>Chat history</h3>
+      <div class="bell"><svg class="icon"><use href="#i-bell"/></svg></div>
     </div>
-    <div class="chat-hist-list" id="chatHistList">
-      <!-- JS will populate this from concerns data -->
+    <div class="search-mini">
+      <svg class="icon"><use href="#i-search"/></svg>
+      Search conversations…
     </div>
-    <button class="chat-hist-new" id="chatHistNewBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-      Create new chat
-    </button>
+    <div id="chatHistoryList"></div>
   </aside>
-
 </div>
 
 <script>
-/* ============================================================
-   HELPDESKCRMC — Ben conversation flow
-   Dashboard is home. Tapping "I Have a Concern" opens Ben:
-   category picker -> interactive conversation -> escalate to inquiry
-   ============================================================ */
+const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content || '';
 
-/* ---------- Security helpers ---------- */
 function escapeHtml(str) {
   if (typeof str !== 'string') return '';
   const d = document.createElement('div');
   d.textContent = str;
   return d.innerHTML;
 }
-const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content || '';
 
-const knowledgeBase = {
-  General: [
-    { topic:"CRMC Location", keywords:["where is crmc","where is crmci","crmc located","crmc location","crmc address","school address","main campus","college campus"],
-      content:"CRMC's main/college campus is located at San Vicente Street, Bogo City, Cebu 6000, Philippines." }
-  ],
-  Registrar: [
-    { topic:"Certificate of Good Moral", keywords:["good moral","certificate","character"],
-      content:"A Certificate of Good Moral Character is released 2 to 3 working days after request. Bring your validated ID to the Registrar's window to claim it." },
-    { topic:"Honorable Dismissal", keywords:["honorable","dismissal","transfer","clearance form"],
-      content:"An Honorable Dismissal needs a fully signed clearance form and settlement of any outstanding balance. Processing usually takes 5 working days once submitted." },
-    { topic:"Enrollment Deadline", keywords:["enrollment","deadline","enroll","late enrol","schedule"],
-      content:"Regular enrollment closes two weeks before classes start. Late enrollment is allowed within the first week of classes, with a late fee." }
-  ],
-  Finance: [
-    { topic:"Refund", keywords:["refund","overpayment","reimburse","money back"],
-      content:"Overpayment refunds are processed within 10 working days. Bring your official receipt and a valid ID to the Finance window to file a request." },
-    { topic:"Tuition Balance", keywords:["balance","tuition","unpaid","how much","fee"],
-      content:"You can check your current balance at the Finance window or on your enrollment assessment slip. Partial payment plans are available on request." }
-  ],
-  SASO: [
-    { topic:"Missing Grade", keywords:["missing","grade","nstp","incomplete"],
-      content:"A missing grade is usually caused by an unencoded requirement. Please coordinate with your subject adviser first, then follow up with SASO if it isn't corrected within a week." },
-    { topic:"Scholarship", keywords:["scholarship","financial","assistance","grant"],
-      content:"Scholarship applications open at the start of each semester. Requirements include a certificate of good moral character and updated grades." }
-  ],
-  Library: [
-    { topic:"Clearance Hold", keywords:["clearance","hold","book","fine"],
-      content:"A library clearance hold usually means an unreturned book or an unpaid fine under your name. Settle it at the circulation desk before requesting clearance again." }
-  ],
-  Guidance: [
-    { topic:"Counseling", keywords:["counseling","stress","appointment","guidance"],
-      content:"You can request a counseling appointment directly at the Guidance Office, or ask me to forward your request so a counselor can reach out to you." }
-  ],
-  Clinic: [
-    { topic:"Medical Certificate", keywords:["medical","certificate","sick","excuse"],
-      content:"Medical certificates for absences need a same-day or next-day visit to the Clinic. Walk-ins are accepted during clinic hours." }
-  ],
-  CCS: [
-    { topic:"OJT / Practicum", keywords:["ojt","practicum","internship","deployment"],
-      content:"OJT and practicum concerns are coordinated through the CCS OJT coordinator. Bring your endorsement letter when you visit the department office." },
-    { topic:"Grade Concern", keywords:["grade","incorrect grade","re-check","recompute"],
-      content:"Coordinate with your instructor first for grade concerns. If it isn't resolved, the CCS department office can help you file a formal request." }
-  ],
-  CCJE: [
-    { topic:"Field Training (FTEP)", keywords:["field training","ftep","practicum","training log"],
-      content:"Field Training Exposure Program concerns go through the CCJE department office. Bring your training log and adviser's endorsement." },
-    { topic:"Board Exam / Review", keywords:["board exam","review","licensure"],
-      content:"Licensure exam review schedules and requirements are posted on the CCJE bulletin board and announced by your adviser." }
-  ],
-  PSYCH: [
-    { topic:"Practicum / Internship", keywords:["practicum","internship","clinical placement"],
-      content:"Psychology practicum placements are coordinated by the department's practicum supervisor. Bring your endorsement form to the department office." },
-    { topic:"Thesis / Research Adviser", keywords:["thesis","research","adviser"],
-      content:"Raise thesis and research concerns with your adviser first, then escalate to the department office if it isn't resolved." }
-  ],
-  CBE: [
-    { topic:"Grade Concern", keywords:["grade","incorrect grade","re-check","recompute"],
-      content:"Coordinate with your instructor first for grade concerns. If it isn't resolved, the CBE department office can help you file a formal request." },
-    { topic:"Business Practicum", keywords:["practicum","ojt","internship"],
-      content:"Business practicum placement concerns are coordinated through the CBE department office." }
-  ],
-  CTE: [
-    { topic:"Practice Teaching", keywords:["practice teaching","student teaching","deployment"],
-      content:"Practice Teaching deployment and requirements are coordinated through the CTE Field Study office." },
-    { topic:"LET Review", keywords:["let","licensure","board exam","review"],
-      content:"LET review schedules and requirements are announced by the CTE department office and your adviser." }
-  ],
-  "Property Custodian": [
-    { topic:"Facility & Equipment Request", keywords:["facility","equipment","borrow","room","property"],
-      content:"For facility or equipment requests, submit a requisition form to the Property Custodian Office at least 3 days prior." }
-  ],
-  ITCD: [
-    { topic:"Account & Portal Support", keywords:["account","password","wifi","portal","email","login"],
-      content:"For portal password resets or institutional email assistance, visit the ITCD office with your valid Student ID." }
-  ],
-  "Human Resources": [
-    { topic:"Employment & Staff Inquiries", keywords:["hr","human resources","staff","faculty","employment"],
-      content:"For HR-related inquiries, faculty concerns, or employment verification, please visit the HR Office." }
-  ]
-};
+function renderMarkdown(text) {
+  if (!text) return '';
+  let html = escapeHtml(text);
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/(?:^|\n)(\d+)\.\s+(.*?)(?=\n|$)/g, '<div style="margin-left:14px;text-indent:-14px;"><strong>$1.</strong> $2</div>');
+  html = html.replace(/(?:^|\n)[-]\s+(.*?)(?=\n|$)/g, '<div style="margin-left:14px;text-indent:-10px;">• $1</div>');
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  html = html.replace(/\n\n/g, '<div style="height:8px;"></div>');
+  html = html.replace(/\n/g, '<br>');
+  return html;
+}
 
-const OFFICES = [
-  { key:"Registrar", label:"Registrar", mode:"ask",
-    icon:'<rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M7 15c0-1.4 1-2 2-2s2 .6 2 2M14 9h4M14 13h4"/>' },
-  { key:"Finance", label:"Finance", mode:"ask",
-    icon:'<circle cx="8" cy="9" r="4"/><circle cx="15" cy="14" r="4"/><path d="M8 9v0M15 14v0"/>' },
-  { key:"SASO", label:"SASO", mode:"ask",
-    icon:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/>' },
-  { key:"Library", label:"Library", mode:"ask",
-    icon:'<path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/>' },
-  { key:"Guidance", label:"Guidance", mode:"ask",
-    icon:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>' },
-  { key:"Clinic", label:"Clinic", mode:"ask",
-    icon:'<path d="M12 3v6M9 6h6M12 13v8M8 21h8"/><rect x="4" y="9" width="16" height="4" rx="1"/>' },
-  { key:"Property Custodian", label:"Property Custodian", mode:"ask",
-    icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>' },
-  { key:"ITCD", label:"ITCD", mode:"ask",
-    icon:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>' },
-  { key:"Human Resources", label:"Human Resources", mode:"ask",
-    icon:'<circle cx="9" cy="7" r="3"/><circle cx="15" cy="7" r="3"/><path d="M3 21v-2a4 4 0 0 1 4-4h2M15 15h2a4 4 0 0 1 4 4v2"/>' }
-];
-
-const ACADEMIC_DEPARTMENTS = [
-  { key:"CCS", label:"CCS", mode:"ask",
-    icon:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>' },
-  { key:"CCJE", label:"CCJE", mode:"ask",
-    icon:'<path d="M12 3l8 4-8 4-8-4 8-4z"/><path d="M4 11v4c0 1.5 3.5 3 8 3s8-1.5 8-3v-4"/>' },
-  { key:"PSYCH", label:"Psych", mode:"ask",
-    icon:'<circle cx="12" cy="12" r="9"/><path d="M9 10c0-2 1.5-3 3-3s3 1 3 3-1.5 2.5-1.5 4.5M12 17h.01"/>' },
-  { key:"CBE", label:"CBE", mode:"ask",
-    icon:'<rect x="4" y="10" width="4" height="10"/><rect x="10" y="6" width="4" height="14"/><rect x="16" y="13" width="4" height="7"/>' },
-  { key:"CTE", label:"CTE", mode:"ask",
-    icon:'<path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12.5V17c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/>' }
-];
-
-const CATEGORIES = [
-  { key:"General", label:"General Enquiry", mode:"general",
-    icon:'<path d="M17 20h5v-2a4 4 0 0 0-3-3.87M9 20H4v-2a4 4 0 0 1 3-3.87M15 11a3 3 0 1 0-6 0 3 3 0 0 0 6 0zM12 14a4 4 0 0 0-4 4v0M17 8a3 3 0 1 0 0-6"/>' },
-  ...OFFICES,
-  { key:"DeptHub", label:"Department", mode:"dept-hub",
-    icon:'<path d="M4 21V7l8-4 8 4v14"/><path d="M9 21v-6h6v6M9 11h.01M15 11h.01M9 15h.01M15 15h.01"/>' }
-];
-
-const noMatchVariants = ["I don't have a clear answer for that yet.", "I'm not fully sure about that one, so I don't want to guess."];
-const resolvedThanksVariants = ["Glad that helped!", "Happy to help!"];
-
-const BEN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="14" rx="7" ry="6"/><path d="M6 8l2-4 2 5M18 8l-2-4-2 5"/><circle cx="9.5" cy="13" r="1"/><circle cx="14.5" cy="13" r="1"/><path d="M11 16q1 1 2 0"/></svg>';
-
-/* ---------- PHP concerns data loaded from backend ---------- */
 let concerns = <?= json_encode(array_map(function($inq) {
     return [
+        'id' => $inq['inquiry_id'],
         'subject' => $inq['subject'] ?? mb_substr($inq['description'], 0, 60),
         'office' => $inq['office_name'] ?? 'General',
         'status' => strtolower(str_replace(' ', '', $inq['status'])),
@@ -554,821 +563,328 @@ let concerns = <?= json_encode(array_map(function($inq) {
     ];
 }, $inquiries)) ?>;
 
-function statusLabel(s){ return s === 'pending' ? 'Pending' : s === 'progress' ? 'In Progress' : 'Resolved'; }
+let currentCategory = null;
+let conversationHistory = [];
 
-function buildConcernRow(item){
-  const wrap = document.createElement('div');
-  const row = document.createElement('div');
-  row.className = 'faq-row';
-  row.innerHTML = `
-    <div class="left">
-      <div class="subject">${escapeHtml(item.subject)}</div>
-      <div class="meta">${escapeHtml(item.office)} · Submitted ${escapeHtml(item.date)}</div>
-    </div>
-    <div class="right">
-      <span class="tag ${escapeHtml(item.status)}">${statusLabel(item.status)}</span>
-      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-    </div>`;
-  const detail = document.createElement('div');
-  detail.className = 'concern-detail';
-  detail.style.display = 'none';
-  detail.innerHTML = item.reply
-    ? `<div class="reply-box"><div class="reply-head">${escapeHtml(item.reply.from)} · ${escapeHtml(item.reply.date)}</div><div class="reply-msg">${escapeHtml(item.reply.message)}</div></div>`
-    : `<div class="reply-empty">No reply yet — staff at ${escapeHtml(item.office)} typically respond within 2–3 working days.</div>`;
-  row.addEventListener('click', () => {
-    const open = detail.style.display === 'block';
-    detail.style.display = open ? 'none' : 'block';
-    row.classList.toggle('open', !open);
-  });
-  wrap.appendChild(row);
-  wrap.appendChild(detail);
-  return wrap;
+const categoryMeta = {
+  'General': { icon: 'i-chat', desc: 'Ask your concern' },
+  'Registrar': { icon: 'i-folder', desc: 'Enrollment, records, IDs' },
+  'Finance': { icon: 'i-dollar', desc: 'Fees, payments, receipts' },
+  'SASO': { icon: 'i-users', desc: 'Student affairs & orgs' },
+  'Guidance': { icon: 'i-info', desc: 'Counseling & support' },
+  'Library': { icon: 'i-book', desc: 'Books, fines, access' },
+  'Property Custodian': { icon: 'i-key', desc: 'Facilities & equipment' },
+  'Clinic': { icon: 'i-cross', desc: 'Medical certificates' },
+  'ITCD': { icon: 'i-monitor', desc: 'Portal & IT support' },
+  'Human Resources': { icon: 'i-briefcase', desc: 'Employment inquiries' },
+  'CCS': { icon: 'i-code', desc: 'Computer science dept' },
+  'CBE': { icon: 'i-chart', desc: 'Business education dept' },
+  'CTE': { icon: 'i-book', desc: 'Teacher education dept' },
+  'CCJE': { icon: 'i-shield', desc: 'Criminal justice dept' }
+};
+
+// Nav switching
+document.getElementById('navAskBen').addEventListener('click', e => {
+  e.preventDefault();
+  showHeroView();
+});
+
+document.getElementById('navMyConcerns').addEventListener('click', e => {
+  e.preventDefault();
+  showConcernsView();
+});
+
+function showHeroView() {
+  document.getElementById('heroView').style.display = 'block';
+  document.getElementById('concernsView').style.display = 'none';
+  const chatView = document.getElementById('chatView');
+  chatView.classList.remove('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('navAskBen').classList.add('active');
 }
 
-function renderConcernList(containerId, limit){
-  const container = document.getElementById(containerId);
-  if(!container) return;
-  container.innerHTML = '';
-  const list = limit ? concerns.slice(0, limit) : concerns;
-  if(list.length === 0){
+function showConcernsView() {
+  document.getElementById('heroView').style.display = 'none';
+  document.getElementById('concernsView').style.display = 'block';
+  document.getElementById('chatView').classList.remove('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('navMyConcerns').classList.add('active');
+  renderConcernsList();
+}
+
+function showChatView(category) {
+  document.getElementById('heroView').style.display = 'none';
+  document.getElementById('concernsView').style.display = 'none';
+  const chatView = document.getElementById('chatView');
+  chatView.classList.add('active');
+
+  currentCategory = category;
+  conversationHistory = [];
+
+  const meta = categoryMeta[category] || { icon: 'i-chat', desc: 'Ask your concern' };
+  document.getElementById('chatCategoryName').textContent = category;
+  document.getElementById('chatCategoryDesc').textContent = meta.desc;
+  document.getElementById('chatCategoryIcon').innerHTML = `<svg class="icon"><use href="#${meta.icon}"/></svg>`;
+
+  const threadInner = document.getElementById('chatThreadInner');
+  threadInner.innerHTML = '';
+
+  // Day divider
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  const dayDiv = document.createElement('div');
+  dayDiv.className = 'day-divider';
+  dayDiv.textContent = `Today · ${timeStr}`;
+  threadInner.appendChild(dayDiv);
+
+  // Initial Ben greeting
+  addBenMessage(`Hi <?= htmlspecialchars($firstName) ?>! I see you'd like help with <b>${escapeHtml(category)}</b> concerns. What can I help you with today?`);
+
+  document.getElementById('chatInput').focus();
+}
+
+function addBenMessage(html, showTyping = false) {
+  const threadInner = document.getElementById('chatThreadInner');
+  const msg = document.createElement('div');
+  msg.className = 'msg ben';
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+  msg.innerHTML = `
+    <div class="m-avatar"><svg class="icon"><use href="#i-chat"/></svg></div>
+    <div class="bubble-wrap">
+      <span class="name">Ben</span>
+      <div class="bubble">${html}</div>
+      <span class="time">${timeStr}</span>
+    </div>`;
+
+  threadInner.appendChild(msg);
+  scrollChatToBottom();
+
+  if (showTyping) {
+    addTypingIndicator();
+  }
+}
+
+function addUserMessage(text) {
+  const threadInner = document.getElementById('chatThreadInner');
+  const msg = document.createElement('div');
+  msg.className = 'msg user';
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+  msg.innerHTML = `
+    <div class="m-avatar"><?= htmlspecialchars($initials) ?></div>
+    <div class="bubble-wrap">
+      <div class="bubble">${escapeHtml(text)}</div>
+      <span class="time">${timeStr}</span>
+    </div>`;
+
+  threadInner.appendChild(msg);
+  scrollChatToBottom();
+  conversationHistory.push({ role: 'student', message: text });
+}
+
+function addTypingIndicator() {
+  const threadInner = document.getElementById('chatThreadInner');
+  const msg = document.createElement('div');
+  msg.className = 'msg ben';
+  msg.id = 'typingIndicator';
+
+  msg.innerHTML = `
+    <div class="m-avatar"><svg class="icon"><use href="#i-chat"/></svg></div>
+    <div class="bubble-wrap">
+      <div class="bubble typing"><span></span><span></span><span></span></div>
+    </div>`;
+
+  threadInner.appendChild(msg);
+  scrollChatToBottom();
+}
+
+function removeTypingIndicator() {
+  const typing = document.getElementById('typingIndicator');
+  if (typing) typing.remove();
+}
+
+function scrollChatToBottom() {
+  const chatThread = document.querySelector('.chat-thread');
+  if (chatThread) {
+    chatThread.scrollTop = chatThread.scrollHeight;
+  }
+}
+
+// Back button
+document.getElementById('backToDashboard').addEventListener('click', () => {
+  showHeroView();
+});
+
+// Send message
+document.getElementById('chatSendBtn').addEventListener('click', sendChatMessage);
+document.getElementById('chatInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') sendChatMessage();
+});
+
+async function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  addUserMessage(text);
+  input.value = '';
+
+  // Add to chat history in right panel
+  const existingIdx = concerns.findIndex(c => c.office === currentCategory && c.isLocal);
+  if (existingIdx !== -1) {
+    concerns[existingIdx].subject = text;
+    concerns[existingIdx].date = 'Just now';
+  } else {
+    concerns.unshift({
+      id: 'local_' + Date.now(),
+      subject: text,
+      office: currentCategory || 'General',
+      status: 'active',
+      date: 'Just now',
+      isLocal: true
+    });
+  }
+  renderChatHistory();
+
+  addTypingIndicator();
+
+  try {
+    const res = await fetch('api/ai_chat.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': CSRF_TOKEN
+      },
+      body: JSON.stringify({
+        message: text,
+        category: currentCategory,
+        history: conversationHistory
+      })
+    });
+
+    const data = await res.json();
+    removeTypingIndicator();
+
+    if (data.success && data.answer) {
+      addBenMessage(renderMarkdown(data.answer));
+      conversationHistory.push({ role: 'assistant', message: data.answer });
+    } else {
+      addBenMessage("I'm having trouble processing that right now. Could you try rephrasing your concern?");
+    }
+  } catch (err) {
+    console.error(err);
+    removeTypingIndicator();
+    addBenMessage("Sorry, I'm having connection issues. Please try again in a moment.");
+  }
+}
+
+// Render concerns list
+function renderConcernsList() {
+  const container = document.getElementById('concernsListContainer');
+  if (!concerns || concerns.length === 0) {
     container.innerHTML = '<div class="reply-empty">No concerns submitted yet.</div>';
     return;
   }
-  list.forEach(item => container.appendChild(buildConcernRow(item)));
-}
-function renderAllConcernLists(){
-  renderConcernList('concernList', 4);
-  renderConcernList('concernListFull');
-}
 
-const bfCatRow = document.getElementById('bfCatRow');
-const bfScrollThumb = document.getElementById('bfScrollThumb');
-const bfThread = document.getElementById('bfThread');
-const bfInput = document.getElementById('bfInput');
-const bfSend = document.getElementById('bfSend');
-const bfFileInput = document.getElementById('bfFileInput');
-const bfAttachBtn = document.getElementById('bfAttachBtn');
-const bfAttachChip = document.getElementById('bfAttachChip');
-const bfAttachName = document.getElementById('bfAttachName');
-const bfAttachSize = document.getElementById('bfAttachSize');
-const bfAttachRemove = document.getElementById('bfAttachRemove');
-let pendingAttachments = [];
-const bfOfficePill = document.getElementById('bfOfficePill');
-let currentCategory = null;
-let conversationHistory = [];
-const benFlow = document.getElementById('benFlow');
-const benFlowHome = benFlow.parentElement;
-const dashboardMain = document.querySelector('#dashboardView > main');
+  container.innerHTML = '';
+  concerns.forEach(item => {
+    const wrap = document.createElement('div');
+    const row = document.createElement('div');
+    row.className = 'faq-row';
+    const statusClass = item.status === 'pending' ? 'pending' : item.status === 'inprogress' ? 'inprogress' : 'resolved';
+    const statusLabel = item.status === 'pending' ? 'Pending' : item.status === 'inprogress' ? 'In Progress' : 'Resolved';
 
-function showEmbeddedConversation(){
-  if (!dashboardMain || benFlow.parentElement === dashboardMain) return;
-  dashboardMain.appendChild(benFlow);
-  dashboardMain.classList.add('conversation-active');
-  benFlow.classList.add('embedded');
-  benFlow.style.display = 'flex';
-}
-
-function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-function scrollBottom(){ bfThread.scrollTop = bfThread.scrollHeight; }
-function truncate(s, n){ n = n || 60; return s.length > n ? s.slice(0, n).trim() + '…' : s; }
-
-/* ---------- step 1: category cards ---------- */
-const bfScrollTrack = document.getElementById('bfScrollTrack');
-const TRACK_WIDTH = 220;
-const MIN_THUMB = 30;
-
-function renderCategories(){
-  document.getElementById('bfChooseLabel').textContent = 'PLEASE CHOOSE WHAT YOU NEED HELP WITH';
-  document.getElementById('bfBackToCategories').style.display = 'none';
-  bfCatRow.innerHTML = '';
-  CATEGORIES.forEach(cat => {
-    const card = document.createElement('button');
-    card.className = 'bf-cat-card';
-    card.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${cat.icon}</svg><div class="lbl">${escapeHtml(cat.label)}</div>`;
-    card.addEventListener('click', () => openCategory(cat));
-    bfCatRow.appendChild(card);
-  });
-  bfCatRow.scrollLeft = 0;
-  requestAnimationFrame(updateScrollThumb);
-}
-
-function showDepartmentList(){
-  document.getElementById('bfChooseLabel').textContent = 'PLEASE CHOOSE A DEPARTMENT';
-  document.getElementById('bfBackToCategories').style.display = 'inline-flex';
-  bfCatRow.innerHTML = '';
-  ACADEMIC_DEPARTMENTS.forEach(dept => {
-    const card = document.createElement('button');
-    card.className = 'bf-cat-card';
-    card.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${dept.icon}</svg><div class="lbl">${escapeHtml(dept.label)}</div>`;
-    card.addEventListener('click', () => openCategory(dept));
-    bfCatRow.appendChild(card);
-  });
-  bfCatRow.scrollLeft = 0;
-  requestAnimationFrame(updateScrollThumb);
-}
-
-const bfBackToCategories = document.getElementById('bfBackToCategories');
-if (bfBackToCategories) bfBackToCategories.addEventListener('click', renderCategories);
-
-function updateScrollThumb(){
-  const max = bfCatRow.scrollWidth - bfCatRow.clientWidth;
-  if(max <= 1){
-    bfScrollTrack.classList.remove('show');
-    return;
-  }
-  bfScrollTrack.classList.add('show');
-  const thumbWidth = Math.max(MIN_THUMB, TRACK_WIDTH * (bfCatRow.clientWidth / bfCatRow.scrollWidth));
-  const ratio = bfCatRow.scrollLeft / max;
-  bfScrollThumb.style.width = thumbWidth + 'px';
-  bfScrollThumb.style.left = (ratio * (TRACK_WIDTH - thumbWidth)) + 'px';
-}
-
-bfCatRow.addEventListener('scroll', updateScrollThumb);
-window.addEventListener('resize', updateScrollThumb);
-
-let dragging = false, dragStartX = 0, dragStartScroll = 0;
-function startDrag(clientX){
-  dragging = true;
-  dragStartX = clientX;
-  dragStartScroll = bfCatRow.scrollLeft;
-}
-function moveDrag(clientX){
-  if(!dragging) return;
-  const max = bfCatRow.scrollWidth - bfCatRow.clientWidth;
-  const thumbWidth = Math.max(MIN_THUMB, TRACK_WIDTH * (bfCatRow.clientWidth / bfCatRow.scrollWidth));
-  const trackRange = TRACK_WIDTH - thumbWidth;
-  if(trackRange <= 0) return;
-  const deltaX = clientX - dragStartX;
-  const scrollDelta = (deltaX / trackRange) * max;
-  bfCatRow.scrollLeft = dragStartScroll + scrollDelta;
-}
-function endDrag(){ dragging = false; }
-
-bfScrollThumb.addEventListener('mousedown', e => { e.preventDefault(); startDrag(e.clientX); });
-window.addEventListener('mousemove', e => moveDrag(e.clientX));
-window.addEventListener('mouseup', endDrag);
-
-bfScrollThumb.addEventListener('touchstart', e => startDrag(e.touches[0].clientX), { passive:true });
-window.addEventListener('touchmove', e => { if(dragging) moveDrag(e.touches[0].clientX); }, { passive:true });
-window.addEventListener('touchend', endDrag);
-
-bfScrollTrack.addEventListener('click', e => {
-  if(e.target === bfScrollThumb) return;
-  const rect = bfScrollTrack.getBoundingClientRect();
-  const clickRatio = (e.clientX - rect.left) / rect.width;
-  const max = bfCatRow.scrollWidth - bfCatRow.clientWidth;
-  bfCatRow.scrollLeft = clickRatio * max;
-});
-
-/* ---------- rendering helpers for step 2 ---------- */
-function parseMarkdown(text){
-  if(!text) return '';
-  // Escape HTML first to prevent XSS
-  let safe = escapeHtml(text);
-  // Parse markdown bold: **text** -> <strong>text</strong>
-  safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  // Parse markdown italic: *text* -> <em>text</em>
-  safe = safe.replace(/\*(.+?)\*/g, '<em>$1</em>');
-  // Parse markdown links: [text](url) -> <a>text</a>
-  safe = safe.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-  // Parse line breaks: \n -> <br>
-  safe = safe.replace(/\n/g, '<br>');
-  return safe;
-}
-
-function addBenMessage(question, sub, chips, answerStyle){
-  // Track in conversation history for AI context
-  if(question && typeof question === 'string') {
-    conversationHistory.push({ role: 'assistant', message: question });
-  }
-
-  const row = document.createElement('div');
-  row.className = 'bf-row';
-  const card = document.createElement('div');
-  card.className = 'bf-msg-card' + (answerStyle ? ' bf-answer' : '');
-  card.innerHTML = `<div class="q">${parseMarkdown(question)}</div>` + (sub ? `<div class="sub">${escapeHtml(sub)}</div>` : '');
-  if(chips && chips.length){
-    const grid = document.createElement('div');
-    grid.className = 'bf-chip-grid';
-    chips.forEach(c => {
-      const btn = document.createElement('button');
-      btn.className = 'bf-chip' + (c.cls ? ' '+c.cls : '');
-      btn.textContent = c.label;
-      btn.addEventListener('click', () => { grid.remove(); addStudentBubble(c.label); c.onClick(); });
-      grid.appendChild(btn);
-    });
-    card.appendChild(grid);
-  }
-  row.innerHTML = `<div class="bf-ben-ic"><img src="assets/images/ben_interactions%20vector/hi_bot.png" alt="BenAI"></div>`;
-  row.appendChild(card);
-  bfThread.appendChild(row);
-  scrollBottom();
-}
-function addStudentBubble(text, attachHTML){
-  // Track in conversation history for AI context
-  if(text) {
-    conversationHistory.push({ role: 'student', message: text });
-  }
-
-  const row = document.createElement('div');
-  row.className = 'bf-row student';
-  const bubble = document.createElement('div');
-  bubble.className = 'bf-student-bubble';
-  bubble.textContent = text;
-  if(attachHTML){
-    bubble.insertAdjacentHTML('beforeend', attachHTML);
-  }
-  row.appendChild(bubble);
-  bfThread.appendChild(row);
-  scrollBottom();
-}
-function disableInput(placeholder){
-  bfInput.disabled = true; bfInput.value = '';
-  bfInput.placeholder = placeholder || 'Choose an option above...';
-  bfSend.disabled = true; bfSend.classList.remove('active');
-  bfAttachBtn.disabled = true;
-  clearAttachments();
-}
-function enableInput(placeholder){
-  bfInput.disabled = false;
-  bfInput.placeholder = placeholder;
-  bfSend.disabled = false; bfSend.classList.add('active');
-  bfAttachBtn.disabled = false;
-  bfInput.focus();
-}
-
-/* ---------- file attachment ---------- */
-function formatFileSize(bytes){
-  if(bytes < 1024) return bytes + ' B';
-  if(bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
-  return (bytes/(1024*1024)).toFixed(1) + ' MB';
-}
-function renderAttachChip(){
-  if(!pendingAttachments.length){
-    bfAttachChip.classList.remove('show');
-    return;
-  }
-  bfAttachChip.classList.add('show');
-  if(pendingAttachments.length === 1){
-    bfAttachName.textContent = pendingAttachments[0].name;
-    bfAttachSize.textContent = formatFileSize(pendingAttachments[0].size);
-  } else {
-    bfAttachName.textContent = pendingAttachments.length + ' files attached';
-    const total = pendingAttachments.reduce((sum, f) => sum + f.size, 0);
-    bfAttachSize.textContent = formatFileSize(total);
-  }
-}
-function clearAttachments(){
-  pendingAttachments = [];
-  bfFileInput.value = '';
-  renderAttachChip();
-}
-bfAttachBtn.addEventListener('click', () => { if(!bfAttachBtn.disabled) bfFileInput.click(); });
-bfFileInput.addEventListener('change', () => {
-  pendingAttachments = Array.from(bfFileInput.files || []);
-  renderAttachChip();
-});
-bfAttachRemove.addEventListener('click', clearAttachments);
-function attachmentPillsHTML(){
-  if(!pendingAttachments.length) return '';
-  return pendingAttachments.map(f =>
-    `<div class="attach-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a1.5 1.5 0 0 1-2.12-2.12l8.49-8.48"/></svg>${f.name}</div>`
-  ).join('');
-}
-
-function matchKB(office, text){
-  const lower = text.toLowerCase();
-  const entries = knowledgeBase[office] || [];
-  let best = null, bestScore = 0;
-  entries.forEach(entry => {
-    let score = 0;
-    entry.keywords.forEach(k => { if(lower.includes(k)) score += 1; });
-    if(score > bestScore){ bestScore = score; best = entry; }
-  });
-  return bestScore > 0 ? best : null;
-}
-function matchAnyOffice(text){
-  const lower = text.toLowerCase();
-  let best = null, bestOffice = null, bestScore = 0;
-  Object.keys(knowledgeBase).forEach(office => {
-    knowledgeBase[office].forEach(entry => {
-      let score = 0;
-      entry.keywords.forEach(k => { if(lower.includes(k)) score += 1; });
-      if(score > bestScore){ bestScore = score; best = entry; bestOffice = office; }
-    });
-  });
-  return bestScore > 0 ? { office:bestOffice, entry:best } : null;
-}
-
-/* ---------- flow ---------- */
-function openCategory(cat){
-  if(cat.mode === 'dept-hub'){
-    showDepartmentList();
-    return;
-  }
-
-  showEmbeddedConversation();
-  currentCategory = cat;
-  conversationHistory = []; // Reset history for new category conversation
-  document.getElementById('bfStep1').style.display = 'none';
-  document.getElementById('bfStep2').style.display = 'flex';
-  bfThread.innerHTML = '';
-  disableInput();
-  bfOfficePill.textContent = cat.label;
-  bfOfficePill.style.display = 'none';
-  addStudentBubble(cat.label);
-
-  if(cat.mode === 'general'){
-    addBenMessage("Sure! Type your concern below — it can be about anything school-related — and I'll do my best to help or point you to the right office.");
-    enableInput('Type your concern about anything school-related...');
-  } else {
-    const topics = (knowledgeBase[cat.key] || []).map(e => e.topic);
-    const chips = topics.map(t => ({ label:t, onClick:() => chooseConcernType(t, cat.key) }));
-    chips.push({ label:'Something Else', onClick:() => chooseConcernType('Something Else', cat.key) });
-    addBenMessage(`Got It, ${cat.label}. What Is Your Concern About?`, `Common concerns in ${cat.label}`, chips);
-  }
-}
-
-function askGeneralAgain(){
-  addBenMessage("Sure, go ahead — type your next concern below.");
-  enableInput('Type your concern about anything school-related...');
-}
-
-function askWhichDepartmentToForward(text){
-  const allTargets = OFFICES.concat(ACADEMIC_DEPARTMENTS);
-  const chips = allTargets.map(d => ({ label:d.label, onClick:() => {
-    addBenMessage(`Great, let's submit your concern to the **${d.label}** office staff:`);
-    renderEscalationCard(d.label, 'General Inquiry', text);
-  }}));
-  addBenMessage("I couldn't confidently match this to one office — which office or department would you like to submit your concern to?", null, chips);
-}
-
-function resetToStep2General(){
-  bfThread.innerHTML = '';
-  bfOfficePill.textContent = 'General Enquiry';
-  askGeneralAgain();
-}
-
-function chooseConcernType(label, office){
-  if(label === 'Something Else'){
-    addBenMessage("No problem — please fill out the concern form below to send your inquiry directly to the office.");
-    renderEscalationCard(office, 'General Inquiry', '');
-    return;
-  }
-  const entry = (knowledgeBase[office] || []).find(e => e.topic === label);
-  if(!entry) {
-    addBenMessage("No problem — please fill out the concern form below to send your inquiry directly to the office.");
-    renderEscalationCard(office, 'General Inquiry', '');
-    return;
-  }
-  setTimeout(() => {
-    addBenMessage(entry.content, null, null, true);
-    setTimeout(() => {
-      addBenMessage('Did that answer your concern?', null, [
-        { label:'Yes, thanks!', cls:'yes', onClick:() => handleResolved(true, office, label) },
-        { label:'Not quite', cls:'no', onClick:() => handleResolved(false, office, label) }
-      ]);
-    }, 350);
-  }, 300);
-}
-
-function handleResolved(resolved, office, subjectText){
-  const isGeneral = currentCategory && currentCategory.mode === 'general';
-  if(resolved){
-    addBenMessage(pick(resolvedThanksVariants) + ' Anything else I can help with?', null, [
-      { label:'Ask another concern', onClick:() => isGeneral ? askGeneralAgain() : backToConcernType(office) },
-      { label:'Switch category', onClick:() => resetToStep1() },
-      { label:'Go to Dashboard', cls:'escalate', onClick:() => showDashboard() }
-    ]);
-  } else {
-    addBenMessage(`No problem! Fill out the short form below to submit your concern directly to the **${office || 'Office'}** staff.`);
-    renderEscalationCard(office, subjectText || '', '');
-  }
-}
-
-function backToConcernType(office){
-  const topics = (knowledgeBase[office] || []).map(e => e.topic);
-  const chips = topics.map(t => ({ label:t, onClick:() => chooseConcernType(t, office) }));
-  chips.push({ label:'Something Else', onClick:() => chooseConcernType('Something Else', office) });
-  addBenMessage(`Sure — what's your next concern about, still for ${office}?`, null, chips);
-}
-
-function resetToStep1(){
-  showDashboard();
-}
-
-async function sendFreeText(){
-  const text = bfInput.value.trim();
-  if((!text && !pendingAttachments.length) || bfInput.disabled) return;
-  const cat = currentCategory;
-  const attachHTML = attachmentPillsHTML();
-  addStudentBubble(text || '(Sent an attachment)', attachHTML);
-  clearAttachments();
-  disableInput();
-
-  // Try AI service first
-  try {
-    const response = await fetch('api/ai_chat.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
-      body: JSON.stringify({ message: text, history: conversationHistory })
-    });
-
-    const result = await response.json();
-
-    // AI service returned a response
-    if(result.success && result.matched){
-      setTimeout(() => {
-        // Just show the AI response directly - no prefix, no forced follow-up
-        addBenMessage(result.answer, null, null, true);
-        enableInput(bfInput.placeholder || 'Type your concern...');
-      }, 300);
-      return;
-    }
-
-    // AI service found no match - proceed with fallback or escalation
-    if(cat.mode === 'general'){
-      const found = matchAnyOffice(text);
-      if(found){
-        setTimeout(() => {
-          addBenMessage(found.entry.content, null, null, true);
-          enableInput(bfInput.placeholder || 'Type your concern...');
-        }, 300);
-        return;
-      }
-      setTimeout(() => {
-        addBenMessage(pick(noMatchVariants));
-        setTimeout(() => askWhichDepartmentToForward(text), 300);
-      }, 300);
-    } else {
-      setTimeout(() => {
-        addBenMessage(pick(noMatchVariants));
-        setTimeout(() => offerEscalation(text, cat.key), 300);
-      }, 300);
-    }
-
-  } catch(error) {
-    console.error('AI service error:', error);
-    // Fallback to keyword matching if AI service fails
-    if(cat.mode === 'general'){
-      const found = matchAnyOffice(text);
-      if(found){
-        setTimeout(() => {
-          addBenMessage(found.entry.content, null, null, true);
-          enableInput(bfInput.placeholder || 'Type your concern...');
-        }, 300);
-      } else {
-        setTimeout(() => {
-          addBenMessage(pick(noMatchVariants));
-          setTimeout(() => askWhichDepartmentToForward(text), 300);
-        }, 300);
-      }
-      return;
-    }
-
-    const match = matchKB(cat.key, text);
-    if(match){
-      setTimeout(() => {
-        addBenMessage(match.content, null, null, true);
-        enableInput(bfInput.placeholder || 'Type your concern...');
-      }, 300);
-    } else {
-      setTimeout(() => {
-        addBenMessage(pick(noMatchVariants));
-        setTimeout(() => offerEscalation(text, cat.key), 300);
-      }, 300);
-    }
-  }
-}
-
-function offerEscalation(text, office){
-  addBenMessage(`I wasn't able to find an exact answer for that. You can submit your concern directly to **${escapeHtml(office)}** so staff can assist you:`);
-  renderEscalationCard(office, office + " Inquiry", text);
-}
-
-function renderEscalationCard(defaultOffice, defaultSubject, defaultDetails){
-  const row = document.createElement('div');
-  row.className = 'bf-row';
-
-  const allOffices = OFFICES.concat(ACADEMIC_DEPARTMENTS);
-  const officeOptions = allOffices.map(o =>
-    `<option value="${escapeHtml(o.label)}" ${o.label.toLowerCase() === (defaultOffice||'').toLowerCase() ? 'selected' : ''}>${escapeHtml(o.label)}</option>`
-  ).join('');
-
-  row.innerHTML = `
-    <div class="bf-ben-ic"><img src="assets/images/ben-avatar.png" alt="Ben"></div>
-    <div class="bf-escalation-card">
-      <div class="bf-esc-header">
-        <div class="bf-esc-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Escalate Concern to Office
-        </div>
-        <select class="bf-esc-office-select" id="escOfficeSelect">
-          ${officeOptions}
-        </select>
+    row.innerHTML = `
+      <div class="left">
+        <div class="subject">${escapeHtml(item.subject)}</div>
+        <div class="meta">${escapeHtml(item.office)} · Submitted ${escapeHtml(item.date)}</div>
       </div>
+      <div class="right">
+        <span class="tag ${statusClass}">${statusLabel}</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </div>`;
 
-      <div class="bf-esc-group">
-        <label class="bf-esc-label">Subject / Title</label>
-        <input type="text" class="bf-esc-input" id="escSubjectInput" placeholder="e.g. Inquiry regarding transcript" value="${escapeHtml(defaultSubject || '')}">
-      </div>
+    const detail = document.createElement('div');
+    detail.className = 'concern-detail';
+    detail.innerHTML = item.reply
+      ? `<div class="reply-box"><div class="reply-head">${escapeHtml(item.reply.from)} · ${escapeHtml(item.reply.date)}</div><div class="reply-msg">${escapeHtml(item.reply.message)}</div></div>`
+      : `<div class="reply-empty">No reply yet — staff at ${escapeHtml(item.office)} typically respond within 2–3 working days.</div>`;
 
-      <div class="bf-esc-group">
-        <label class="bf-esc-label">Detailed Description</label>
-        <textarea class="bf-esc-textarea" id="escDetailsInput" placeholder="Describe your concern in detail so the office staff can assist you...">${escapeHtml(defaultDetails || '')}</textarea>
-      </div>
-
-      <div class="bf-esc-group">
-        <div class="bf-esc-row">
-          <div style="flex: 1;">
-            <label class="bf-esc-label">Priority Level</label>
-            <div class="bf-esc-priority-pills" id="escPriorityPills">
-              <button type="button" class="bf-esc-pill-btn active" data-val="normal">Normal</button>
-              <button type="button" class="bf-esc-pill-btn" data-val="urgent">Urgent</button>
-            </div>
-          </div>
-          <div>
-            <label class="bf-esc-label">Attachment (Optional)</label>
-            <label class="bf-esc-file-trigger">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a1.5 1.5 0 0 1-2.12-2.12l8.49-8.48"/></svg>
-              Attach File
-              <input type="file" id="escFileInput" style="display:none;" multiple>
-            </label>
-          </div>
-        </div>
-        <div class="bf-esc-file-preview" id="escFilePreview"></div>
-      </div>
-
-      <div class="bf-esc-actions">
-        <button type="button" class="bf-esc-submit" id="escSubmitBtn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          Submit Concern
-        </button>
-        <button type="button" class="bf-esc-cancel" id="escCancelBtn">Cancel</button>
-      </div>
-    </div>
-  `;
-
-  bfThread.appendChild(row);
-  scrollThreadBottom();
-
-  // Priority Pills Toggle
-  const priorityBtns = row.querySelectorAll('#escPriorityPills .bf-esc-pill-btn');
-  let selectedPriority = 'normal';
-  priorityBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      priorityBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      selectedPriority = btn.getAttribute('data-val');
+    row.addEventListener('click', () => {
+      const open = row.classList.contains('open');
+      row.classList.toggle('open');
     });
-  });
 
-  // Attachments Preview
-  const fileInput = row.querySelector('#escFileInput');
-  const filePreview = row.querySelector('#escFilePreview');
-  let attachedFiles = [];
-
-  if (fileInput) {
-    fileInput.addEventListener('change', () => {
-      attachedFiles = Array.from(fileInput.files || []);
-      filePreview.innerHTML = attachedFiles.map((f, idx) =>
-        `<div class="bf-esc-file-tag">${escapeHtml(f.name)} <span data-idx="${idx}">&times;</span></div>`
-      ).join('');
-
-      filePreview.querySelectorAll('span').forEach(sp => {
-        sp.addEventListener('click', () => {
-          const i = parseInt(sp.getAttribute('data-idx'), 10);
-          attachedFiles.splice(i, 1);
-          sp.parentElement.remove();
-        });
-      });
-    });
-  }
-
-  // Cancel Handler
-  row.querySelector('#escCancelBtn').addEventListener('click', () => {
-    row.remove();
-    addBenMessage("No problem! Feel free to ask me anything else whenever you're ready.");
-  });
-
-  // Submit Handler
-  row.querySelector('#escSubmitBtn').addEventListener('click', async () => {
-    const targetOffice = row.querySelector('#escOfficeSelect').value;
-    const subject = row.querySelector('#escSubjectInput').value.trim();
-    const details = row.querySelector('#escDetailsInput').value.trim();
-    const submitBtn = row.querySelector('#escSubmitBtn');
-
-    if(!subject && !details){
-      alert('Please enter a subject or description for your concern.');
-      return;
-    }
-
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = 'Submitting...';
-
-    const fullMessage = (subject ? `[${subject}] ` : '') + (details || subject) + (selectedPriority === 'urgent' ? ' (URGENT)' : '');
-
-    try {
-      await submitInquiry(fullMessage, targetOffice);
-      row.remove();
-      addBenMessage(`🎉 **Concern Submitted Successfully!**\n\nYour concern has been forwarded directly to the **${escapeHtml(targetOffice)}** staff. You can check for updates under **My Concerns** on your dashboard at any time.`, null, [
-        { label: 'View My Concerns', cls: 'escalate', onClick: () => showDashConcerns() },
-        { label: 'Ask another question', onClick: () => resetToStep1() }
-      ]);
-    } catch(e) {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = 'Submit Concern';
-      alert('Failed to submit concern. Please try again.');
-    }
+    wrap.appendChild(row);
+    wrap.appendChild(detail);
+    container.appendChild(wrap);
   });
 }
 
-async function submitInquiry(subjectText, office){
-  try {
-    const response = await fetch('api/submit_inquiry.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
-      body: JSON.stringify({ message: subjectText, office: office })
-    });
-    const result = await response.json();
-    if (!result.success) throw new Error(result.error || 'Submission failed');
-  } catch (e) {
-    console.error('submitInquiry error:', e);
-    addBenMessage("Sorry, I couldn't forward that. Please try again.", null, [
-      { label:'Retry', cls:'escalate', onClick:() => submitInquiry(subjectText, office) },
-      { label:'Go to Dashboard', onClick:() => showDashboard() }
-    ]);
+// Render chat history in right panel
+function renderChatHistory() {
+  const container = document.getElementById('chatHistoryList');
+  if (!concerns || concerns.length === 0) {
+    container.innerHTML = '<div class="empty-state"><svg class="icon"><use href="#i-chat"/></svg><p>No conversations yet</p><span>Ask Ben something to start one</span></div>';
     return;
   }
-  // Update local state for immediate UI feedback
-  const today = new Date();
-  const dateStr = today.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-  concerns.unshift({ subject:truncate(subjectText), office:office, status:'pending', date:dateStr, reply:null });
-  renderAllConcernLists();
-  const pendingEl = document.getElementById('statPending');
-  pendingEl.textContent = parseInt(pendingEl.textContent, 10) + 1;
+
+  container.innerHTML = '';
+  concerns.slice(0, 5).forEach(item => {
+    const meta = categoryMeta[item.office] || { icon: 'i-chat', desc: '' };
+    const row = document.createElement('a');
+    row.className = 'history-item';
+    row.href = '#';
+
+    row.innerHTML = `
+      <div class="ic"><svg class="icon"><use href="#${meta.icon}"/></svg></div>
+      <div>
+        <div class="h-title">${escapeHtml(item.office)}</div>
+        <div class="h-sub">${escapeHtml(item.subject.substring(0, 25))}… · ${escapeHtml(item.date)}</div>
+      </div>`;
+
+    row.addEventListener('click', e => {
+      e.preventDefault();
+      showChatView(item.office);
+    });
+
+    container.appendChild(row);
+  });
 }
 
-/* ---------- Dashboard <-> My Concerns page switching ---------- */
-function showDashHome(){
-  document.getElementById('dashHome').style.display = 'block';
-  document.getElementById('dashConcerns').style.display = 'none';
-  document.getElementById('navDashboard').classList.add('active');
-  document.getElementById('navMyConcerns').classList.remove('active');
-}
-function showMyConcerns(){
-  document.getElementById('dashHome').style.display = 'none';
-  document.getElementById('dashConcerns').style.display = 'block';
-  document.getElementById('navDashboard').classList.remove('active');
-  document.getElementById('navMyConcerns').classList.add('active');
-  renderConcernList('concernListFull');
-}
-const navDashboard = document.getElementById('navDashboard');
-const navMyConcerns = document.getElementById('navMyConcerns');
-const viewAllLink = document.getElementById('viewAllLink');
-
-if (navDashboard) navDashboard.addEventListener('click', e => { e.preventDefault(); showDashHome(); });
-if (navMyConcerns) navMyConcerns.addEventListener('click', e => { e.preventDefault(); showMyConcerns(); });
-if (viewAllLink) viewAllLink.addEventListener('click', e => { e.preventDefault(); showMyConcerns(); });
-
-/* ---------- view switching ---------- */
-function openBenFlow(){
-  showDashboard();
-}
-function showDashboard(){
-  benFlow.classList.remove('embedded');
-  dashboardMain.classList.remove('conversation-active');
-  benFlowHome.appendChild(benFlow);
-  benFlow.style.display = 'none';
-}
-
-const bfExitToDash = document.getElementById('bfExitToDash');
-const bfBackToStep1 = document.getElementById('bfBackToStep1');
-const openBenBtn = document.getElementById('openBenBtn');
-const allOfficesBtn = document.getElementById('allOfficesBtn');
-
-if (bfExitToDash) bfExitToDash.addEventListener('click', showDashboard);
-if (bfBackToStep1) bfBackToStep1.addEventListener('click', resetToStep1);
-if (openBenBtn) openBenBtn.addEventListener('click', openBenFlow);
-if (allOfficesBtn) allOfficesBtn.addEventListener('click', openBenFlow);
-
-document.querySelectorAll('.office-shortcut').forEach(button => {
-  button.addEventListener('click', () => {
-    openBenFlow();
-    const office = CATEGORIES.find(item => item.key === button.dataset.office);
-    if (office) openCategory(office);
+// Category tile clicks
+document.querySelectorAll('[data-category]').forEach(el => {
+  el.addEventListener('click', () => {
+    const category = el.getAttribute('data-category');
+    showChatView(category);
   });
 });
 
-document.querySelectorAll('.figma-category-card').forEach(button => {
-  button.addEventListener('click', () => {
-    const key = button.dataset.office;
-    console.log('🔵 Figma card clicked:', key);
-    console.log('🔵 CATEGORIES:', CATEGORIES);
-    console.log('🔵 ACADEMIC_DEPARTMENTS:', ACADEMIC_DEPARTMENTS);
-    openBenFlow();
-    const cat = [...CATEGORIES, ...ACADEMIC_DEPARTMENTS].find(c => c.key === key || c.label === key);
-    console.log('🔵 Found category:', cat);
-    if (cat) {
-      console.log('🔵 Calling openCategory with:', cat);
-      openCategory(cat);
-    } else {
-      console.error('❌ Category not found for key:', key);
+// Hero search
+document.getElementById('heroSearchInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') {
+    const text = e.target.value.trim();
+    if (text) {
+      showChatView('General');
+      setTimeout(() => {
+        document.getElementById('chatInput').value = text;
+        sendChatMessage();
+      }, 300);
     }
-  });
+  }
 });
 
-/* ---------- Category Search & Filtering ---------- */
-const categorySearchInput = document.getElementById('categorySearchInput');
-const categorySearchClear = document.getElementById('categorySearchClear');
-const noCategoryResults = document.getElementById('noCategoryResults');
+document.getElementById('heroSearchPill').addEventListener('click', () => {
+  document.getElementById('heroSearchInput').focus();
+});
 
-if (categorySearchInput) {
-  categorySearchInput.addEventListener('input', e => {
-    const q = e.target.value.toLowerCase().trim();
-    if (categorySearchClear) categorySearchClear.style.display = q ? 'block' : 'none';
-
-    let totalVisible = 0;
-    const cards = document.querySelectorAll('.figma-category-card');
-
-    cards.forEach(card => {
-      const office = (card.dataset.office || '').toLowerCase();
-      const keywords = (card.dataset.keywords || '').toLowerCase();
-      const title = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
-      const desc = card.querySelector('p') ? card.querySelector('p').textContent.toLowerCase() : '';
-
-      const matches = !q || office.includes(q) || keywords.includes(q) || title.includes(q) || desc.includes(q);
-      card.style.display = matches ? 'flex' : 'none';
-      if (matches) totalVisible++;
-    });
-
-    // Hide/show section labels and grids if all their cards are hidden
-    document.querySelectorAll('.figma-category-grid').forEach(grid => {
-      const visibleCards = Array.from(grid.querySelectorAll('.figma-category-card')).filter(c => c.style.display !== 'none');
-      const sectionName = grid.dataset.gridSection;
-      const label = document.querySelector(`.figma-section-label[data-section-for="${sectionName}"]`);
-      if (label) label.style.display = visibleCards.length > 0 ? 'block' : 'none';
-    });
-
-    if (noCategoryResults) {
-      noCategoryResults.style.display = (totalVisible === 0 && q) ? 'flex' : 'none';
-    }
-  });
-
-  if (categorySearchClear) {
-    categorySearchClear.addEventListener('click', () => {
-      categorySearchInput.value = '';
-      categorySearchInput.dispatchEvent(new Event('input'));
-      categorySearchInput.focus();
-    });
-  }
-}
-
-
-if (bfSend) bfSend.addEventListener('click', sendFreeText);
-if (bfInput) bfInput.addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendFreeText(); } });
-
-renderAllConcernLists();
-
-/* ---------- Chat History Sidebar ---------- */
-const chatHistColors = ['#557fd3','#d35555','#55b89a','#d3a055','#8b55d3','#d355a8'];
-function renderChatHistory(filter = '') {
-  const list = document.getElementById('chatHistList');
-  if (!list) return;
-  const filtered = concerns.filter(c =>
-    !filter || c.subject.toLowerCase().includes(filter.toLowerCase()) || c.office.toLowerCase().includes(filter.toLowerCase())
-  );
-  if (!filtered.length) {
-    list.innerHTML = '<div class="chat-hist-empty">No conversations yet</div>';
-    return;
-  }
-  list.innerHTML = filtered.slice(0, 20).map((c, i) => {
-    const color = chatHistColors[i % chatHistColors.length];
-    const initial = (c.office || 'G')[0].toUpperCase();
-    return `<div class="chat-hist-item" data-office="${c.office}">
-      <div class="chat-hist-avatar" style="background:${color}">${initial}</div>
-      <div class="chat-hist-info">
-        <div class="chat-hist-name">${c.office}</div>
-        <div class="chat-hist-preview">${c.subject}</div>
-      </div>
-      <div class="chat-hist-time">${c.date}</div>
-    </div>`;
-  }).join('');
-  list.querySelectorAll('.chat-hist-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const key = item.dataset.office;
-      openBenFlow();
-      const cat = [...CATEGORIES, ...ACADEMIC_DEPARTMENTS].find(c => c.key === key);
-      if (cat) openCategory(cat);
-    });
-  });
-}
+// Initialize
 renderChatHistory();
-const chatHistSearch = document.getElementById('chatHistSearch');
-if (chatHistSearch) chatHistSearch.addEventListener('input', e => renderChatHistory(e.target.value));
-const chatHistNewBtn = document.getElementById('chatHistNewBtn');
-if (chatHistNewBtn) chatHistNewBtn.addEventListener('click', openBenFlow);
 </script>
-
 </body>
 </html>
