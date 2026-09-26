@@ -270,8 +270,12 @@ h1,h3,h4{letter-spacing:-0.01em;margin:0;}
 .msg{display:flex;gap:10px;max-width:82%;}
 .msg .m-avatar{width:28px;height:28px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;}
 .msg .m-avatar .icon{width:15px;height:15px;}
-.msg.ben .m-avatar{background:linear-gradient(145deg,#ffffff,#f3e9db);box-shadow:0 6px 14px -8px rgba(184,35,28,.25), inset 0 0 0 1px #fff;}
-.msg.ben .m-avatar .icon{stroke:var(--amber-dk);}
+.msg.ben .m-avatar{background:linear-gradient(145deg,#ffffff,#f3e9db);box-shadow:0 6px 14px -8px rgba(184,35,28,.25), inset 0 0 0 1px #fff;position:relative;overflow:hidden;}
+.ben-face{width:18px;height:18px;position:relative;display:flex;align-items:center;justify-content:center;}
+.ben-face .face-circle{width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-dk));position:relative;}
+.ben-face .eyes{position:absolute;top:6px;left:50%;transform:translateX(-50%);display:flex;gap:4px;}
+.ben-face .eye{width:2.5px;height:2.5px;border-radius:50%;background:var(--ink);}
+.ben-face .smile{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:7px;height:3.5px;border:1px solid;border-color:transparent transparent var(--ink) transparent;border-radius:0 0 100px 100px;}
 .msg .bubble-wrap{display:flex;flex-direction:column;gap:3px;}
 .msg .bubble{border-radius:14px;padding:10px 13px;font-size:13px;line-height:1.5;}
 .msg.ben .bubble{background:#fff;border:1px solid var(--line);border-top-left-radius:4px;box-shadow:0 8px 18px -14px rgba(28,27,24,.15);}
@@ -652,7 +656,14 @@ function addBenMessage(html, showTyping = false) {
   const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
   msg.innerHTML = `
-    <div class="m-avatar"><svg class="icon"><use href="#i-chat"/></svg></div>
+    <div class="m-avatar">
+      <div class="ben-face">
+        <div class="face-circle">
+          <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
+          <div class="smile"></div>
+        </div>
+      </div>
+    </div>
     <div class="bubble-wrap">
       <span class="name">Ben</span>
       <div class="bubble">${html}</div>
@@ -694,7 +705,14 @@ function addTypingIndicator() {
   msg.id = 'typingIndicator';
 
   msg.innerHTML = `
-    <div class="m-avatar"><svg class="icon"><use href="#i-chat"/></svg></div>
+    <div class="m-avatar">
+      <div class="ben-face">
+        <div class="face-circle">
+          <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
+          <div class="smile"></div>
+        </div>
+      </div>
+    </div>
     <div class="bubble-wrap">
       <div class="bubble typing"><span></span><span></span><span></span></div>
     </div>`;
