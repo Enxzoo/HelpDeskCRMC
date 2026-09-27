@@ -1,9 +1,4 @@
 <?php
-/**
- * login.php
- * Redesigned Authentication Portal — HELPDESKCRMC
- */
-
 require_once __DIR__ . '/../app/config/env.php';
 require_once __DIR__ . '/../app/config/database.php';
 require_once __DIR__ . '/../app/controllers/AuthController.php';
@@ -37,11 +32,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - CRMC Helpdesk</title>
+    <title>Sign In — HelpdeskCRMC</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --ink: #1C1B18;
+            --ink-2: #26241F;
+            --amber: #ECC94B;
+            --amber-dk: #C98A06;
+            --red: #B8231C;
+            --teal: #1E7A8C;
+            --cream: #FBF6EE;
+            --card: #FFFFFF;
+            --line: #ECE3D6;
+            --muted: #847C6E;
+            --bg: var(--cream);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -49,326 +58,231 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(155deg, #1557A0 0%, #2171B5 50%, #0D4278 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
             min-height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
             position: relative;
-            overflow: hidden;
-            padding: 20px;
         }
 
-        /* Decorative circles in background */
-        .bg-decoration {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 85% 15%, rgba(236, 201, 75, .16), transparent 38%),
+                radial-gradient(circle at 15% 85%, rgba(30, 122, 140, .06), transparent 42%);
             pointer-events: none;
+            z-index: 0;
         }
 
-        .circle-1 { width: 80px; height: 80px; top: 10%; left: 5%; }
-        .circle-2 { width: 40px; height: 40px; top: 25%; right: 15%; }
-        .circle-3 { width: 60px; height: 60px; bottom: 30%; left: 10%; }
-        .circle-4 { width: 30px; height: 30px; top: 60%; right: 8%; }
-        .circle-5 { width: 50px; height: 50px; bottom: 15%; right: 25%; }
-        .circle-6 { width: 25px; height: 25px; top: 35%; left: 25%; }
-
-        /* Wave decoration at bottom */
-        .wave-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            overflow: hidden;
-        }
-
-        .wave {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .wave path {
-            fill: rgba(255, 255, 255, 0.05);
-        }
-
-        /* Login container */
-        .login-container {
+        .site-nav {
             position: relative;
             z-index: 10;
+            display: flex;
+            align-items: center;
+            padding: 24px 32px;
+            background: transparent;
+        }
+
+        .site-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .site-brand img {
+            height: 48px;
+            width: auto;
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 1;
+            max-width: 440px;
             width: 100%;
-            max-width: 480px;
+            margin: 0 auto;
+            padding: 0 24px 48px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        /* Logo */
-        .logo-container {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .logo-image {
-            width: 120px;
-            height: auto;
-            margin-bottom: 20px;
-        }
-
-        /* Login card */
         .login-card {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 24px;
-            padding: 48px 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 36px;
+            background: var(--card);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 16px rgba(28, 27, 24, .08);
+            border: 1px solid var(--line);
         }
 
         .login-header h1 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 32px;
-            font-weight: 800;
-            color: #1A171E;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--ink);
             margin-bottom: 8px;
         }
 
         .login-header p {
             font-size: 15px;
-            color: #7A7485;
+            color: var(--muted);
+            margin-bottom: 32px;
         }
 
-        /* Error alert */
-        .error-alert {
-            background: #FEE;
-            border: 1px solid #FCC;
-            color: #C33;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 14px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Form groups */
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
             font-size: 14px;
             font-weight: 600;
-            color: #1A171E;
+            color: var(--ink);
             margin-bottom: 8px;
-        }
-
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .label-row label {
-            margin-bottom: 0;
-        }
-
-        .forgot-link {
-            font-size: 13px;
-            color: #2171B5;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .forgot-link:hover {
-            text-decoration: underline;
         }
 
         .form-group input {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px 14px;
             font-size: 15px;
-            border: 1px solid #E6E3EB;
-            border-radius: 12px;
-            background: #F9F9FB;
-            color: #1A171E;
-            transition: all 0.2s;
             font-family: 'Inter', sans-serif;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--cream);
+            color: var(--ink);
+            transition: all .2s;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #2171B5;
-            background: #FFF;
-            box-shadow: 0 0 0 3px rgba(33, 113, 181, 0.1);
+            border-color: var(--amber);
+            box-shadow: 0 0 0 3px rgba(236, 201, 75, .12);
         }
 
-        .form-group input::placeholder {
-            color: #A9A5B3;
-        }
-
-        /* Remember me checkbox */
-        .remember-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .error-message {
+            background: rgba(184, 35, 28, .08);
+            border: 1px solid rgba(184, 35, 28, .2);
+            color: var(--red);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
             margin-bottom: 24px;
         }
 
-        .remember-row input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .remember-row label {
-            font-size: 14px;
-            color: #7A7485;
-            cursor: pointer;
-        }
-
-        /* Submit button */
         .submit-btn {
             width: 100%;
-            padding: 16px;
-            background: linear-gradient(155deg, #2171B5 0%, #1557A0 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
             font-family: 'Inter', sans-serif;
-            box-shadow: 0 4px 12px rgba(33, 113, 181, 0.3);
+            color: var(--ink);
+            background: var(--amber);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all .2s;
         }
 
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(33, 113, 181, 0.4);
+            background: var(--amber-dk);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(236, 201, 75, .3);
         }
 
         .submit-btn:active {
             transform: translateY(0);
         }
 
-        /* Footer */
         .login-footer {
             text-align: center;
             margin-top: 24px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            color: var(--muted);
         }
 
-        /* Responsive */
+        .login-footer a {
+            color: var(--teal);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 600px) {
+            .site-nav {
+                padding: 20px 20px;
+            }
+
+            .site-brand img {
+                height: 40px;
+            }
+
             .login-card {
-                padding: 36px 24px;
+                padding: 32px 24px;
             }
 
             .login-header h1 {
-                font-size: 26px;
-            }
-
-            .circle-1, .circle-2, .circle-3, .circle-4, .circle-5, .circle-6 {
-                display: none;
+                font-size: 24px;
             }
         }
     </style>
-    <link rel="stylesheet" href="assets/css/login.css">
 </head>
 <body>
-    <header class="site-nav">
-        <a class="site-brand" href="index_new.php">
+    <nav class="site-nav">
+        <a href="index.php" class="site-brand">
             <img src="assets/images/helpdesk-logo.png" alt="HelpdeskCRMC">
         </a>
-        <nav class="site-links" aria-label="Primary navigation">
-            <a href="index_new.php#features">Features</a>
-            <a href="index_new.php#ben">Meet BenAI</a>
-            <a href="index_new.php#how-it-works">How it works</a>
-            <a href="index_new.php#faq">FAQ</a>
-        </nav>
-        <div class="site-actions">
-            <a href="login.php">Log in</a>
-            <a class="get-started" href="login.php">Get Started</a>
-        </div>
-    </header>
+    </nav>
 
-    <!-- Background decorative circles -->
-    <div class="bg-decoration circle-1"></div>
-    <div class="bg-decoration circle-2"></div>
-    <div class="bg-decoration circle-3"></div>
-    <div class="bg-decoration circle-4"></div>
-    <div class="bg-decoration circle-5"></div>
-    <div class="bg-decoration circle-6"></div>
-
-    <!-- Wave decoration -->
-    <div class="wave-container">
-        <svg class="wave" viewBox="0 0 1440 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-            <path d="M0,100 C300,150 600,50 900,100 C1200,150 1440,100 1440,100 L1440,200 L0,200 Z" />
-        </svg>
-    </div>
-
-    <!-- Login container -->
     <div class="login-container">
-        <!-- Login card -->
         <div class="login-card">
-            <div class="logo-container">
-                <img src="assets/images/helpdesk-logo.png" alt="CRMC Helpdesk" class="logo-image">
-            </div>
             <div class="login-header">
-                <h1>Sign in</h1>
+                <h1>Welcome back</h1>
+                <p>Sign in to your account to continue</p>
             </div>
 
-            <form method="post" action="login.php">
+            <?php if ($error): ?>
+                <div class="error-message">
+                    <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
+                </div>
+            <?php endif; ?>
+
+            <form method="POST" action="">
                 <?= csrf_field() ?>
 
-                <?php if ($error): ?>
-                    <div class="error-alert">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="12" y1="8" x2="12" y2="12"/>
-                            <line x1="12" y1="16" x2="12.01" y2="16"/>
-                        </svg>
-                        <span><?= htmlspecialchars($error) ?></span>
-                    </div>
-                <?php endif; ?>
-
                 <div class="form-group">
-                    <label for="email">Login</label>
-                    <input type="email" id="email" name="email" placeholder="name@crmc.edu.ph" required autofocus>
+                    <label for="email">Email address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        autofocus
+                        value="<?= htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                    >
                 </div>
 
                 <div class="form-group">
-                    <div class="label-row">
-                        <label for="password">Password</label>
-                        <a href="#" class="forgot-link" onclick="alert('Please contact the MIS / IT Office to reset your password.'); return false;">Forgot password?</a>
-                    </div>
-                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                    >
                 </div>
 
-                <div class="remember-row">
-                    <input type="checkbox" id="remember" name="remember">
-                    <label for="remember">Remember me</label>
-                </div>
-
-                <button type="submit" class="submit-btn">Login</button>
+                <button type="submit" class="submit-btn">Sign in</button>
             </form>
-        </div>
 
-        <!-- Footer -->
-        <div class="login-footer">
-            © <?= date('Y') ?> Cebu Roosevelt Memorial Colleges. All rights reserved.
+            <div class="login-footer">
+                Don't have an account? <a href="index.php">Learn more</a>
+            </div>
         </div>
     </div>
-
 </body>
 </html>
