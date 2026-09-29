@@ -240,10 +240,12 @@ if ($userRow) {
       </div>
     </div>
 
-    <div id="concernsView" class="concerns-header" style="display:none;">
-      <h1>My Concerns</h1>
-      <p>Everything you've submitted or asked Ben about, including replies from staff.</p>
-      <div class="faq-card" id="concernsListContainer"></div>
+    <div id="concernsView" class="concerns-view" style="display:none;">
+      <div class="concerns-header">
+        <h1>My Concerns</h1>
+        <p>Track your submitted concerns and communicate with staff</p>
+      </div>
+      <div class="concerns-container" id="concernsListContainer"></div>
     </div>
 
     <div id="chatView">
@@ -758,46 +760,259 @@ async function sendChatMessage() {
 }
 
 // Render concerns list
-function renderConcernsList() {
+async function renderConcernsList() {
   const container = document.getElementById('concernsListContainer');
-  if (!concerns || concerns.length === 0) {
-    container.innerHTML = '<div class="reply-empty">No concerns submitted yet.</div>';
-    return;
-  }
 
-  container.innerHTML = '';
-  concerns.forEach(item => {
-    const wrap = document.createElement('div');
-    const row = document.createElement('div');
-    row.className = 'faq-row';
-    const statusClass = item.status === 'pending' ? 'pending' : item.status === 'inprogress' ? 'inprogress' : 'resolved';
-    const statusLabel = item.status === 'pending' ? 'Pending' : item.status === 'inprogress' ? 'In Progress' : 'Resolved';
-
-    row.innerHTML = `
-      <div class="left">
-        <div class="subject">${escapeHtml(item.subject)}</div>
-        <div class="meta">${escapeHtml(item.office)} · Submitted ${escapeHtml(item.date)}</div>
-      </div>
-      <div class="right">
-        <span class="tag ${statusClass}">${statusLabel}</span>
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-      </div>`;
-
-    const detail = document.createElement('div');
-    detail.className = 'concern-detail';
-    detail.innerHTML = item.reply
-      ? `<div class="reply-box"><div class="reply-head">${escapeHtml(item.reply.from)} · ${escapeHtml(item.reply.date)}</div><div class="reply-msg">${escapeHtml(item.reply.message)}</div></div>`
-      : `<div class="reply-empty">No reply yet — staff at ${escapeHtml(item.office)} typically respond within 2–3 working days.</div>`;
-
-    row.addEventListener('click', () => {
-      const open = row.classList.contains('open');
-      row.classList.toggle('open');
+  try {
+    const response = await fetch('api/get_student_concerns_with_replies.php', {
+      headers: {
+        'X-CSRF-Token': CSRF_TOKEN
+      }
     });
 
-    wrap.appendChild(row);
-    wrap.appendChild(detail);
-    container.appendChild(wrap);
-  });
+    if (!response.ok) throw new Error('Failed to fetch concerns');
+
+    const data = await response.json();
+    const concernsWithReplies = data.concerns || [];
+
+    if (concernsWithReplies.length === 0) {
+      container.innerHTML = `
+        <div class="concerns-empty">
+          <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+          </svg>
+          <h3>No Concerns Yet</h3>
+          <p>You haven't submitted any concerns. Ask Ben or escalate to get started.</p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = '';
+    concernsWithReplies.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'concern-card';
+
+      // Normalize status
+      const status = item.status.toLowerCase().replace(/\s+/g, '');
+      const statusClass = status === 'pending' ? 'pending' :
+                         status === 'inprogress' ? 'inprogress' :
+                         status === 'onhold' ? 'onhold' : 'resolved';
+      const statusLabel = status === 'pending' ? 'Pending' :
+                         status === 'inprogress' ? 'In Progress' :
+                         status === 'onhold' ? 'On Hold' : 'Resolved';
+
+      const date = new Date(item.created_at).toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit'
+      });
+
+      const hasReplies = item.replies && item.replies.length > 0;
+      const replyCount = hasReplies ? item.replies.length : 0;
+
+      card.innerHTML = `
+        <div class="concern-card-header">
+          <div class="concern-header-left">
+            <h3 class="concern-subject">${escapeHtml(item.subject)}</h3>
+            <div class="concern-meta">
+              <span class="concern-office">${escapeHtml(item.office)}</span>
+              <span class="concern-dot">•</span>
+              <span class="concern-date">${date}</span>
+              ${hasReplies ? `<span class="concern-dot">•</span><span class="concern-replies">${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}</span>` : ''}
+            </div>
+          </div>
+          <span class="concern-status ${statusClass}">${statusLabel}</span>
+        </div>
+
+        <div class="concern-card-body">
+          <div class="original-message">
+            <div class="message-label">Your Concern</div>
+            <div class="message-text">${escapeHtml(item.message)}</div>
+          </div>
+
+          ${hasReplies ? `
+            <div class="staff-replies">
+              <div class="replies-label">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 8 4 12l5 4"/><path d="M4 12h9a6 6 0 0 1 6 6v1"/>
+                </svg>
+                Staff Replies
+              </div>
+              ${item.replies.map(reply => {
+                const replyDate = new Date(reply.created_at).toLocaleDateString('en-US', {
+                  month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+                });
+                return `
+                  <div class="staff-reply-bubble">
+                    <div class="staff-reply-header">
+                      <span class="staff-name">${escapeHtml(reply.staff_name)}</span>
+                      <span class="staff-reply-time">${replyDate}</span>
+                    </div>
+                    <div class="staff-reply-message">${escapeHtml(reply.message)}</div>
+                  </div>`;
+              }).join('')}
+            </div>
+          ` : `
+            <div class="no-replies">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+              </svg>
+              <p>No staff replies yet. The ${escapeHtml(item.office)} office typically responds within 2–3 working days.</p>
+            </div>
+          `}
+
+          ${status === 'onhold' ? `
+            <div class="student-reply-section">
+              <div class="reply-prompt">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+                </svg>
+                <span>Staff is waiting for your response</span>
+              </div>
+              <textarea class="student-reply-input" placeholder="Type your reply here..." rows="3" data-inquiry-id="${item.inquiry_id}"></textarea>
+              <button class="send-reply-btn" data-inquiry-id="${item.inquiry_id}">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m22 2-7 20-4-9-9-4 20-7z"/>
+                </svg>
+                Send Reply
+              </button>
+            </div>
+          ` : status === 'resolved' ? `
+            <div class="feedback-section" data-inquiry-id="${item.inquiry_id}">
+              <div class="feedback-prompt">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                <span>How was your experience?</span>
+              </div>
+              <div class="feedback-emojis">
+                <button class="emoji-rate" data-rating="1" title="Very Dissatisfied">😞</button>
+                <button class="emoji-rate" data-rating="2" title="Dissatisfied">😐</button>
+                <button class="emoji-rate" data-rating="3" title="Neutral">😊</button>
+                <button class="emoji-rate" data-rating="4" title="Satisfied">😄</button>
+                <button class="emoji-rate" data-rating="5" title="Very Satisfied">🤩</button>
+              </div>
+              <textarea class="feedback-comment" placeholder="Optional: Tell us more about your experience..." rows="2"></textarea>
+              <button class="submit-feedback-btn" style="display:none;">Submit Feedback</button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+
+    // Add event listeners for reply buttons
+    document.querySelectorAll('.send-reply-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const inquiryId = e.target.dataset.inquiryId;
+        const textarea = document.querySelector(`.student-reply-input[data-inquiry-id="${inquiryId}"]`);
+        const message = textarea.value.trim();
+
+        if (!message) {
+          alert('Please type a reply before sending.');
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+
+        try {
+          const response = await fetch('api/submit_student_reply.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': CSRF_TOKEN
+            },
+            body: JSON.stringify({ inquiry_id: inquiryId, message })
+          });
+
+          const result = await response.json();
+          if (result.success) {
+            textarea.value = '';
+            renderConcernsList(); // Reload the list
+          } else {
+            alert(result.error || 'Failed to send reply');
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg> Send Reply';
+          }
+        } catch (error) {
+          console.error('Error sending reply:', error);
+          alert('Failed to send reply. Please try again.');
+          btn.disabled = false;
+          btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg> Send Reply';
+        }
+      });
+    });
+
+    // Add event listeners for feedback
+    document.querySelectorAll('.emoji-rate').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const section = this.closest('.feedback-section');
+        section.querySelectorAll('.emoji-rate').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        section.querySelector('.submit-feedback-btn').style.display = 'block';
+        section.dataset.rating = this.dataset.rating;
+      });
+    });
+
+    document.querySelectorAll('.submit-feedback-btn').forEach(btn => {
+      btn.addEventListener('click', async function() {
+        const section = this.closest('.feedback-section');
+        const inquiryId = section.dataset.inquiryId;
+        const rating = section.dataset.rating;
+        const comment = section.querySelector('.feedback-comment').value.trim();
+
+        if (!rating) {
+          alert('Please select a rating');
+          return;
+        }
+
+        this.disabled = true;
+        this.textContent = 'Submitting...';
+
+        try {
+          const response = await fetch('api/submit_feedback.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': CSRF_TOKEN
+            },
+            body: JSON.stringify({ inquiry_id: inquiryId, rating, comment })
+          });
+
+          const result = await response.json();
+          if (result.success) {
+            section.innerHTML = `
+              <div class="feedback-success">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/>
+                </svg>
+                <span>Thank you for your feedback!</span>
+              </div>`;
+          } else {
+            alert(result.error || 'Failed to submit feedback');
+            this.disabled = false;
+            this.textContent = 'Submit Feedback';
+          }
+        } catch (error) {
+          console.error('Error submitting feedback:', error);
+          alert('Failed to submit feedback. Please try again.');
+          this.disabled = false;
+          this.textContent = 'Submit Feedback';
+        }
+      });
+    });
+
+  } catch (error) {
+    console.error('Error loading concerns:', error);
+    container.innerHTML = `
+      <div class="concerns-error">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+        </svg>
+        <h3>Failed to Load Concerns</h3>
+        <p>Please refresh the page to try again.</p>
+      </div>`;
+  }
 }
 
 // Render chat history in right panel
