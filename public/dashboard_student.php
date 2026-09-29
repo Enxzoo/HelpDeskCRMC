@@ -1070,13 +1070,13 @@ document.addEventListener('DOMContentLoaded', function() {
   renderChatHistory();
 });
 
-// Sidebar reply clicks - open Ben-style chat thread view
+// Sidebar reply clicks - redirect to My Concerns instead of broken chat view
 document.addEventListener('click', function(e) {
   const replyChannel = e.target.closest('.channel[data-inquiry-id]');
   if (replyChannel) {
     e.preventDefault();
-    const inquiryId = replyChannel.getAttribute('data-inquiry-id');
-    openThreadView(inquiryId);
+    // Instead of opening broken chat view, switch to My Concerns
+    showConcernsView();
     return;
   }
 
