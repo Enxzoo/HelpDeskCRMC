@@ -1,9 +1,7 @@
 <?php
 /**
  * User.php
- * Data-access for the "users" table. Auth logic (checking passwords,
- * setting sessions) lives in AuthController, NOT here — this file
- * only talks to the database.
+ * Data-access for the "users" table.
  */
 
 require_once __DIR__ . '/../config/database.php';
@@ -17,73 +15,68 @@ class User
         $this->db = getDbConnection();
     }
 
+    public function findById(int $userId): ?array
+    {
+        $stmt = $this->db->prepare('SELECT * FROM users WHERE user_id = ? LIMIT 1');
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result ? $result->fetch_assoc() : null;
+    }
+
     public function findByEmail(string $email): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM users WHERE email = ? LIMIT 1');
         $stmt->bind_param('s', $email);
         $stmt->execute();
         $result = $stmt->get_result();
-
-        $user = $result->fetch_assoc();
-        return $user ?: null;
+        return $result ? $result->fetch_assoc() : null;
     }
 
-    public function findById(int $id): ?array
+    public function findByRole(string $role): array
     {
-        $stmt = $this->db->prepare('SELECT * FROM users WHERE user_id = ? LIMIT 1');
-        $stmt->bind_param('i', $id);
+        $stmt = $this->db->prepare('SELECT * FROM users WHERE role = ? AND is_active = 1');
+        $stmt->bind_param('s', $role);
         $stmt->execute();
         $result = $stmt->get_result();
-
-        $user = $result->fetch_assoc();
-        return $user ?: null;
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     }
 
-    public function create(string $firstName, string $lastName, string $email, string $password, string $role = 'student', ?int $officeId = null, ?string $studentNumber = null): int
+    public function findByOffice(int $officeId): array
     {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-
-        $stmt = $this->db->prepare(
-            'INSERT INTO users (first_name, last_name, email, password_hash, role, office_id, student_number) VALUES (?, ?, ?, ?, ?, ?, ?)'
-        );
-        $stmt->bind_param('sssssis', $firstName, $lastName, $email, $hash, $role, $officeId, $studentNumber);
+        $stmt = $this->db->prepare('SELECT * FROM users WHERE office_id = ? AND role IN ("staff", "admin") AND is_active = 1');
+        $stmt->bind_param('i', $officeId);
         $stmt->execute();
+        $result = $stmt->get_result();
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    }
 
+    public function create(array $data): int
+    {
+        $stmt = $this->db->prepare(
+            'INSERT INTO users (role, office_id, student_number, first_name, last_name, email, password_hash, is_active)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 1)'
+        );
+
+        $stmt->bind_param(
+            'sisisss',
+            $data['role'],
+            $data['office_id'] ?? null,
+            $data['student_number'] ?? null,
+            $data['first_name'],
+            $data['last_name'],
+            $data['email'],
+            $data['password_hash']
+        );
+
+        $stmt->execute();
         return $stmt->insert_id;
     }
 
-    public function findAll(): array
+    public function updateLastLogin(int $userId): void
     {
-        $result = $this->db->query(
-            'SELECT u.*, o.office_name
-             FROM users u
-             LEFT JOIN offices o ON u.office_id = o.office_id
-             ORDER BY u.user_id DESC'
-        );
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-
-    public function toggleStatus(int $userId): bool
-    {
-        $stmt = $this->db->prepare(
-            'UPDATE users SET is_active = NOT is_active WHERE user_id = ?'
-        );
+        $stmt = $this->db->prepare('UPDATE users SET last_login_at = NOW() WHERE user_id = ?');
         $stmt->bind_param('i', $userId);
-        return $stmt->execute();
-    }
-
-    public function getStats(): array
-    {
-        $students = (int)($this->db->query("SELECT COUNT(*) as cnt FROM users WHERE role = 'student'")->fetch_assoc()['cnt'] ?? 0);
-        $staff = (int)($this->db->query("SELECT COUNT(*) as cnt FROM users WHERE role = 'staff'")->fetch_assoc()['cnt'] ?? 0);
-        $admins = (int)($this->db->query("SELECT COUNT(*) as cnt FROM users WHERE role = 'admin'")->fetch_assoc()['cnt'] ?? 0);
-        $offices = (int)($this->db->query("SELECT COUNT(*) as cnt FROM offices")->fetch_assoc()['cnt'] ?? 0);
-
-        return [
-            'students' => $students,
-            'staff'    => $staff,
-            'admins'   => $admins,
-            'offices'  => $offices
-        ];
+        $stmt->execute();
     }
 }

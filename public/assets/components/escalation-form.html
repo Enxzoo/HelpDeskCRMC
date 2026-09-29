@@ -1,0 +1,206 @@
+<div class="escalation-card">
+  <div class="esc-header">
+    <h3>Escalate Your Concern</h3>
+    <p>Fill out the form below and we'll forward your concern to the appropriate office</p>
+  </div>
+
+  <form class="esc-form" data-escalation-form>
+    <div class="esc-alert esc-alert-error" style="display: none;" data-error-msg></div>
+
+    <div class="esc-group">
+      <label for="esc-fullname">Full Name <span class="esc-req">*</span></label>
+      <input type="text" id="esc-fullname" name="fullName" required>
+    </div>
+
+    <div class="esc-row">
+      <div class="esc-group">
+        <label for="esc-email">Email <span class="esc-req">*</span></label>
+        <input type="email" id="esc-email" name="email" required>
+      </div>
+      <div class="esc-group">
+        <label for="esc-phone">Contact Number <span class="esc-req">*</span></label>
+        <input type="tel" id="esc-phone" name="phone" required>
+      </div>
+    </div>
+
+    <div class="esc-group">
+      <label for="esc-office">Which office can help you? <span class="esc-req">*</span></label>
+      <select id="esc-office" name="office" required>
+        <option value="">Select an office...</option>
+        <optgroup label="Academic Services">
+          <option value="registrar">Registrar's Office</option>
+          <option value="cashier">Cashier's Office</option>
+        </optgroup>
+        <optgroup label="Student Support">
+          <option value="guidance">Guidance Office</option>
+          <option value="saso">SASO - Student Affairs</option>
+        </optgroup>
+        <optgroup label="Departments">
+          <option value="cte">College of Teacher Education (CTE)</option>
+          <option value="cbe">College of Business Education (CBE)</option>
+          <option value="ccs">College of Computer Studies (CCS)</option>
+          <option value="cje">College of Justice Education (CJE)</option>
+          <option value="psychology">Psychology Department</option>
+        </optgroup>
+        <optgroup label="Other">
+          <option value="main">Main Office</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="esc-group">
+      <label for="esc-subject">Subject <span class="esc-req">*</span></label>
+      <input type="text" id="esc-subject" name="subject" placeholder="e.g., Transcript of Records Request" required>
+    </div>
+
+    <div class="esc-group">
+      <label for="esc-concern">Describe your concern <span class="esc-req">*</span></label>
+      <textarea id="esc-concern" name="concern" rows="3" required></textarea>
+    </div>
+
+    <button type="submit" class="esc-btn">Submit Concern</button>
+  </form>
+
+  <div class="esc-success" style="display: none;" data-success-msg>
+    ✓ Your concern has been submitted successfully! A staff member will contact you soon.
+  </div>
+</div>
+
+<style>
+.escalation-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.esc-header {
+  margin-bottom: 18px;
+}
+
+.esc-header h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.esc-header p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.esc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.esc-alert {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.esc-alert-error {
+  background: rgba(184, 35, 28, .08);
+  border: 1px solid rgba(184, 35, 28, .2);
+  color: var(--red);
+}
+
+.esc-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.esc-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.esc-group label {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.esc-req {
+  color: var(--red);
+}
+
+.esc-group input,
+.esc-group select,
+.esc-group textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 13px;
+  transition: all .2s;
+}
+
+.esc-group input:focus,
+.esc-group select:focus,
+.esc-group textarea:focus {
+  outline: none;
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px rgba(236, 201, 75, .12);
+}
+
+.esc-group textarea {
+  resize: vertical;
+  min-height: 70px;
+  line-height: 1.4;
+}
+
+.esc-btn {
+  padding: 10px 16px;
+  background: var(--amber);
+  color: var(--ink);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+  margin-top: 4px;
+}
+
+.esc-btn:hover:not(:disabled) {
+  background: var(--amber-dk);
+  transform: translateY(-1px);
+}
+
+.esc-btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.esc-success {
+  padding: 12px;
+  background: rgba(30, 122, 140, .08);
+  border: 1px solid rgba(30, 122, 140, .2);
+  color: var(--teal);
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: center;
+}
+
+@media (max-width: 500px) {
+  .esc-row {
+    grid-template-columns: 1fr;
+  }
+
+  .escalation-card {
+    padding: 16px;
+  }
+}
+</style>

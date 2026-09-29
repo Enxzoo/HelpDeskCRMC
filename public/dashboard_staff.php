@@ -26,16 +26,28 @@ $officeModel  = new Office();
 
 $officesList  = $officeModel->findAll();
 $officeName   = 'General Support';
+$officeIcon   = 'G';
 if ($officeId) {
     $officeData = $officeModel->findById($officeId);
     if ($officeData) {
         $officeName = $officeData['office_name'];
+        $officeIcon = strtoupper(substr($officeData['office_name'], 0, 1));
     }
 }
 
 $stats     = $inquiryModel->getStats($officeId);
 $inquiries = $inquiryModel->findByOffice($officeId);
 $initials  = strtoupper(substr($_SESSION['name'], 0, 1));
+
+// Count by status
+$pendingCount = 0;
+$inProgressCount = 0;
+$resolvedCount = 0;
+foreach ($inquiries as $inquiry) {
+    if ($inquiry['status'] === 'Pending') $pendingCount++;
+    if ($inquiry['status'] === 'In Progress') $inProgressCount++;
+    if ($inquiry['status'] === 'Resolved') $resolvedCount++;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,360 +57,391 @@ $initials  = strtoupper(substr($_SESSION['name'], 0, 1));
     <meta name="csrf-token" content="<?= csrf_token() ?>">
     <title>Staff Portal - HELPDESKCRMC</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/design-system.css">
-    <link rel="stylesheet" href="assets/css/admin-staff-dashboard.css">
+    <link rel="stylesheet" href="assets/css/dashboard_staff.css?v=<?= md5_file('assets/css/dashboard_staff.css') ?>">
 </head>
 <body>
+
+<svg style="display:none" aria-hidden="true">
+<defs>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3"/><path d="M14 8l4 4-4 4"/><path d="M18 12H9"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+  <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M8 12.5l6-6a3 3 0 0 1 4.2 4.2l-8 8a5 5 0 1 1-7-7l7-7"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></symbol>
+</defs>
+</svg>
+
 <div class="app">
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="brand">
-            <img src="assets/images/helpdesk-logo.png" alt="CRMC Helpdesk" style="height:32px;width:auto;margin-bottom:4px;">
-            <span class="n">CRMC Helpdesk</span>
-            <span class="s">Staff Operations Portal</span>
-        </div>
-
-        <div class="nav-group">
-            <span class="nav-label">QUEUE MANAGEMENT</span>
-            <nav>
-                <a href="#" class="nav-item active">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    <span>Inquiry Queue</span>
-                </a>
-            </nav>
-        </div>
-
-        <div class="side-promo">
-            <h4><?= htmlspecialchars($officeName) ?></h4>
-            <p>Assigned Office Queue. Respond to student concerns step-by-step.</p>
-        </div>
-
-        <div style="margin-top:auto;">
-            <a href="logout.php" class="nav-item" style="color:#C53030;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                <span>Sign Out</span>
-            </a>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main>
-        <div class="topbar">
-            <div class="who">
-                <div class="n">Welcome, <?= htmlspecialchars($_SESSION['name']) ?></div>
-                <div class="s">Office Queue Manager — <?= htmlspecialchars($officeName) ?></div>
-            </div>
-            <div class="top-actions">
-                <div class="avatar"><?= htmlspecialchars($initials) ?></div>
-            </div>
-        </div>
-
-        <!-- Overview Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-info">
-                    <div class="lbl">Pending</div>
-                    <div class="num" id="statPending"><?= $stats['pending'] ?></div>
-                </div>
-                <div class="stat-icon gold">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-info">
-                    <div class="lbl">In Progress</div>
-                    <div class="num" id="statProgress"><?= $stats['in_progress'] ?></div>
-                </div>
-                <div class="stat-icon maroon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-info">
-                    <div class="lbl">Resolved</div>
-                    <div class="num" id="statResolved"><?= $stats['resolved'] ?></div>
-                </div>
-                <div class="stat-icon green">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-info">
-                    <div class="lbl">Total Concerns</div>
-                    <div class="num"><?= $stats['total'] ?></div>
-                </div>
-                <div class="stat-icon blue">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Filter & Search Toolbar -->
-        <div class="filter-bar">
-            <div class="search-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" id="searchInput" placeholder="Search by student name, ID, or subject..." onkeyup="filterQueue()">
-            </div>
-            <div class="filter-group">
-                <select id="statusFilter" onchange="filterQueue()">
-                    <option value="all">All Statuses</option>
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Resolved">Resolved</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Data Table -->
-        <div class="data-card">
-            <div class="data-card-head">
-                <h3>Assigned Student Concerns</h3>
-                <span class="s" style="font-size:12.5px;color:var(--muted);"><?= count($inquiries) ?> records</span>
-            </div>
-            <div class="table-wrap">
-                <table class="data-table" id="inquiryTable">
-                    <thead>
-                        <tr>
-                            <th>#ID</th>
-                            <th>Student</th>
-                            <th>Subject</th>
-                            <th>Submitted</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (empty($inquiries)): ?>
-                            <tr>
-                                <td colspan="6" style="text-align:center;padding:30px;color:var(--muted);">
-                                    No student inquiries in queue for this office.
-                                </td>
-                            </tr>
-                        <?php else: ?>
-                            <?php foreach ($inquiries as $inq): ?>
-                                <?php
-                                $sClass = match($inq['status']) {
-                                    'Pending'     => 'pending',
-                                    'In Progress' => 'progress',
-                                    'Resolved'    => 'resolved',
-                                    default       => 'pending'
-                                };
-                                $studentFullName = trim(($inq['first_name'] ?? '') . ' ' . ($inq['last_name'] ?? ''));
-                                if (empty($studentFullName)) $studentFullName = 'Student #' . $inq['student_id'];
-                                ?>
-                                <tr data-status="<?= htmlspecialchars($inq['status']) ?>" data-search="<?= htmlspecialchars(strtolower($studentFullName . ' ' . $inq['subject'] . ' ' . ($inq['student_number'] ?? ''))) ?>">
-                                    <td><strong>#<?= $inq['inquiry_id'] ?></strong></td>
-                                    <td>
-                                        <div style="font-weight:600;"><?= htmlspecialchars($studentFullName) ?></div>
-                                        <div style="font-size:11.5px;color:var(--muted);"><?= htmlspecialchars($inq['student_number'] ?? $inq['student_email'] ?? '') ?></div>
-                                    </td>
-                                    <td>
-                                        <div style="font-weight:600;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($inq['subject']) ?></div>
-                                        <div style="font-size:11.5px;color:var(--muted);max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($inq['description']) ?></div>
-                                    </td>
-                                    <td style="font-size:12px;color:var(--muted);white-space:nowrap;"><?= date('M j, Y H:i', strtotime($inq['created_at'])) ?></td>
-                                    <td><span class="tag <?= $sClass ?>"><?= htmlspecialchars($inq['status']) ?></span></td>
-                                    <td>
-                                        <button type="button" class="btn-sm btn-outline" onclick="openRespondModal(<?= htmlspecialchars(json_encode($inq)) ?>)">
-                                            View & Respond
-                                        </button>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-</div>
-
-<!-- Respond Modal -->
-<div class="modal-overlay" id="respondModal">
-    <div class="modal-card">
-        <div class="modal-header">
-            <h3 id="modalTitle">Inquiry #--</h3>
-            <button type="button" class="modal-close" onclick="closeRespondModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div style="margin-bottom:16px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                    <strong id="modalStudentName" style="font-size:15px;">--</strong>
-                    <span id="modalStatusTag" class="tag pending">--</span>
-                </div>
-                <div id="modalMeta" style="font-size:12px;color:var(--muted);">--</div>
-            </div>
-
-            <div style="background:#F9F8FA;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:18px;">
-                <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Original Concern</div>
-                <div id="modalSubject" style="font-weight:700;font-size:14px;margin-bottom:6px;">--</div>
-                <div id="modalDescription" style="font-size:13px;line-height:1.5;color:var(--ink);">--</div>
-            </div>
-
-            <!-- Existing Responses -->
-            <div style="margin-bottom:18px;">
-                <label style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;">Staff Response History</label>
-                <div id="threadList" class="thread-list">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-
-            <!-- Add Response Form -->
-            <form id="replyForm" onsubmit="submitReply(event)">
-                <input type="hidden" id="currentInquiryId" value="">
-
-                <div class="form-group" style="margin-bottom:14px;">
-                    <label for="statusSelect" style="font-size:12px;font-weight:700;color:var(--muted);">Update Inquiry Status</label>
-                    <select id="statusSelect" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px;font-family:inherit;background:#fff;">
-                        <option value="Pending">Pending</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Resolved">Resolved</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="replyMessage" style="font-size:12px;font-weight:700;color:var(--muted);">Official Response Message</label>
-                    <textarea id="replyMessage" rows="3" placeholder="Type official response to the student..." style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px;font-family:inherit;outline:none;" required></textarea>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-sm btn-secondary" onclick="closeRespondModal()">Cancel</button>
-            <button type="button" class="btn-sm btn-primary" onclick="submitReply(event)">Send Response</button>
-        </div>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
+      <div class="brand-name">Helpdesk<span>CRMC</span></div>
     </div>
+
+    <div class="office-card">
+      <div class="office-header">Assigned Office</div>
+      <div class="office-name"><?= htmlspecialchars($officeName) ?></div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Workspace</div>
+      <a class="nav-item active" href="#concerns">
+        <svg class="icon"><use href="#i-chat"/></svg>
+        Concerns Queue
+      </a>
+      <a class="nav-item" href="#history">
+        <svg class="icon"><use href="#i-clock"/></svg>
+        History
+      </a>
+    </div>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="staff-section">
+      <div class="staff-profile">
+        <div class="avatar"><?= htmlspecialchars($initials) ?></div>
+        <div class="staff-info">
+          <div class="staff-name"><?= htmlspecialchars($_SESSION['name']) ?></div>
+          <div class="staff-role">Staff Member</div>
+        </div>
+      </div>
+      <form method="POST" action="login.php?action=logout">
+        <button type="submit" class="logout-btn">
+          <svg class="icon"><use href="#i-logout"/></svg>
+          Logout
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-top">
+        <div class="header-title">
+          <h1>Concerns Queue</h1>
+          <div class="header-subtitle">Manage and respond to student inquiries</div>
+        </div>
+        <div class="header-stats">
+          <div class="stat-box">
+            <div class="stat-value pending"><?= $pendingCount ?></div>
+            <div class="stat-label">Pending</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value progress"><?= $inProgressCount ?></div>
+            <div class="stat-label">In Progress</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value resolved"><?= $resolvedCount ?></div>
+            <div class="stat-label">Resolved</div>
+          </div>
+        </div>
+      </div>
+      <div class="search-bar">
+        <svg class="icon"><use href="#i-search"/></svg>
+        <input type="text" placeholder="Search by student name or inquiry ID..." id="searchInput">
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Queue Panel -->
+      <div class="queue-panel">
+        <div class="queue-header">
+          <h3 class="queue-title">Active Concerns</h3>
+          <div class="filter-group">
+            <button class="filter-btn active" data-status="all">All</button>
+            <button class="filter-btn" data-status="pending">Pending</button>
+            <button class="filter-btn" data-status="in_progress">In Progress</button>
+            <button class="filter-btn" data-status="resolved">Resolved</button>
+          </div>
+        </div>
+
+        <div class="queue-list" id="concernsList">
+          <?php if (empty($inquiries)): ?>
+          <div class="empty-state">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg>
+            <p>No concerns in queue</p>
+          </div>
+          <?php else: ?>
+            <?php foreach ($inquiries as $index => $inquiry): ?>
+            <div class="concern-card <?= $index === 0 ? 'selected' : '' ?> <?= strpos(strtolower($inquiry['subject']), 'urgent') !== false ? 'urgent' : '' ?>"
+                 onclick="selectConcern(this, <?= $inquiry['inquiry_id'] ?>)"
+                 data-inquiry-id="<?= $inquiry['inquiry_id'] ?>"
+                 data-status="<?= htmlspecialchars(str_replace(' ', '_', strtolower($inquiry['status']))) ?>">
+              <span class="concern-status-badge status-<?= str_replace(' ', '-', strtolower($inquiry['status'])) ?>">
+                <?= htmlspecialchars($inquiry['status']) ?>
+              </span>
+              <div class="concern-subject"><?= htmlspecialchars($inquiry['subject']) ?></div>
+              <div class="concern-meta">
+                <span class="concern-student"><?= htmlspecialchars($inquiry['student_name']) ?></span>
+                <span class="concern-time"><?= date('M j, g:i A', strtotime($inquiry['created_at'])) ?></span>
+              </div>
+            </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+      </div>
+
+      <!-- Detail Panel -->
+      <div class="detail-panel" id="detailPanel">
+        <?php if (!empty($inquiries)): ?>
+        <?php $firstInquiry = $inquiries[0]; ?>
+        <div class="detail-header">
+          <div class="detail-header-top">
+            <div class="detail-title">
+              <h2 id="detailTitle"><?= htmlspecialchars($firstInquiry['subject']) ?></h2>
+              <div class="detail-meta">
+                <div class="meta-item">
+                  <svg class="icon"><use href="#i-user"/></svg>
+                  <span class="meta-label" id="detailStudent"><?= htmlspecialchars($firstInquiry['student_name']) ?></span>
+                </div>
+                <div class="meta-item">
+                  <span>Student ID: <?= htmlspecialchars($firstInquiry['student_id'] ?? 'N/A') ?></span>
+                </div>
+                <div class="meta-item">
+                  <span id="detailDate">Submitted <?= date('M j, Y \a\t g:i A', strtotime($firstInquiry['created_at'])) ?></span>
+                </div>
+              </div>
+            </div>
+            <div class="detail-actions">
+              <button class="btn btn-secondary" onclick="reassignConcern()">Reassign</button>
+              <button class="btn btn-success" onclick="resolveConcern()">
+                <svg class="icon"><use href="#i-check"/></svg>
+                Mark Resolved
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="thread" id="messageThread">
+          <div class="message student">
+            <div class="message-header"><?= htmlspecialchars($firstInquiry['student_name']) ?></div>
+            <div class="message-bubble" id="originalMessage"><?= nl2br(htmlspecialchars($firstInquiry['message'])) ?></div>
+            <div class="message-time"><?= date('M j, g:i A', strtotime($firstInquiry['created_at'])) ?></div>
+          </div>
+        </div>
+
+        <div class="reply-section">
+          <div class="status-row">
+            <label for="statusSelect">Status</label>
+            <select id="statusSelect">
+              <option value="Open" <?= $firstInquiry['status'] === 'Open' ? 'selected' : '' ?>>Open</option>
+              <option value="In Progress" <?= $firstInquiry['status'] === 'In Progress' ? 'selected' : '' ?>>In Progress</option>
+              <option value="Resolved" <?= $firstInquiry['status'] === 'Resolved' ? 'selected' : '' ?>>Resolved</option>
+              <option value="On Hold" <?= $firstInquiry['status'] === 'On Hold' ? 'selected' : '' ?>>On Hold</option>
+            </select>
+          </div>
+          <form id="replyForm" onsubmit="sendReply(event)">
+            <div class="reply-box">
+              <textarea class="reply-input" id="replyText" placeholder="Type your response here..." required></textarea>
+              <div class="reply-actions">
+                <button type="submit" class="btn btn-primary">
+                  <svg class="icon"><use href="#i-send"/></svg>
+                  Send Reply
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="attachFile()">
+                  <svg class="icon"><use href="#i-paperclip"/></svg>
+                  Attach
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <?php else: ?>
+        <div class="no-selection">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg>
+          <p>Select a concern to view details</p>
+        </div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content || '';
+let currentInquiryId = <?= !empty($inquiries) ? $inquiries[0]['inquiry_id'] : 'null' ?>;
+let inquiriesData = <?= json_encode($inquiries) ?>;
 
-function filterQueue() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    const status = document.getElementById('statusFilter').value;
-    const rows = document.querySelectorAll('#inquiryTable tbody tr');
+function selectConcern(element, inquiryId) {
+  document.querySelectorAll('.concern-card').forEach(el => el.classList.remove('selected'));
+  element.classList.add('selected');
+  currentInquiryId = inquiryId;
 
-    rows.forEach(tr => {
-        const rowStatus = tr.getAttribute('data-status');
-        const searchData = tr.getAttribute('data-search') || '';
+  const inquiry = inquiriesData.find(i => i.inquiry_id == inquiryId);
+  if (!inquiry) return;
 
-        const matchesStatus = (status === 'all' || rowStatus === status);
-        const matchesQuery  = (q === '' || searchData.includes(q));
+  document.getElementById('detailTitle').textContent = inquiry.subject;
+  document.getElementById('detailStudent').textContent = inquiry.student_name;
+  document.getElementById('detailDate').textContent = 'Submitted ' + new Date(inquiry.created_at).toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit'
+  }) + ' at ' + new Date(inquiry.created_at).toLocaleTimeString('en-US', {
+    hour: 'numeric', minute: '2-digit'
+  });
+  document.getElementById('originalMessage').innerHTML = inquiry.message.replace(/\n/g, '<br>');
 
-        tr.style.display = (matchesStatus && matchesQuery) ? '' : 'none';
+  const statusSelect = document.getElementById('statusSelect');
+  statusSelect.value = inquiry.status;
+
+  loadInquiryResponses(inquiryId);
+}
+
+async function loadInquiryResponses(inquiryId) {
+  try {
+    const response = await fetch(`api/get_responses.php?inquiry_id=${inquiryId}`, {
+      headers: {
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+      }
     });
-}
 
-let activeInquiry = null;
+    if (!response.ok) throw new Error('Failed to load responses');
 
-function openRespondModal(inq) {
-    activeInquiry = inq;
-    document.getElementById('currentInquiryId').value = inq.inquiry_id;
-    document.getElementById('modalTitle').textContent = `Inquiry #${inq.inquiry_id}`;
-    document.getElementById('modalStudentName').textContent = `${inq.first_name || ''} ${inq.last_name || ''}`;
-    document.getElementById('modalMeta').textContent = `Student ID: ${inq.student_number || 'N/A'} • Submitted: ${inq.created_at}`;
-    document.getElementById('modalSubject').textContent = inq.subject;
-    document.getElementById('modalDescription').textContent = inq.description;
-    document.getElementById('statusSelect').value = inq.status;
+    const data = await response.json();
+    const thread = document.getElementById('messageThread');
+    const originalMessage = thread.children[0];
+    thread.innerHTML = '';
+    thread.appendChild(originalMessage);
 
-    const tag = document.getElementById('modalStatusTag');
-    tag.textContent = inq.status;
-    tag.className = 'tag ' + (inq.status === 'Pending' ? 'pending' : (inq.status === 'In Progress' ? 'progress' : 'resolved'));
-
-    renderThread(inq.replies || []);
-
-    document.getElementById('respondModal').classList.add('active');
-}
-
-function closeRespondModal() {
-    document.getElementById('respondModal').classList.remove('active');
-    document.getElementById('replyMessage').value = '';
-}
-
-function renderThread(replies) {
-    const box = document.getElementById('threadList');
-    if (!replies || replies.length === 0) {
-        box.innerHTML = '<div style="font-size:12px;color:var(--muted);font-style:italic;">No staff replies yet.</div>';
-        return;
+    if (data.responses) {
+      data.responses.forEach(resp => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message staff';
+        messageDiv.innerHTML = `
+          <div class="message-header">${resp.staff_name}</div>
+          <div class="message-bubble">${resp.message.replace(/\n/g, '<br>')}</div>
+          <div class="message-time">${new Date(resp.created_at).toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric',
+            hour: 'numeric', minute: '2-digit'
+          })}</div>
+        `;
+        thread.appendChild(messageDiv);
+      });
     }
 
-    box.innerHTML = replies.map(r => `
-        <div class="thread-bubble staff">
-            <div class="author">${escapeHtml(r.first_name || 'Staff')} ${escapeHtml(r.last_name || '')}</div>
-            <div class="msg">${escapeHtml(r.message)}</div>
-            <div class="time">${escapeHtml(r.created_at)}</div>
-        </div>
-    `).join('');
+    thread.scrollTop = thread.scrollHeight;
+  } catch (error) {
+    console.error('Error loading responses:', error);
+  }
 }
 
-function escapeHtml(str) {
-    if (!str) return '';
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-}
+async function sendReply(event) {
+  event.preventDefault();
 
-async function submitReply(e) {
-    if (e) e.preventDefault();
+  if (!currentInquiryId) return;
 
-    const inquiryId = document.getElementById('currentInquiryId').value;
-    const message   = document.getElementById('replyMessage').value.trim();
-    const newStatus = document.getElementById('statusSelect').value;
+  const replyText = document.getElementById('replyText');
+  const statusSelect = document.getElementById('statusSelect');
 
-    if (!message) {
-        alert('Please enter a response message.');
-        return;
+  if (!replyText.value.trim()) return;
+
+  try {
+    const response = await fetch('api/staff_action.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({
+        action: 'respond',
+        inquiry_id: currentInquiryId,
+        message: replyText.value.trim(),
+        status: statusSelect.value
+      })
+    });
+
+    if (!response.ok) throw new Error('Failed to send response');
+
+    const data = await response.json();
+
+    if (data.success) {
+      const thread = document.getElementById('messageThread');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message staff';
+      messageDiv.innerHTML = `
+        <div class="message-header">You</div>
+        <div class="message-bubble">${replyText.value.replace(/\n/g, '<br>')}</div>
+        <div class="message-time">Just now</div>
+      `;
+      thread.appendChild(messageDiv);
+
+      replyText.value = '';
+
+      const concernItem = document.querySelector(`[data-inquiry-id="${currentInquiryId}"]`);
+      if (concernItem) {
+        const statusBadge = concernItem.querySelector('.concern-status-badge');
+        statusBadge.textContent = statusSelect.value;
+        statusBadge.className = `concern-status-badge status-${statusSelect.value.toLowerCase().replace(' ', '-')}`;
+      }
+
+      thread.scrollTop = thread.scrollHeight;
+    } else {
+      alert('Failed to send response: ' + (data.error || 'Unknown error'));
     }
-
-    try {
-        // 1. Post reply
-        const res = await fetch('api/staff_action.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': CSRF_TOKEN
-            },
-            body: JSON.stringify({
-                action: 'add_reply',
-                inquiry_id: inquiryId,
-                message: message
-            })
-        });
-
-        const data = await res.json();
-        if (!data.success) {
-            alert(data.error || 'Failed to submit response.');
-            return;
-        }
-
-        // 2. Update status if changed
-        if (newStatus !== activeInquiry.status) {
-            await fetch('api/staff_action.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': CSRF_TOKEN
-                },
-                body: JSON.stringify({
-                    action: 'update_status',
-                    inquiry_id: inquiryId,
-                    status: newStatus
-                })
-            });
-        }
-
-        alert('Response saved successfully.');
-        location.reload();
-    } catch (err) {
-        console.error(err);
-        alert('Network error. Please try again.');
-    }
+  } catch (error) {
+    console.error('Error sending reply:', error);
+    alert('Failed to send response. Please try again.');
+  }
 }
+
+function resolveConcern() {
+  if (!currentInquiryId) return;
+
+  if (confirm('Mark this concern as resolved?')) {
+    document.getElementById('statusSelect').value = 'Resolved';
+  }
+}
+
+function reassignConcern() {
+  if (!currentInquiryId) return;
+  alert('Reassignment feature coming soon');
+}
+
+function attachFile() {
+  alert('File attachment feature coming soon');
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+
+    const status = this.dataset.status;
+    const items = document.querySelectorAll('.concern-card');
+
+    items.forEach(item => {
+      if (status === 'all' || item.dataset.status === status) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', function() {
+  const query = this.value.toLowerCase();
+  const items = document.querySelectorAll('.concern-card');
+
+  items.forEach(item => {
+    const title = item.querySelector('.concern-subject').textContent.toLowerCase();
+    const student = item.querySelector('.concern-student').textContent.toLowerCase();
+
+    if (title.includes(query) || student.includes(query)) {
+      item.style.display = 'block';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+});
 </script>
+
 </body>
 </html>

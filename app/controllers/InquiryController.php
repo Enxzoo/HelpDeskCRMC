@@ -14,7 +14,7 @@ class InquiryController
      * should never be able to submit an inquiry as someone else by
      * editing form data.
      */
-    public function submit(int $studentId, string $message, ?string $office = null): array
+    public function submit(int $studentId, string $message, ?string $office = null, ?string $subject = null): array
     {
         $message = trim($message);
 
@@ -27,11 +27,17 @@ class InquiryController
         $inquiryModel = new Inquiry();
 
         // Save the inquiry to the database (status defaults to Pending)
-        $inquiryId = $inquiryModel->create([
+        $inquiryData = [
             'student_id' => $studentId,
             'message'    => $message,
             'office_id'  => $office,
-        ]);
+        ];
+
+        if (!empty($subject)) {
+            $inquiryData['subject'] = $subject;
+        }
+
+        $inquiryId = $inquiryModel->create($inquiryData);
 
         return [
             'success'    => true,

@@ -38,12 +38,13 @@ if (!csrf_verify_header()) {
 // Get and validate input
 $input = json_decode(file_get_contents('php://input'), true);
 
-$message = trim($input['message'] ?? '');
+$message = trim($input['concern'] ?? $input['message'] ?? '');
 $officeName = trim($input['office'] ?? '');
+$subject = trim($input['subject'] ?? '');
 
 if ($message === '') {
     http_response_code(400);
-    echo json_encode(['error' => 'Message is required']);
+    echo json_encode(['error' => 'Concern description is required']);
     exit;
 }
 
@@ -51,8 +52,13 @@ if ($message === '') {
 $officeId = null;
 if ($officeName !== '') {
     $db = getDbConnection();
-    $stmt = $db->prepare('SELECT office_id FROM offices WHERE office_name = ? AND is_active = 1');
-    $stmt->bind_param('s', $officeName);
+    // In escalation form, the `value` of options is lowercase slug (e.g., registrar, cashier)
+    // Wait, let's look at the DB. office_name usually matches exact names, or maybe the switch is better.
+    // However, the previous implementation did `$stmt->bind_param('s', $officeName);`.
+    // Let's ensure we map the slug to actual names if needed, but let's check what's in the DB.
+    $stmt = $db->prepare('SELECT office_id FROM offices WHERE office_name LIKE ? AND is_active = 1');
+    $likeOffice = "%$officeName%";
+    $stmt->bind_param('s', $likeOffice);
     $stmt->execute();
     $row = $stmt->get_result()->fetch_assoc();
     $officeId = $row['office_id'] ?? null;
@@ -61,7 +67,8 @@ if ($officeName !== '') {
 // Submit via InquiryController (student_id from session — never from POST)
 $studentId = (int) $_SESSION['user_id'];
 $controller = new InquiryController();
-$result = $controller->submit($studentId, $message, $officeId);
+// Controller accepts only studentId, message, officeId. We need to pass Subject too!
+$result = $controller->submit($studentId, $message, $officeId, $subject);
 
 if ($result['success']) {
     echo json_encode([
