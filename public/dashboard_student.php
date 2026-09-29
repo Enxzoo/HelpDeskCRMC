@@ -809,7 +809,7 @@ async function renderConcernsList() {
       const replyCount = hasReplies ? item.replies.length : 0;
 
       card.innerHTML = `
-        <div class="concern-card-header">
+        <div class="concern-card-header" onclick="this.closest('.concern-card').classList.toggle('expanded')">
           <div class="concern-header-left">
             <h3 class="concern-subject">${escapeHtml(item.subject)}</h3>
             <div class="concern-meta">
