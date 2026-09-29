@@ -224,7 +224,7 @@ foreach ($inquiries as $inquiry) {
         <div class="thread" id="messageThread">
           <div class="message student">
             <div class="message-header"><?= htmlspecialchars($firstInquiry['student_name']) ?></div>
-            <div class="message-bubble" id="originalMessage"><?= nl2br(htmlspecialchars($firstInquiry['message'])) ?></div>
+            <div class="message-bubble" id="originalMessage"><?= nl2br(htmlspecialchars($firstInquiry['description'])) ?></div>
             <div class="message-time"><?= date('M j, g:i A', strtotime($firstInquiry['created_at'])) ?></div>
           </div>
         </div>
@@ -286,7 +286,7 @@ function selectConcern(element, inquiryId) {
   }) + ' at ' + new Date(inquiry.created_at).toLocaleTimeString('en-US', {
     hour: 'numeric', minute: '2-digit'
   });
-  document.getElementById('originalMessage').innerHTML = inquiry.message.replace(/\n/g, '<br>');
+  document.getElementById('originalMessage').innerHTML = inquiry.description.replace(/\n/g, '<br>');
 
   const statusSelect = document.getElementById('statusSelect');
   statusSelect.value = inquiry.status;

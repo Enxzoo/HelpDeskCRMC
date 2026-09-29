@@ -1,0 +1,156 @@
+<?php
+session_start();
+require_once __DIR__ . '/../app/helpers/csrf.php';
+$_SESSION['user_id'] = 1;
+$_SESSION['role'] = 'student';
+$_SESSION['name'] = 'Test User';
+// Generate CSRF token
+$token = csrf_token();
+?>
+<title>Ben API Test</title>
+<style>
+body {
+  font-family: system-ui, sans-serif;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fbf6ee;
+}
+.log {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  font-family: monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.error { background: #fee; border-color: #dc2626; }
+.success { background: #d1fae5; border-color: #10b981; }
+button {
+  background: #ecc94b;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 8px 8px 8px 0;
+}
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 8px 0;
+  font-size: 14px;
+}
+</style>
+
+<h1>Ben API Direct Test</h1>
+<p>This will show exactly what's happening with Ben's API calls.</p>
+
+<input type="text" id="testMessage" placeholder="Type a message to test..." value="hello">
+<button onclick="testFirstMessage()">Test First Message (No History)</button>
+<button onclick="testWithHistory()">Test With History</button>
+<button onclick="clearLogs()">Clear Logs</button>
+
+<div id="output"></div>
+
+<script>
+const conversationHistory = [];
+const CSRF_TOKEN = '<?php echo htmlspecialchars(csrf_token()); ?>';
+
+function log(message, type = '') {
+  const output = document.getElementById('output');
+  const div = document.createElement('div');
+  div.className = 'log ' + type;
+  div.textContent = message;
+  output.appendChild(div);
+  output.scrollTop = output.scrollHeight;
+}
+
+function clearLogs() {
+  document.getElementById('output').innerHTML = '';
+  conversationHistory.length = 0;
+  log('Logs cleared. Conversation history reset.');
+}
+
+async function testFirstMessage() {
+  const message = document.getElementById('testMessage').value;
+  log('=== TEST 1: First Message (No History) ===');
+  log('Message: ' + message);
+  log('History: []');
+
+  try {
+    const res = await fetch('api/ai_chat.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': CSRF_TOKEN
+      },
+      body: JSON.stringify({
+        message: message,
+        history: []
+      })
+    });
+
+    log('HTTP Status: ' + res.status);
+    const data = await res.json();
+    log('Full Response:\n' + JSON.stringify(data, null, 2), data.success ? 'success' : 'error');
+
+    if (data.success) {
+      conversationHistory.push({ role: 'user', message: message });
+      conversationHistory.push({ role: 'model', message: data.answer });
+      log('✓ SUCCESS! Added to history. History now has ' + conversationHistory.length + ' messages', 'success');
+    } else {
+      log('✗ FAILED! Error: ' + (data.error || 'Unknown'), 'error');
+    }
+  } catch (err) {
+    log('✗ EXCEPTION: ' + err.message, 'error');
+  }
+}
+
+async function testWithHistory() {
+  if (conversationHistory.length === 0) {
+    log('No history yet. Run "Test First Message" first.', 'error');
+    return;
+  }
+
+  const message = document.getElementById('testMessage').value;
+  log('=== TEST 2: Message With History ===');
+  log('Message: ' + message);
+  log('History (' + conversationHistory.length + ' messages):\n' + JSON.stringify(conversationHistory, null, 2));
+
+  try {
+    const res = await fetch('api/ai_chat.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': CSRF_TOKEN
+      },
+      body: JSON.stringify({
+        message: message,
+        history: conversationHistory
+      })
+    });
+
+    log('HTTP Status: ' + res.status);
+    const data = await res.json();
+    log('Full Response:\n' + JSON.stringify(data, null, 2), data.success ? 'success' : 'error');
+
+    if (data.success) {
+      conversationHistory.push({ role: 'user', message: message });
+      conversationHistory.push({ role: 'model', message: data.answer });
+      log('✓ SUCCESS! Added to history. History now has ' + conversationHistory.length + ' messages', 'success');
+    } else {
+      log('✗ FAILED! Error: ' + (data.error || 'Unknown'), 'error');
+    }
+  } catch (err) {
+    log('✗ EXCEPTION: ' + err.message, 'error');
+  }
+}
+
+log('Ready. Click "Test First Message" to begin.');
+</script>

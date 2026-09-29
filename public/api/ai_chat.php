@@ -67,6 +67,9 @@ $result = $controller->generateResponse($message, [
     'history' => $conversationHistory
 ]);
 
+// Log the actual result for debugging
+error_log("Ben AI Result: " . json_encode($result));
+
 // Return response
 if ($result['success']) {
     echo json_encode([

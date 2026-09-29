@@ -154,13 +154,18 @@ class GeminiAiController
         if (curl_errno($ch)) {
             $error = curl_error($ch);
             curl_close($ch);
+            error_log("cURL Error: $error");
             throw new Exception("cURL error: $error");
         }
 
         curl_close($ch);
 
+        // Log the actual response for debugging
+        error_log("Gemini API Response - HTTP: $httpCode, Body: " . substr($response, 0, 1000));
+
         if ($httpCode !== 200) {
-            throw new Exception("Gemini API returned HTTP $httpCode: $response");
+            error_log("Gemini API HTTP Error: Code=$httpCode, Response=" . substr($response, 0, 500));
+            throw new Exception("Gemini API returned HTTP $httpCode: " . substr($response, 0, 200));
         }
 
         // Parse response

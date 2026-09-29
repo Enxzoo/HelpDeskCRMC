@@ -479,10 +479,18 @@ async function addEscalationFormMessage(prefillOffice = '', prefillSubject = '')
     if (fullNameInput) fullNameInput.value = <?= json_encode($studentFullName) ?>;
     if (emailInput) emailInput.value = <?= json_encode($studentEmail) ?>;
 
-    // Set up form submission
+    // Set up form submission - ensure it fires
     const form = msg.querySelector('[data-escalation-form]');
     if (form) {
-      form.addEventListener('submit', handleEscalationSubmit);
+      console.log('Escalation form found, attaching submit handler');
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Escalation form submitted!');
+        handleEscalationSubmit(e, msg);
+      });
+    } else {
+      console.error('Escalation form not found with [data-escalation-form] selector');
     }
 
     scrollChatToBottom();
@@ -492,17 +500,42 @@ async function addEscalationFormMessage(prefillOffice = '', prefillSubject = '')
   }
 }
 
-async function handleEscalationSubmit(e) {
+async function handleEscalationSubmit(e, formContainer) {
   e.preventDefault();
+  e.stopPropagation();
 
   const form = e.target;
   const submitBtn = form.querySelector('.esc-btn');
   const errorAlert = form.querySelector('[data-error-msg]');
-  const successDiv = form.querySelector('[data-success-msg]');
+  let successDiv = form.querySelector('[data-success-msg]');
+
+  // If success div doesn't exist, create it (for older cached forms)
+  if (!successDiv) {
+    const card = form.closest('.escalation-card');
+    if (card) {
+      successDiv = document.createElement('div');
+      successDiv.className = 'esc-success';
+      successDiv.style.display = 'none';
+      successDiv.setAttribute('data-success-msg', '');
+      successDiv.innerHTML = `
+        <div class="esc-success-icon">✓</div>
+        <h3>Concern Forwarded Successfully!</h3>
+        <p>Your concern has been forwarded to the appropriate office. A staff member will review your inquiry and get back to you within 2-3 working days.</p>
+        <p class="esc-success-note">You can track the status of your concern in the <strong>My Concerns</strong> section.</p>
+      `;
+      card.appendChild(successDiv);
+    }
+  }
+
+  if (!errorAlert) {
+    console.error('Missing errorAlert element');
+    alert('Error: Form not properly loaded. Please refresh and try again.');
+    return;
+  }
 
   // Clear previous messages
   errorAlert.style.display = 'none';
-  successDiv.style.display = 'none';
+  if (successDiv) successDiv.style.display = 'none';
 
   // Get form data
   const formData = {
@@ -542,8 +575,10 @@ async function handleEscalationSubmit(e) {
     if (result.success) {
       // Hide form, show success
       form.style.display = 'none';
-      successDiv.style.display = 'block';
-      successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if (successDiv) {
+        successDiv.style.display = 'block';
+        successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
 
       // Add to concerns list
       concerns.unshift({
@@ -605,7 +640,7 @@ function addUserMessage(text) {
 
   threadInner.appendChild(msg);
   scrollChatToBottom();
-  conversationHistory.push({ role: 'student', message: text });
+  conversationHistory.push({ role: 'user', message: text });
 }
 
 function addTypingIndicator() {
@@ -704,7 +739,7 @@ async function sendChatMessage() {
 
     if (data.success && data.answer) {
       addBenMessage(renderMarkdown(data.answer));
-      conversationHistory.push({ role: 'assistant', message: data.answer });
+      conversationHistory.push({ role: 'model', message: data.answer });
 
       // Show escalation form if user indicated need for escalation
       if (shouldEscalate || isNoToDidThatAnswer) {
@@ -820,21 +855,244 @@ document.addEventListener('DOMContentLoaded', function() {
   renderChatHistory();
 });
 
-// Category tile clicks using event delegation to ensure they always trigger
+// Sidebar reply clicks - open Ben-style chat thread view
 document.addEventListener('click', function(e) {
-  console.log('Click detected on:', e.target);
+  const replyChannel = e.target.closest('.channel[data-inquiry-id]');
+  if (replyChannel) {
+    e.preventDefault();
+    const inquiryId = replyChannel.getAttribute('data-inquiry-id');
+    openThreadView(inquiryId);
+    return;
+  }
+
   const tile = e.target.closest('[data-category]');
-  console.log('Closest tile found:', tile);
   if (tile) {
     e.preventDefault();
     const category = tile.getAttribute('data-category');
-    console.log('Category:', category);
     if (category) {
-      console.log('About to call showChatView with:', category);
       showChatView(category);
     }
   }
 });
+
+// Open Ben-style chat view for a specific inquiry thread
+async function openThreadView(inquiryId) {
+  try {
+    // Fetch the full inquiry with all replies
+    const res = await fetch('api/get_student_concerns_with_replies.php');
+    const data = await res.json();
+
+    if (!data.success || !data.concerns) {
+      console.error('Failed to fetch concerns');
+      return;
+    }
+
+    const concern = data.concerns.find(c => c.inquiry_id == inquiryId);
+    if (!concern) {
+      console.error('Concern not found:', inquiryId);
+      return;
+    }
+
+    // Build the thread view
+    const chatView = document.getElementById('chatView');
+    document.getElementById('chatTitle').textContent = concern.subject;
+    document.getElementById('chatSubtitle').textContent = `${concern.office} • ${capitalize(concern.status)}`;
+
+    const chatThread = document.getElementById('chatThread');
+    chatThread.innerHTML = '';
+
+    // Add day divider
+    const dayDiv = document.createElement('div');
+    dayDiv.style.cssText = 'text-align: center; font-size: 12px; color: var(--muted); margin: 8px 0; position: relative;';
+    dayDiv.innerHTML = '<span style="background: var(--cream); padding: 0 12px;">Conversation Thread</span>';
+    chatThread.appendChild(dayDiv);
+
+    // Add student's original concern
+    const studentMsg = document.createElement('div');
+    studentMsg.className = 'thread-message student';
+    const studentDate = new Date(concern.created_at);
+    const studentTime = studentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+    studentMsg.innerHTML = `
+      <div class="thread-avatar">${initials}</div>
+      <div class="thread-bubble-wrap">
+        <div class="thread-message-name">You</div>
+        <div class="thread-bubble">${escapeHtml(concern.message)}</div>
+        <div class="thread-message-time">${studentDate.toLocaleDateString()} ${studentTime}</div>
+      </div>
+    `;
+    chatThread.appendChild(studentMsg);
+
+    // Add staff replies
+    if (concern.replies && concern.replies.length > 0) {
+      concern.replies.forEach(reply => {
+        const staffMsg = document.createElement('div');
+        staffMsg.className = 'thread-message staff';
+        const replyDate = new Date(reply.created_at);
+        const replyTime = replyDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+        staffMsg.innerHTML = `
+          <div class="thread-bubble-wrap">
+            <div class="thread-message-name">${escapeHtml(reply.staff_name)}</div>
+            <div class="thread-bubble">${escapeHtml(reply.message).replace(/\n/g, '<br>')}</div>
+            <div class="thread-message-time">${replyDate.toLocaleDateString()} ${replyTime}</div>
+          </div>
+          <div class="thread-avatar">S</div>
+        `;
+        chatThread.appendChild(staffMsg);
+      });
+    }
+
+    // Update composer based on status
+    const composerHint = document.getElementById('composerHint');
+    const replyForm = document.getElementById('replyForm');
+    const feedbackForm = document.getElementById('feedbackForm');
+
+    replyForm.style.display = 'none';
+    feedbackForm.style.display = 'none';
+
+    if (concern.status.toLowerCase() === 'onhold' || concern.status.toLowerCase() === 'on hold') {
+      composerHint.textContent = 'You can reply to this concern because it\'s on hold. Type your reply below.';
+      replyForm.style.display = 'flex';
+
+      // Clear and setup reply button
+      document.getElementById('replyInput').value = '';
+      document.getElementById('sendReplyBtn').onclick = () => submitStudentReply(inquiryId, concern);
+    } else if (concern.status.toLowerCase() === 'resolved') {
+      composerHint.textContent = 'This concern has been resolved. Please provide your feedback below.';
+      feedbackForm.style.display = 'block';
+      setupFeedbackForm(inquiryId, concern);
+    } else {
+      composerHint.textContent = 'Staff is working on your concern. Check back soon for updates.';
+    }
+
+    // Show the chat view
+    chatView.classList.add('active');
+
+    // Scroll to bottom
+    setTimeout(() => {
+      chatThread.scrollTop = chatThread.scrollHeight;
+    }, 100);
+
+  } catch (error) {
+    console.error('Error opening thread view:', error);
+  }
+}
+
+function closeChatView() {
+  document.getElementById('chatView').classList.remove('active');
+}
+
+function capitalize(str) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+async function submitStudentReply(inquiryId, concern) {
+  const message = document.getElementById('replyInput').value.trim();
+  if (!message) return;
+
+  const btn = document.getElementById('sendReplyBtn');
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('api/submit_student_reply.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': CSRF_TOKEN
+      },
+      body: JSON.stringify({
+        inquiry_id: inquiryId,
+        message: message
+      })
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      // Add the new message to the thread
+      const chatThread = document.getElementById('chatThread');
+      const studentMsg = document.createElement('div');
+      studentMsg.className = 'thread-message student';
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+      studentMsg.innerHTML = `
+        <div class="thread-avatar">${initials}</div>
+        <div class="thread-bubble-wrap">
+          <div class="thread-message-name">You</div>
+          <div class="thread-bubble">${escapeHtml(message)}</div>
+          <div class="thread-message-time">${now.toLocaleDateString()} ${timeStr}</div>
+        </div>
+      `;
+      chatThread.appendChild(studentMsg);
+
+      document.getElementById('replyInput').value = '';
+      setTimeout(() => {
+        chatThread.scrollTop = chatThread.scrollHeight;
+      }, 100);
+    } else {
+      alert('Failed to submit reply: ' + (result.error || 'Unknown error'));
+    }
+  } catch (error) {
+    console.error('Error submitting reply:', error);
+    alert('Error submitting reply');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function setupFeedbackForm(inquiryId, concern) {
+  let selectedRating = 0;
+
+  document.querySelectorAll('.emoji-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.onclick = function() {
+      document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+      this.classList.add('selected');
+      selectedRating = parseInt(this.getAttribute('data-rating'));
+    };
+  });
+
+  document.getElementById('submitFeedbackBtn').onclick = async () => {
+    if (!selectedRating) {
+      alert('Please select a rating');
+      return;
+    }
+
+    const comment = document.getElementById('feedbackComment').value.trim();
+    const btn = document.getElementById('submitFeedbackBtn');
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('api/submit_feedback.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': CSRF_TOKEN
+        },
+        body: JSON.stringify({
+          inquiry_id: inquiryId,
+          rating: selectedRating,
+          comment: comment
+        })
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        alert('Thank you for your feedback!');
+        document.getElementById('feedbackForm').innerHTML = '<p style="text-align: center; color: var(--muted);">Feedback submitted. Thank you!</p>';
+      } else {
+        alert('Failed to submit feedback: ' + (result.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      alert('Error submitting feedback');
+    } finally {
+      btn.disabled = false;
+    }
+  };
+}
 
 // Additional CSS for escalation messages
 const escalationStyles = `

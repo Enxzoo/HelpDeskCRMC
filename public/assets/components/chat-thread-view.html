@@ -1,0 +1,311 @@
+<!-- Chat View for Staff Replies Thread -->
+<div id="chatView" class="chat-view" style="display: none;">
+  <div class="chat-header">
+    <button class="back-btn" onclick="closeChatView()">
+      <svg class="icon"><use href="#i-back"/></svg>
+    </button>
+    <div class="chat-info">
+      <h1 class="chat-title" id="chatTitle">Concern Thread</h1>
+      <p class="chat-subtitle" id="chatSubtitle">Office • Status</p>
+    </div>
+  </div>
+
+  <div class="chat-thread" id="chatThread">
+    <!-- Messages will be populated here -->
+  </div>
+
+  <div class="composer" id="composer">
+    <div class="composer-hint" id="composerHint">
+      Loading...
+    </div>
+    <div class="reply-form" id="replyForm" style="display: none;">
+      <div class="reply-input-wrap">
+        <textarea id="replyInput" placeholder="Type your reply..." rows="3"></textarea>
+        <button id="sendReplyBtn" class="send-btn">
+          <svg class="icon"><use href="#i-send"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="feedback-form" id="feedbackForm" style="display: none;">
+      <h3>How was your experience?</h3>
+      <p>Please rate how well we resolved your concern:</p>
+      <div class="feedback-rating">
+        <button class="emoji-btn" data-rating="1">😞</button>
+        <button class="emoji-btn" data-rating="2">😐</button>
+        <button class="emoji-btn" data-rating="3">😊</button>
+        <button class="emoji-btn" data-rating="4">😄</button>
+        <button class="emoji-btn" data-rating="5">🤩</button>
+      </div>
+      <textarea id="feedbackComment" placeholder="Optional: Tell us more about your experience..." rows="3"></textarea>
+      <button id="submitFeedbackBtn" class="feedback-submit-btn">Submit Feedback</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.chat-view {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.chat-view.active {
+  display: flex;
+}
+
+.chat-header {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--amber);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.chat-info {
+  flex: 1;
+}
+
+.chat-title {
+  font-weight: 700;
+  font-size: 15px;
+  margin: 0;
+}
+
+.chat-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 2px 0 0;
+}
+
+.chat-thread {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.thread-message {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.thread-message.student {
+  justify-content: flex-start;
+}
+
+.thread-message.staff {
+  justify-content: flex-end;
+}
+
+.thread-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: white;
+  flex: none;
+}
+
+.thread-message.student .thread-avatar {
+  background: linear-gradient(135deg, var(--amber), var(--amber-dk));
+}
+
+.thread-message.staff .thread-avatar {
+  background: linear-gradient(135deg, #b8231c, #8f1912);
+}
+
+.thread-bubble-wrap {
+  max-width: 70%;
+}
+
+.thread-message-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.thread-bubble {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.thread-message.staff .thread-bubble {
+  background: linear-gradient(135deg, var(--amber), var(--amber-dk));
+  border: none;
+  color: var(--ink);
+}
+
+.thread-message-time {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.composer {
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  padding: 14px 20px;
+}
+
+.composer-hint {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  padding: 12px;
+}
+
+.reply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reply-input-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+#replyInput {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 40px;
+}
+
+.send-btn {
+  width: 40px;
+  height: 40px;
+  background: var(--amber);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+
+.feedback-form {
+  text-align: center;
+}
+
+.feedback-form h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.feedback-form p {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.feedback-rating {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.emoji-btn {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  background: var(--card);
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.emoji-btn:hover {
+  border-color: var(--amber);
+  transform: scale(1.1);
+}
+
+.emoji-btn.selected {
+  border-color: var(--amber);
+  background: var(--amber);
+}
+
+#feedbackComment {
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  margin-bottom: 16px;
+}
+
+.feedback-submit-btn {
+  background: var(--amber);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+@media (max-width: 600px) {
+  .thread-bubble-wrap {
+    max-width: 85%;
+  }
+
+  .feedback-rating {
+    gap: 4px;
+  }
+
+  .emoji-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+}
+</style>
