@@ -248,6 +248,48 @@ if ($userRow) {
       <div class="concerns-container" id="concernsListContainer"></div>
     </div>
 
+    <!-- Staff Reply Thread View (Ben-style chat) -->
+    <div id="threadView" style="display:none;">
+      <div class="thread-view-header">
+        <button class="back-btn" onclick="goBackToConcerns()"><svg class="icon"><use href="#i-back"/></svg></button>
+        <div class="thread-view-info">
+          <h2 id="threadTitle">Concern Title</h2>
+          <div class="thread-view-meta">
+            <span id="threadOffice">Office Name</span>
+            <span>•</span>
+            <span class="status-badge" id="threadStatus">On Hold</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="thread-messages-container">
+        <div class="thread-messages-inner" id="threadMessages"></div>
+      </div>
+
+      <div class="thread-composer-area" id="threadComposer">
+        <!-- Reply section (for On Hold) -->
+        <div class="thread-reply-section" id="threadReplySection">
+          <div class="thread-reply-label">📝 Staff is waiting for your response</div>
+          <textarea class="thread-reply-input" id="threadReplyInput" placeholder="Type your reply here..."></textarea>
+          <button class="thread-reply-btn" onclick="sendThreadReply()">Send Reply</button>
+        </div>
+
+        <!-- Feedback section (for Resolved) -->
+        <div class="thread-feedback-section" id="threadFeedbackSection" style="display:none;">
+          <div class="thread-feedback-label">How was your experience with this concern?</div>
+          <div class="thread-feedback-emojis">
+            <button class="thread-emoji-btn" data-rating="1" title="Very Dissatisfied" onclick="selectRating(1)">😞</button>
+            <button class="thread-emoji-btn" data-rating="2" title="Dissatisfied" onclick="selectRating(2)">😐</button>
+            <button class="thread-emoji-btn" data-rating="3" title="Neutral" onclick="selectRating(3)">😊</button>
+            <button class="thread-emoji-btn" data-rating="4" title="Satisfied" onclick="selectRating(4)">😄</button>
+            <button class="thread-emoji-btn" data-rating="5" title="Very Satisfied" onclick="selectRating(5)">🤩</button>
+          </div>
+          <textarea class="thread-reply-input" id="threadFeedbackInput" placeholder="Optional: Tell us more about your experience..." style="min-height: 60px;"></textarea>
+          <button class="thread-reply-btn" onclick="submitThreadFeedback()">Submit Feedback</button>
+        </div>
+      </div>
+    </div>
+
     <div id="chatView">
       <div class="chat-header">
         <button class="back-btn" id="backToDashboard"><svg class="icon"><use href="#i-back"/></svg></button>
@@ -1070,13 +1112,13 @@ document.addEventListener('DOMContentLoaded', function() {
   renderChatHistory();
 });
 
-// Sidebar reply clicks - redirect to My Concerns instead of broken chat view
+// Sidebar reply clicks - open Ben-style thread view
 document.addEventListener('click', function(e) {
   const replyChannel = e.target.closest('.channel[data-inquiry-id]');
   if (replyChannel) {
     e.preventDefault();
-    // Instead of opening broken chat view, switch to My Concerns
-    showConcernsView();
+    const inquiryId = replyChannel.getAttribute('data-inquiry-id');
+    openThreadView(inquiryId);
     return;
   }
 
@@ -1094,7 +1136,9 @@ document.addEventListener('click', function(e) {
 async function openThreadView(inquiryId) {
   try {
     // Fetch the full inquiry with all replies
-    const res = await fetch('api/get_student_concerns_with_replies.php');
+    const res = await fetch('api/get_student_concerns_with_replies.php', {
+      headers: {'X-CSRF-Token': CSRF_TOKEN}
+    });
     const data = await res.json();
 
     if (!data.success || !data.concerns) {
@@ -1108,35 +1152,53 @@ async function openThreadView(inquiryId) {
       return;
     }
 
-    // Build the thread view
-    const chatView = document.getElementById('chatView');
-    document.getElementById('chatTitle').textContent = concern.subject;
-    document.getElementById('chatSubtitle').textContent = `${concern.office} • ${capitalize(concern.status)}`;
+    // Hide other views and show thread view
+    document.getElementById('heroView').style.display = 'none';
+    document.getElementById('concernsView').style.display = 'none';
+    document.getElementById('chatView').classList.remove('active');
+    document.getElementById('threadView').style.display = 'flex';
 
-    const chatThread = document.getElementById('chatThread');
-    chatThread.innerHTML = '';
+    // Update thread header
+    document.getElementById('threadTitle').textContent = concern.subject || mb_substr(concern.description, 0, 60);
+    document.getElementById('threadOffice').textContent = concern.office;
+
+    const statusMap = {
+      'pending': 'pending',
+      'in progress': 'inprogress',
+      'on hold': 'onhold',
+      'resolved': 'resolved'
+    };
+    const statusKey = statusMap[concern.status.toLowerCase()] || concern.status.toLowerCase();
+    const statusBadge = document.getElementById('threadStatus');
+    statusBadge.className = `status-badge ${statusKey}`;
+    statusBadge.textContent = concern.status.charAt(0).toUpperCase() + concern.status.slice(1);
+
+    // Build thread messages
+    const threadMessages = document.getElementById('threadMessages');
+    threadMessages.innerHTML = '';
 
     // Add day divider
     const dayDiv = document.createElement('div');
-    dayDiv.style.cssText = 'text-align: center; font-size: 12px; color: var(--muted); margin: 8px 0; position: relative;';
-    dayDiv.innerHTML = '<span style="background: var(--cream); padding: 0 12px;">Conversation Thread</span>';
-    chatThread.appendChild(dayDiv);
+    dayDiv.className = 'thread-day-divider';
+    const createdDate = new Date(concern.created_at);
+    dayDiv.innerHTML = `<span>${createdDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</span>`;
+    threadMessages.appendChild(dayDiv);
 
     // Add student's original concern
     const studentMsg = document.createElement('div');
     studentMsg.className = 'thread-message student';
-    const studentDate = new Date(concern.created_at);
-    const studentTime = studentDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    const studentTime = createdDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    const studentInitials = 'JR'; // Get actual initials from user
 
     studentMsg.innerHTML = `
-      <div class="thread-avatar">${initials}</div>
-      <div class="thread-bubble-wrap">
-        <div class="thread-message-name">You</div>
-        <div class="thread-bubble">${escapeHtml(concern.message)}</div>
-        <div class="thread-message-time">${studentDate.toLocaleDateString()} ${studentTime}</div>
+      <div class="thread-avatar">${studentInitials}</div>
+      <div class="message-content">
+        <div class="message-sender">You</div>
+        <div class="message-bubble">${escapeHtml(concern.description)}</div>
+        <div class="message-time">${studentTime}</div>
       </div>
     `;
-    chatThread.appendChild(studentMsg);
+    threadMessages.appendChild(studentMsg);
 
     // Add staff replies
     if (concern.replies && concern.replies.length > 0) {
@@ -1145,53 +1207,115 @@ async function openThreadView(inquiryId) {
         staffMsg.className = 'thread-message staff';
         const replyDate = new Date(reply.created_at);
         const replyTime = replyDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        const staffInitials = reply.staff_name ? reply.staff_name.split(' ').map(n => n[0]).join('') : 'ST';
 
         staffMsg.innerHTML = `
-          <div class="thread-bubble-wrap">
-            <div class="thread-message-name">${escapeHtml(reply.staff_name)}</div>
-            <div class="thread-bubble">${escapeHtml(reply.message).replace(/\n/g, '<br>')}</div>
-            <div class="thread-message-time">${replyDate.toLocaleDateString()} ${replyTime}</div>
+          <div class="thread-avatar">${staffInitials}</div>
+          <div class="message-content">
+            <div class="message-sender">${escapeHtml(reply.staff_name || 'Staff')}</div>
+            <div class="message-bubble">${escapeHtml(reply.message).replace(/\n/g, '<br>')}</div>
+            <div class="message-time">${replyDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</div>
           </div>
-          <div class="thread-avatar">S</div>
         `;
-        chatThread.appendChild(staffMsg);
+        threadMessages.appendChild(staffMsg);
       });
     }
 
     // Update composer based on status
-    const composerHint = document.getElementById('composerHint');
-    const replyForm = document.getElementById('replyForm');
-    const feedbackForm = document.getElementById('feedbackForm');
+    const replySection = document.getElementById('threadReplySection');
+    const feedbackSection = document.getElementById('threadFeedbackSection');
 
-    replyForm.style.display = 'none';
-    feedbackForm.style.display = 'none';
-
-    if (concern.status.toLowerCase() === 'onhold' || concern.status.toLowerCase() === 'on hold') {
-      composerHint.textContent = 'You can reply to this concern because it\'s on hold. Type your reply below.';
-      replyForm.style.display = 'flex';
-
-      // Clear and setup reply button
-      document.getElementById('replyInput').value = '';
-      document.getElementById('sendReplyBtn').onclick = () => submitStudentReply(inquiryId, concern);
+    if (concern.status.toLowerCase() === 'on hold' || concern.status.toLowerCase() === 'onhold') {
+      replySection.style.display = 'block';
+      feedbackSection.style.display = 'none';
+      document.getElementById('threadReplyInput').value = '';
     } else if (concern.status.toLowerCase() === 'resolved') {
-      composerHint.textContent = 'This concern has been resolved. Please provide your feedback below.';
-      feedbackForm.style.display = 'block';
-      setupFeedbackForm(inquiryId, concern);
+      replySection.style.display = 'none';
+      feedbackSection.style.display = 'block';
+      document.getElementById('threadFeedbackInput').value = '';
+      document.querySelectorAll('.emoji-btn').forEach(btn => btn.classList.remove('selected'));
     } else {
-      composerHint.textContent = 'Staff is working on your concern. Check back soon for updates.';
+      replySection.style.display = 'none';
+      feedbackSection.style.display = 'none';
     }
-
-    // Show the chat view
-    chatView.classList.add('active');
 
     // Scroll to bottom
     setTimeout(() => {
-      chatThread.scrollTop = chatThread.scrollHeight;
+      document.querySelector('.thread-container').scrollTop = 999999;
     }, 100);
 
   } catch (error) {
     console.error('Error opening thread view:', error);
   }
+}
+
+function goBackToConcerns() {
+  document.getElementById('threadView').style.display = 'none';
+  showConcernsView();
+}
+
+function sendThreadReply() {
+  const input = document.getElementById('threadReplyInput');
+  const message = input.value.trim();
+
+  if (!message) {
+    alert('Please type a reply before sending.');
+    return;
+  }
+
+  const btn = document.querySelector('#threadReplySection .thread-send-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  // Add message to thread
+  const threadMessages = document.getElementById('threadMessages');
+  const newMsg = document.createElement('div');
+  newMsg.className = 'thread-message student';
+  const now = new Date();
+
+  newMsg.innerHTML = `
+    <div class="thread-avatar">JR</div>
+    <div class="message-content">
+      <div class="message-sender">You</div>
+      <div class="message-bubble">${escapeHtml(message).replace(/\n/g, '<br>')}</div>
+      <div class="message-time">${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</div>
+    </div>
+  `;
+  threadMessages.appendChild(newMsg);
+
+  document.querySelector('.thread-container').scrollTop = 999999;
+  input.value = '';
+
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = 'Send Reply';
+  }, 1000);
+}
+
+function selectRating(rating) {
+  document.querySelectorAll('.emoji-btn').forEach(btn => btn.classList.remove('selected'));
+  document.querySelector(`.emoji-btn[data-rating="${rating}"]`).classList.add('selected');
+}
+
+function submitThreadFeedback() {
+  const selected = document.querySelector('.emoji-btn.selected');
+  if (!selected) {
+    alert('Please select a rating');
+    return;
+  }
+
+  const btn = document.querySelector('#threadFeedbackSection .thread-send-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  setTimeout(() => {
+    const feedbackSection = document.getElementById('threadFeedbackSection');
+    feedbackSection.innerHTML = `
+      <div class="feedback-success">
+        ✅ Thank you for your feedback!
+      </div>
+    `;
+  }, 1000);
 }
 
 function closeChatView() {

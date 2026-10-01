@@ -245,6 +245,338 @@ h1,h3,h4{letter-spacing:-0.01em;margin:0;}
 
 /* Enhanced My Concerns Section */
 .concerns-view{padding:16px;max-width:800px;margin:0 auto;}
+
+/* Ben-style Thread View for Staff Replies */
+.thread-view {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--cream);
+}
+
+.thread-header {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.thread-info {
+  flex: 1;
+}
+
+.thread-title {
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+
+.thread-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.thread-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.thread-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.thread-message {
+  display: flex;
+  gap: 12px;
+  max-width: 80%;
+}
+
+.thread-message.student {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.thread-message.staff {
+  align-self: flex-start;
+}
+
+.thread-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.thread-message.student .thread-avatar {
+  background: linear-gradient(135deg, var(--amber), var(--amber-dk));
+  color: var(--ink);
+}
+
+.thread-message.staff .thread-avatar {
+  background: linear-gradient(135deg, #b8231c, #8f1912);
+}
+
+.message-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.message-sender {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.thread-message.student .message-sender {
+  text-align: right;
+}
+
+.message-bubble {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.thread-message.student .message-bubble {
+  background: linear-gradient(135deg, var(--amber), var(--amber-dk));
+  border: none;
+  color: var(--ink);
+  border-top-right-radius: 4px;
+}
+
+.thread-message.staff .message-bubble {
+  border-top-left-radius: 4px;
+}
+
+.message-time {
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.thread-message.student .message-time {
+  text-align: right;
+}
+
+.thread-day-divider {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 16px 0;
+  position: relative;
+}
+
+.thread-day-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--line);
+  z-index: 0;
+}
+
+.thread-day-divider span {
+  background: var(--cream);
+  padding: 0 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.thread-composer {
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  padding: 16px 20px;
+  flex-shrink: 0;
+}
+
+.reply-section, .feedback-section {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.reply-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--red);
+}
+
+.feedback-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #059669;
+  margin-bottom: 16px;
+}
+
+.thread-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 80px;
+  margin-bottom: 12px;
+  background: var(--cream);
+}
+
+.thread-input:focus {
+  outline: none;
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(184, 35, 28, 0.1);
+}
+
+.thread-send-btn {
+  background: var(--red);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.thread-send-btn:hover:not(:disabled) {
+  background: #991b1b;
+  transform: translateY(-1px);
+}
+
+.thread-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.feedback-section {
+  background: #f0fdf4;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #dcfce7;
+}
+
+.feedback-emojis {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.emoji-btn {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  background: var(--card);
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emoji-btn:hover {
+  border-color: #059669;
+  transform: scale(1.1);
+}
+
+.emoji-btn.selected {
+  border-color: #059669;
+  background: #059669;
+  transform: scale(1.1);
+}
+
+.feedback-section .thread-input {
+  background: var(--card);
+  min-height: 60px;
+}
+
+.feedback-section .thread-input:focus {
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.feedback-section .thread-send-btn {
+  background: #059669;
+}
+
+.feedback-section .thread-send-btn:hover:not(:disabled) {
+  background: #047857;
+}
+
+.feedback-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #065f46;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .thread-container {
+    padding: 16px 12px;
+  }
+
+  .thread-composer {
+    padding: 12px;
+  }
+
+  .thread-message {
+    max-width: 90%;
+  }
+
+  .feedback-emojis {
+    gap: 6px;
+  }
+
+  .emoji-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+}
 .concerns-header{margin-bottom:24px;}
 .concerns-header h1{font-size:22px;font-weight:700;color:var(--ink);margin:0 0 4px;}
 .concerns-header p{color:var(--muted);font-size:13px;margin:0;}
