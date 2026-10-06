@@ -30,3 +30,9 @@ loadEnv(__DIR__ . '/../../.env');
 
 // Define constants for easy access
 define('GEMINI_API_KEY', env('GEMINI_API_KEY', ''));
+$triageModel = trim((string)env('GEMINI_TRIAGE_MODEL', ''));
+define('GEMINI_TRIAGE_MODEL', $triageModel !== '' ? $triageModel : 'gemini-3.6-flash');
+
+define('GROQ_API_KEY', env('GROQ_API_KEY', ''));
+$groqTriageModel = trim((string)env('GROQ_TRIAGE_MODEL', ''));
+define('GROQ_TRIAGE_MODEL', $groqTriageModel !== '' ? $groqTriageModel : 'openai/gpt-oss-20b');

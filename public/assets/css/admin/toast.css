@@ -1,0 +1,27 @@
+.admin-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  background: var(--ink-2);
+  color: #fff;
+  border-left: 4px solid var(--amber);
+  border-radius: 6px;
+  padding: 14px 20px;
+  font-size: 13px;
+  box-shadow: 0 8px 30px rgb(0 0 0 / 12%);
+  z-index: 200;
+  max-width: calc(100vw - 32px);
+  overflow-wrap: anywhere;
+}
+
+.filter-bar .search-field input {
+  border: 0;
+  border-radius: 0;
+  padding: 10px 0;
+  background: transparent;
+  margin: 0;
+}
+
+.filter-bar label>select {
+  margin-top: 0;
+}

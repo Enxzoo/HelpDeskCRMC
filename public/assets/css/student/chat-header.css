@@ -1,0 +1,89 @@
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 22px;
+  border-bottom: 1px solid var(--line);
+  background: #fffdf9;
+  flex: none;
+}
+
+.back-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7a7362;
+  flex: none;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+.back-btn:hover {
+  background: #f1ede4;
+}
+
+.chat-header .ic {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg,var(--amber),var(--amber-dk));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.chat-header .ic .icon {
+  stroke: var(--ink);
+  width: 17px;
+  height: 17px;
+}
+
+.chat-header .ic.has-office-logo {
+  overflow: hidden;
+  padding: 3px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.chat-header .ic.has-office-logo .category-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.chat-header h2 {
+  margin: 0;
+  font-size: 14.5px;
+}
+
+.chat-header p {
+  margin: 1px 0 0;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.status-pill {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #eaf7ee;
+  color: #1e7a44;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  flex: none;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #1e7a44;
+}

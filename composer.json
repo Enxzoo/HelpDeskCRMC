@@ -1,0 +1,19 @@
+{
+    "name": "crmc/helpdesk",
+    "type": "project",
+    "require": {
+        "php": ">=8.3",
+        "phpmailer/phpmailer": "^7.0",
+        "minishlink/web-push": "^10.0",
+        "guzzlehttp/guzzle": "^7.10"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
+        },
+        "sort-packages": true
+    },
+    "require-dev": {
+        "zemmelmootez/phplocator": "*"
+    }
+}

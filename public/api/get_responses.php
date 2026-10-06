@@ -20,14 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 // Require authenticated session
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
+$currentUser = requireApiUser(['student', 'staff', 'admin']);
 
 // Get inquiry ID
-$inquiryId = (int)($_GET['inquiry_id'] ?? 0);
+$inquiryId = (int) filter_var($_GET['inquiry_id'] ?? 0, FILTER_VALIDATE_INT);
 
 if ($inquiryId <= 0) {
     http_response_code(400);
@@ -48,11 +44,11 @@ try {
     }
 
     // Check if user has permission to view this inquiry
-    $userId = (int)$_SESSION['user_id'];
+    $userId = (int) $_SESSION['user_id'];
     $userRole = $_SESSION['role'];
 
     // Students can only view their own inquiries
-    if ($userRole === 'student' && (int)$inquiry['student_id'] !== $userId) {
+    if ($userRole === 'student' && (int) $inquiry['student_id'] !== $userId) {
         http_response_code(403);
         echo json_encode(['error' => 'Access denied']);
         exit;
@@ -60,8 +56,8 @@ try {
 
     // Staff can view inquiries from their office
     if ($userRole === 'staff') {
-        $officeId = $_SESSION['office_id'] ?? null;
-        if ($officeId && (int)$inquiry['office_id'] !== (int)$officeId) {
+        $officeId = $currentUser['office_id'];
+        if (!$officeId || (int) $inquiry['office_id'] !== (int) $officeId) {
             http_response_code(403);
             echo json_encode(['error' => 'Access denied']);
             exit;

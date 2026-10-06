@@ -1,0 +1,280 @@
+.student-profile-view {
+  --profile-muted: #625e54;
+  --profile-line: #ded6c9;
+  height: 100%;
+  overflow-y: auto;
+  padding: 24px 28px 36px;
+  background: var(--cream);
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+.student-profile-view * {
+  letter-spacing: 0;
+}
+
+.profile-content {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+#profileView .profile-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  margin-bottom: 18px;
+  padding-right: 108px;
+}
+
+.profile-heading-row>div,
+.profile-identity-name {
+  min-width: 0;
+}
+
+#profileView .profile-heading-row h1 {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+#profileView .profile-heading-row p {
+  color: var(--profile-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.profile-mobile-back {
+  display: none;
+  flex: none;
+  text-decoration: none;
+}
+
+.profile-identity {
+  display: grid;
+  grid-template-columns: 44px minmax(0,1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 0 24px;
+  border-bottom: 1px solid var(--profile-line);
+}
+
+#profileView .profile-avatar {
+  width: 44px;
+  height: 44px;
+  font-size: 15px;
+}
+
+.profile-identity h2 {
+  margin: 0 0 2px;
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.profile-identity p {
+  margin: 0;
+  color: var(--profile-muted);
+  font-size: 13px;
+}
+
+.profile-identity p strong {
+  margin-left: 6px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.student-profile-view .account-success>img {
+  flex: none;
+}
+
+.student-profile-view .account-error,
+.student-profile-view .account-success {
+  margin: 20px 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--teal);
+  background: #eef7f8;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.student-profile-view .account-success {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  border-color: #27775c;
+  background: #edf7f2;
+  color: #245a48;
+}
+
+.student-profile-view .account-success img {
+  margin-top: 2px;
+}
+
+.student-profile-view .account-error {
+  border-color: var(--red);
+  background: #fff1ef;
+  color: #8e241c;
+}
+
+.profile-detail-section {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--profile-line);
+}
+
+.profile-detail-section h2 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+.student-profile-view .account-details {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 18px 32px;
+  margin: 0;
+}
+
+.student-profile-view .account-details div {
+  min-width: 0;
+}
+
+.student-profile-view .account-details .full {
+  grid-column: 1/-1;
+}
+
+.student-profile-view dt {
+  margin-bottom: 4px;
+  color: var(--profile-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.student-profile-view dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.student-profile-view dd.profile-empty-value {
+  color: var(--profile-muted);
+  font-weight: 400;
+}
+
+.profile-history {
+  margin-top: 18px;
+}
+
+.profile-history>summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 10px 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.profile-history>summary::-webkit-details-marker {
+  display: none;
+}
+
+.profile-history>summary small {
+  margin-left: auto;
+  color: var(--profile-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.profile-history-chevron {
+  flex: none;
+  transition: transform .15s;
+}
+
+.profile-history[open] .profile-history-chevron {
+  transform: rotate(90deg);
+}
+
+.profile-history-empty {
+  margin: 12px 0;
+  color: var(--profile-muted);
+  font-size: 13px;
+}
+
+.student-profile-view .account-history article {
+  padding: 14px 0;
+  border-top: 1px solid var(--profile-line);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.student-profile-view .account-history article>div {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.student-profile-view .account-history time {
+  color: var(--profile-muted);
+  font-size: 12px;
+}
+
+.student-profile-view .account-history p {
+  margin: 5px 0 0;
+  color: var(--profile-muted);
+}
+
+.profile-legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 24px;
+  font-size: 13px;
+}
+
+.profile-legal-links a {
+  color: #845b00;
+  text-underline-offset: 3px;
+}
+
+@media (max-width:960px) {
+  .student-profile-view {
+    height: 100dvh;
+  }
+
+  .profile-mobile-back {
+    display: inline-flex;
+  }
+}
+
+@media (max-width:600px) {
+  .student-profile-view {
+    padding: 24px 16px 32px;
+  }
+
+  .student-profile-view .account-details {
+    grid-template-columns: minmax(0,1fr);
+    gap: 16px;
+  }
+
+  .profile-history>summary {
+    gap: 7px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .profile-history-chevron {
+    transition: none;
+  }
+}

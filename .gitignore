@@ -1,5 +1,12 @@
 # Environment / secrets
 .env
+.superdesign/tmp/
+tests/.runtime/
+tests/node_modules/
+storage/sessions/
+vendor/
+storage/notification-worker.pid
+storage/composer-cache/
 
 # Logs — keep folder, ignore contents
 logs/*.log

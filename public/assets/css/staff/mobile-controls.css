@@ -1,0 +1,16 @@
+.mobile-nav {
+  display: none;
+}
+
+.mobile-profile-menu {
+  display: none;
+}
+
+.concern-card:focus-visible,.filter-btn:focus-visible,.btn:focus-visible,.back-to-queue:focus-visible,.mobile-nav-item:focus-visible {
+  outline: 3px solid rgba(201,138,6,.35);
+  outline-offset: 2px;
+}
+
+[hidden] {
+  display: none !important;
+}

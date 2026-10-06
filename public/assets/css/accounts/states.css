@@ -1,0 +1,44 @@
+.account-state {
+  border-left: 3px solid var(--teal);
+  background: #eef7f8;
+  padding: 12px 14px;
+  margin: 20px 0;
+  line-height: 1.6;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.account-state strong {
+  display: block;
+  color: #155e6d;
+}
+
+.account-state p {
+  margin: 6px 0 0;
+}
+
+.account-error {
+  border-left: 3px solid #b8231c;
+  color: #a3221b;
+  background: #fff1ef;
+  padding: 12px 14px;
+  margin: 20px 0;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.account-success {
+  background: #edf7f2;
+  color: #236548;
+  padding: 12px 14px;
+  margin: 20px 0;
+  line-height: 1.6;
+}
+
+.account-error,.account-success {
+  font-size: 12px;
+}
+
+.account-success {
+  border-left: 3px solid var(--teal);
+}

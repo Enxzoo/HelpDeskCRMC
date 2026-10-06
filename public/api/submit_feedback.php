@@ -1,20 +1,17 @@
 <?php
 /**
  * submit_feedback.php
- * API endpoint for students to rate resolved concerns
+ * API endpoint for students to rate concerns that are not On Hold
  */
 
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/helpers/csrf.php';
+require_once __DIR__ . '/../../app/middleware/AuthMiddleware.php';
 
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
+requireApiUser(['student']);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -22,10 +19,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+if (!csrf_verify_header()) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Invalid CSRF token']);
+    exit;
+}
+
 $input = json_decode(file_get_contents('php://input'), true);
-$inquiryId = (int)($input['inquiry_id'] ?? 0);
-$rating = (int)($input['rating'] ?? 0);
+if (!is_array($input) || (isset($input['comment']) && !is_string($input['comment']))) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid feedback data']);
+    exit;
+}
+$inquiryId = (int) filter_var($input['inquiry_id'] ?? 0, FILTER_VALIDATE_INT);
+$rating = (int) filter_var($input['rating'] ?? 0, FILTER_VALIDATE_INT);
 $comment = trim($input['comment'] ?? '');
+if (mb_strlen($comment) > 500) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Feedback comments must be 500 characters or fewer.']);
+    exit;
+}
 
 if (!$inquiryId || !$rating || $rating < 1 || $rating > 5) {
     echo json_encode(['error' => 'Invalid inquiry ID or rating (1-5 required)']);
@@ -35,7 +48,7 @@ if (!$inquiryId || !$rating || $rating < 1 || $rating > 5) {
 try {
     $db = getDbConnection();
 
-    // Verify the inquiry belongs to this student and is resolved
+    // Verify the inquiry belongs to this student
     $verifyStmt = $db->prepare("
         SELECT student_id, status
         FROM inquiries
@@ -52,14 +65,15 @@ try {
         exit;
     }
 
-    if ((int)$inquiry['student_id'] !== (int)$_SESSION['user_id']) {
+    if ((int) $inquiry['student_id'] !== (int) $_SESSION['user_id']) {
         http_response_code(403);
         echo json_encode(['error' => 'Access denied']);
         exit;
     }
 
-    if ($inquiry['status'] !== 'Resolved') {
-        echo json_encode(['error' => 'Can only rate resolved concerns']);
+    if ($inquiry['status'] === 'On Hold') {
+        http_response_code(409);
+        echo json_encode(['error' => 'Feedback is unavailable while a response is requested']);
         exit;
     }
 

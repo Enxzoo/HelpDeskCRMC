@@ -1,0 +1,79 @@
+* {
+  letter-spacing: 0;
+}
+
+.account-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+  flex-wrap: wrap;
+}
+
+.account-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--heading-font);
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.account-brand img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.account-nav {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.account-nav a {
+  color: var(--amber-dk);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.account-nav form {
+  margin: 0;
+}
+
+.account-shell {
+  width: min(960px,100%);
+  margin: 0 auto;
+  padding: 28px 28px 48px;
+}
+
+.account-shell.wide {
+  width: min(1280px,100%);
+}
+
+.account-title {
+  font-size: 22px;
+  line-height: 1.4;
+  margin: 0 0 8px;
+}
+
+.account-subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.account-brand span {
+  color: var(--amber-dk);
+}
+
+.account-header {
+  min-height: 76px;
+}

@@ -64,8 +64,16 @@ CREATE TABLE `inquiries` (
   `assigned_staff_id` int UNSIGNED DEFAULT NULL,
   `subject` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
   `description` text COLLATE utf8mb4_general_ci NOT NULL,
-  `status` enum('Pending','In Progress','Resolved') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Pending',
+  `status` enum('Pending','In Progress','Resolved','On Hold') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Pending',
   `source` enum('ai_escalation','general_inquiry') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'general_inquiry',
+  `ai_priority` enum('Critical/Urgent','High','Normal','Low') COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ai_priority_reason` varchar(280) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ai_priority_confidence` decimal(4,3) DEFAULT NULL,
+  `priority_override` enum('Critical/Urgent','High','Normal','Low') COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `priority_override_by` int UNSIGNED DEFAULT NULL,
+  `priority_override_at` timestamp NULL DEFAULT NULL,
+  `duplicate_of_inquiry_id` int UNSIGNED DEFAULT NULL,
+  `duplicate_match_confidence` decimal(4,3) DEFAULT NULL,
   `resolved_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -79,7 +87,7 @@ CREATE TABLE `inquiries` (
 
 CREATE TABLE `inquiry_attachments` (
   `attachment_id` int UNSIGNED NOT NULL,
-  `inquiry_id` int UNSIGNED NOT NULL,
+  `inquiry_id` int UNSIGNED DEFAULT NULL,
   `response_id` int UNSIGNED DEFAULT NULL,
   `uploaded_by` int UNSIGNED NOT NULL,
   `file_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
@@ -142,7 +150,14 @@ INSERT INTO `offices` (`office_id`, `office_name`, `description`, `is_active`, `
 (1, 'Registrar', 'Handles enrollment, records, and academic documents', 1, '2026-09-13 12:49:38', '2026-09-13 12:49:38'),
 (2, 'Cashier', 'Handles tuition, fees, and payment concerns', 1, '2026-09-13 12:49:38', '2026-09-13 12:49:38'),
 (3, 'Guidance Office', 'Handles counseling and student welfare concerns', 1, '2026-09-13 12:49:38', '2026-09-13 12:49:38'),
-(4, 'MIS / IT Office', 'Handles system access and technical concerns', 1, '2026-09-13 12:49:38', '2026-09-13 12:49:38');
+(4, 'MIS / IT Office', 'Handles system access and technical concerns', 1, '2026-09-13 12:49:38', '2026-09-13 12:49:38'),
+(6, 'SASO', 'Handles student affairs and student support concerns', 1, '2026-10-02 00:00:00', '2026-10-02 00:00:00'),
+(7, 'CTE', 'College of Teacher Education', 1, '2026-10-02 00:00:00', '2026-10-02 00:00:00'),
+(8, 'CBE', 'College of Business Education', 1, '2026-10-02 00:00:00', '2026-10-02 00:00:00'),
+(9, 'CCS', 'College of Computer Studies', 1, '2026-10-02 00:00:00', '2026-10-02 00:00:00'),
+(10, 'CCJE', 'College of Justice Education', 1, '2026-10-02 00:00:00', '2026-10-02 00:00:00'),
+(11, 'Psychology Department', 'Handles Psychology Department concerns', 1, '2026-10-02 00:00:00', '2026-10-02 00:00:00'),
+(12, 'Main Office', 'Handles general office concerns', 1, '2026-10-02 00:00:00', '2026-10-02 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -161,6 +176,7 @@ CREATE TABLE `users` (
   `password_hash` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `last_login_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -202,7 +218,11 @@ ALTER TABLE `inquiries`
   ADD KEY `fk_inquiries_concern_type` (`concern_type_id`),
   ADD KEY `idx_inquiries_status` (`status`),
   ADD KEY `idx_inquiries_student` (`student_id`),
-  ADD KEY `idx_inquiries_staff` (`assigned_staff_id`);
+  ADD KEY `idx_inquiries_staff` (`assigned_staff_id`),
+  ADD KEY `idx_inquiries_priority_override_by` (`priority_override_by`),
+  ADD KEY `idx_inquiries_urgency` (`status`,`ai_priority`,`priority_override`),
+  ADD KEY `idx_inquiries_student_office_created` (`student_id`,`office_id`,`created_at`),
+  ADD KEY `idx_inquiries_duplicate_group` (`duplicate_of_inquiry_id`,`created_at`,`status`);
 
 --
 -- Indexes for table `inquiry_attachments`
@@ -322,6 +342,8 @@ ALTER TABLE `inquiries`
   ADD CONSTRAINT `fk_inquiries_concern_type` FOREIGN KEY (`concern_type_id`) REFERENCES `concern_types` (`concern_type_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_inquiries_office` FOREIGN KEY (`office_id`) REFERENCES `offices` (`office_id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_inquiries_staff` FOREIGN KEY (`assigned_staff_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_inquiries_priority_override_by` FOREIGN KEY (`priority_override_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_inquiries_duplicate_root` FOREIGN KEY (`duplicate_of_inquiry_id`) REFERENCES `inquiries` (`inquiry_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_inquiries_student` FOREIGN KEY (`student_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --

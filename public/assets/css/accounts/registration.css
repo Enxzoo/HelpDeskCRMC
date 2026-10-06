@@ -1,0 +1,165 @@
+.register-container {
+  max-width: 680px;
+  padding-top: 32px;
+}
+
+.register-container .login-card {
+  width: 100%;
+}
+
+.registration-progress {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 8px;
+  margin: 0 0 28px;
+  padding: 0 0 20px;
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+
+.registration-progress li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.registration-progress-number {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--muted);
+}
+
+.registration-progress .is-current {
+  color: var(--ink);
+}
+
+.registration-progress .is-current .registration-progress-number {
+  border-color: var(--amber-dk);
+  background: var(--amber);
+  color: var(--ink);
+}
+
+.registration-progress .is-complete,
+.registration-progress .is-complete .registration-progress-number {
+  color: var(--teal);
+}
+
+.registration-progress .is-complete .registration-progress-number {
+  border-color: var(--teal);
+}
+
+.register-container .profile-section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.register-container .profile-section legend {
+  margin-bottom: 18px;
+  padding: 0;
+  font-size: 16px;
+}
+
+.register-container .profile-grid label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.register-container .profile-grid input,
+.register-container .profile-grid select {
+  min-height: 44px;
+  margin-top: 8px;
+  background: var(--cream);
+  font-size: 15px;
+}
+
+.registration-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.registration-actions .registration-back {
+  flex: 0 0 104px;
+  min-height: 48px;
+  cursor: pointer;
+}
+
+.registration-actions .submit-btn {
+  flex: 1;
+  min-height: 48px;
+}
+
+.registration-submit {
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(201,138,6,.3);
+}
+
+.registration-footer {
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.registration-footer a {
+  color: var(--teal);
+  font-weight: 600;
+}
+
+.registration-footer a:hover {
+  text-decoration: underline;
+}
+
+.registration-agreements {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.registration-agreements .profile-acknowledgement {
+  margin: 0 0 16px;
+  font-size: 13px;
+}
+
+.registration-agreements a {
+  color: var(--teal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.register-container .account-state {
+  margin: 0 0 24px;
+}
+
+@media (max-width:600px) {
+  .register-container {
+    padding-top: 16px;
+  }
+
+  .registration-progress {
+    gap: 4px;
+    margin-bottom: 24px;
+  }
+
+  .registration-progress li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    font-size: 11px;
+  }
+
+  .registration-actions .registration-back {
+    flex-basis: 88px;
+  }
+}

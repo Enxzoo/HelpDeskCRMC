@@ -1,0 +1,223 @@
+.sidebar {
+  flex: 0 0 230px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--line);
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 0 6px;
+}
+
+.brand img {
+  height: 28px;
+  width: auto;
+  flex: none;
+}
+
+.brand-name {
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.2;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brand-name span {
+  color: var(--amber-dk);
+}
+
+.office-card {
+  background: linear-gradient(135deg, #fef3c7, #fff9e5);
+  border: 1px solid #f0e2bd;
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 16px;
+}
+
+.office-header {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a89f8c;
+  margin-bottom: 4px;
+}
+
+.office-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.office-identity {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.office-identity-logo,
+.office-identity-initial {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 9px;
+}
+
+.office-identity-logo {
+  object-fit: contain;
+  padding: 3px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.office-identity-initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--amber), var(--amber-dk));
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.nav-section {
+  margin-bottom: 16px;
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a89f8c;
+  margin: 10px 4px 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: #5c5648;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 1px;
+}
+
+.nav-item .icon {
+  color: #9a9182;
+}
+
+.nav-item:hover {
+  background: var(--hover-bg);
+}
+
+.nav-item.active {
+  background: var(--active-bg);
+  color: var(--amber-dk);
+  font-weight: 600;
+}
+
+.nav-item.active .icon {
+  color: var(--amber-dk);
+}
+
+.sidebar-spacer {
+  flex: 1;
+}
+
+.staff-section {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  margin-top: 6px;
+}
+
+.staff-profile {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.staff-profile:hover {
+  background: var(--hover-bg);
+}
+
+.avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--amber), var(--amber-dk));
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 11px;
+  flex: none;
+}
+
+.staff-info {
+  flex: 1;
+}
+
+.staff-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.staff-role {
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.logout-btn .icon {
+  width: 13px;
+  height: 13px;
+}

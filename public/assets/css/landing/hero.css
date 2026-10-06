@@ -1,0 +1,97 @@
+.hero {
+  position: relative;
+  padding: 70px 0 30px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.orbit-field {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.ring {
+  position: absolute;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+
+.ring1 {
+  width: 340px;
+  height: 340px;
+}
+
+.ring2 {
+  width: 560px;
+  height: 560px;
+}
+
+.ring3 {
+  width: 800px;
+  height: 800px;
+}
+
+.orb {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 20px -14px rgba(0,0,0,.3);
+  color: var(--amber-dk);
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.rating {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.rating b {
+  color: var(--ink);
+}
+
+h1 {
+  font-size: 44px;
+  line-height: 1.15;
+  margin: 0 0 14px;
+  font-weight: 800;
+}
+
+h1 .accent {
+  background: linear-gradient(135deg,var(--amber-dk),#8a5c04);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lede {
+  max-width: 520px;
+  margin: 0 auto 26px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 34px;
+}

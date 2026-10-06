@@ -1,0 +1,92 @@
+.profile-section {
+  border: 0;
+  border-top: 1px solid var(--line);
+  padding: 20px 0 0;
+  margin: 24px 0;
+  min-width: 0;
+}
+
+.profile-section legend {
+  font-size: 14px;
+  font-family: var(--heading-font);
+  font-weight: 700;
+  padding: 0 12px 0 0;
+  color: var(--ink);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 16px;
+}
+
+.profile-grid .full {
+  grid-column: 1/-1;
+}
+
+.profile-grid label {
+  font-size: 12px;
+  font-weight: 550;
+  color: var(--ink-2);
+  line-height: 1.5;
+  min-width: 0;
+}
+
+.profile-grid input,.profile-grid select,.profile-grid textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--body-font);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+.profile-grid select {
+  white-space: normal;
+}
+
+.profile-grid input:focus,.profile-grid select:focus,.profile-grid textarea:focus {
+  outline: 0;
+  border-color: var(--amber-dk);
+  box-shadow: 0 0 0 3px rgba(201,138,6,.14);
+}
+
+.profile-acknowledgement {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  margin: 24px 0;
+}
+
+.profile-acknowledgement input {
+  flex: none;
+  margin-top: 4px;
+  width: 17px;
+  height: 17px;
+  accent-color: var(--amber-dk);
+}
+
+.profile-acknowledgement a {
+  color: var(--amber-dk);
+}
+
+.account-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.account-actions .button {
+  font-size: 12px;
+}

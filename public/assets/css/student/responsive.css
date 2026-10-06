@@ -1,0 +1,84 @@
+@media (max-width:600px) {
+  .concerns-view {
+    padding: 12px;
+  }
+
+  .concern-card-header {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+  }
+
+  .concern-card-body {
+    padding: 12px 16px;
+  }
+
+  .concern-subject {
+    font-size: 14px;
+  }
+
+  .concern-header-left {
+    margin-right: 18px;
+  }
+
+  .concern-card-indicators {
+    margin-right: 18px;
+  }
+
+  .staff-replies {
+    margin-left: 12px;
+  }
+
+  .feedback-emojis {
+    gap: 6px;
+  }
+
+  .emoji-rate {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .student-reply-section,.feedback-section {
+    margin-left: -12px;
+    margin-right: -12px;
+    margin-bottom: -16px;
+  }
+
+  .concern-header-left {
+    margin-right: 30px;
+  }
+}
+
+@media (max-width:960px) {
+  .app {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .main {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .sidebar,.panel {
+    display: none;
+  }
+
+  #threadView {
+    position: fixed;
+    inset: 0;
+    height: 100dvh;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .search-pill,.general-card,.tile {
+    transition: none;
+  }
+
+  .general-card:hover,.tile:hover {
+    transform: none;
+  }
+}

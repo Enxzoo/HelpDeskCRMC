@@ -53,6 +53,10 @@ body::before {
     justify-content: center;
 }
 
+.register-container {
+    max-width: 580px;
+}
+
 .login-card {
     background: var(--card);
     border-radius: 16px;
@@ -76,6 +80,12 @@ body::before {
 
 .form-group {
     margin-bottom: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
 }
 
 .form-group label {
@@ -102,6 +112,43 @@ body::before {
     outline: none;
     border-color: var(--amber);
     box-shadow: 0 0 0 3px rgba(236, 201, 75, .12);
+}
+
+.profile-password {
+    position: relative;
+}
+
+.profile-password input {
+    padding-right: 48px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.password-toggle:hover {
+    background: var(--hover-bg, var(--cream));
+}
+
+.password-toggle:focus-visible {
+    outline: 2px solid var(--amber-dk);
+    outline-offset: 1px;
+}
+
+.password-toggle img {
+    width: 18px;
+    height: 18px;
 }
 
 .error-message {
@@ -158,6 +205,11 @@ body::before {
 @media (max-width: 600px) {
     .login-card {
         padding: 32px 24px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
     }
 
     .login-header h1 {

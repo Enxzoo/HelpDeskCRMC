@@ -1,0 +1,88 @@
+.concerns-view {
+  padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+#threadView {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--cream);
+}
+
+.thread-view-header {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  padding: 16px clamp(16px, 3vw, 32px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.thread-view-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#threadTitle {
+  font-weight: 700;
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.25;
+  margin: 0 0 6px;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.thread-view-meta {
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.thread-view-meta .status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.thread-office-logo {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.thread-view-meta .status-badge.pending {
+  color: #805d05;
+  background: #fff3c4;
+}
+
+.thread-view-meta .status-badge.inprogress {
+  color: #155e75;
+  background: #cffafe;
+}
+
+.thread-view-meta .status-badge.onhold {
+  color: #9a3412;
+  background: #ffedd5;
+}
+
+.thread-view-meta .status-badge.resolved {
+  color: #166534;
+  background: #dcfce7;
+}

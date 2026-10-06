@@ -1,0 +1,32 @@
+@media (max-width:900px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 26px;
+  }
+
+  .footer-about {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width:820px) {
+  nav.links {
+    display: none;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  .feat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .how-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .orbit-field {
+    display: none;
+  }
+}

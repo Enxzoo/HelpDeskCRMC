@@ -19,11 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Require authenticated session
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
+requireApiUser(['student', 'staff', 'admin']);
 
 // Verify CSRF token
 if (!csrf_verify_header()) {
@@ -32,6 +28,7 @@ if (!csrf_verify_header()) {
     exit;
 }
 
+$filepath = null;
 try {
     // Check if file was uploaded
     if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
@@ -39,7 +36,7 @@ try {
     }
 
     $file = $_FILES['file'];
-    $userId = (int)$_SESSION['user_id'];
+    $userId = (int) $_SESSION['user_id'];
 
     // Validate file size (5MB max)
     $maxSize = 5 * 1024 * 1024; // 5MB
@@ -49,15 +46,21 @@ try {
 
     // Validate file type
     $allowedTypes = [
-        'image/jpeg', 'image/png', 'image/gif', 'image/webp',
-        'application/pdf',
-        'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'text/plain', 'text/csv'
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/gif' => 'gif',
+        'image/webp' => 'webp',
+        'application/pdf' => 'pdf',
+        'application/msword' => 'doc',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+        'application/vnd.ms-excel' => 'xls',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
+        'text/plain' => 'txt',
+        'text/csv' => 'csv'
     ];
 
     $fileType = mime_content_type($file['tmp_name']);
-    if (!in_array($fileType, $allowedTypes)) {
+    if (!isset($allowedTypes[$fileType])) {
         throw new Exception('File type not allowed. Allowed: images, PDF, Word, Excel, text files');
     }
 
@@ -68,8 +71,8 @@ try {
     }
 
     // Generate unique filename
-    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = uniqid() . '_' . time() . '.' . $extension;
+    $extension = $allowedTypes[$fileType];
+    $filename = bin2hex(random_bytes(16)) . '.' . $extension;
     $filepath = $uploadDir . $filename;
 
     // Move uploaded file
@@ -88,12 +91,15 @@ try {
     $inquiryId = null;
     $responseId = null;
 
-    $stmt->bind_param('iisissi',
+    $originalName = mb_substr(basename($file['name']), 0, 255);
+    $storedPath = 'uploads/' . $filename;
+    $stmt->bind_param(
+        'iiisssi',
         $inquiryId,
         $responseId,
         $userId,
-        $file['name'],
-        'uploads/' . $filename,
+        $originalName,
+        $storedPath,
         $fileType,
         $file['size']
     );
@@ -115,11 +121,14 @@ try {
         'file_type' => $fileType
     ]);
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
+    if ($filepath !== null && is_file($filepath)) {
+        unlink($filepath);
+    }
     error_log('File upload error: ' . $e->getMessage());
     http_response_code(400);
     echo json_encode([
         'success' => false,
-        'error' => $e->getMessage()
+        'error' => $e instanceof mysqli_sql_exception ? 'Failed to save file information.' : $e->getMessage()
     ]);
 }

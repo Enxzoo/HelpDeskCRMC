@@ -1,0 +1,41 @@
+@media (max-width:600px) {
+  .profile-grid,.account-details,.catalog-form {
+    grid-template-columns: minmax(0,1fr);
+  }
+
+  .account-shell {
+    padding: 24px 16px 36px;
+  }
+
+  .account-header {
+    padding: 16px;
+  }
+
+  .account-actions .button {
+    flex: 1;
+  }
+
+  .account-title {
+    font-size: 20px;
+  }
+
+  .account-nav {
+    gap: 10px;
+  }
+
+  .account-nav a {
+    font-size: 12px;
+  }
+
+  .account-details {
+    gap: 16px;
+  }
+
+  .profile-grid input,.profile-grid select,.profile-grid textarea {
+    font-size: 16px;
+  }
+
+  .account-actions .button {
+    min-height: 44px;
+  }
+}

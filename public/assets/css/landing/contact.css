@@ -1,0 +1,37 @@
+.cta-band {
+  max-width: 1200px;
+  margin: 0 auto 70px;
+  padding: 40px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(420px 220px at 50% 0%, rgba(236,201,75,.16), transparent 65%),
+    linear-gradient(135deg,var(--ink),var(--ink-2));
+  border-radius: 20px;
+  color: var(--bg);
+}
+
+.cta-band h2 {
+  font-size: 24px;
+  margin: 0 0 8px;
+  color: #fff;
+}
+
+.cta-band p {
+  color: #C8C3B8;
+  font-size: 13.5px;
+  margin: 0 0 20px;
+}
+
+.cta-band .btn-gold {
+  padding: 11px 22px;
+  font-size: 14px;
+}
+
+.cta-ben {
+  width: 64px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px;
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,.35));
+}

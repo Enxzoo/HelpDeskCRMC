@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "/dashboard_admin.php": {
+      "targetKind": "new-target",
+      "projectId": "7841c4c3-f50a-448f-948b-1258c8ded07c",
+      "activeDraftId": "0adb5595-6a8f-4127-8501-e93b9d0598cb",
+      "designSystemPath": ".superdesign/design-system.md",
+      "referenceIds": ["brand-office-crmc"],
+      "brandAssets": {
+        "logo": {
+          "assetKey": "brand-office-crmc",
+          "url": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/7841c4c3-f50a-448f-948b-1258c8ded07c/brand-assets/brand-office-crmc/CRMC_LOGO.png",
+          "sourcePath": "public/assets/images/offices_logo/CRMC LOGO.png"
+        }
+      },
+      "contextFiles": [".superdesign/design-system.md", "public/dashboard_admin.php", "public/assets/css/dashboard_admin.css", "public/assets/js/dashboard_admin.js"],
+      "fingerprints": {
+        ".superdesign/design-system.md": "776ADB30244D49C4C0CAE7F0A8EB20A6367BCA528DF3981C8BBFE57EB7AAD8A6",
+        "public/dashboard_admin.php": "2EF8A673A9C70769003490BC4AE1CA4B399C46BECE1AA92055E9A74900261E9A",
+        "public/assets/css/dashboard_admin.css": "328570E629B646DDAF4A87A522B1BE5873252586C6EEA4F61679A4649EDFCC88",
+        "public/assets/js/dashboard_admin.js": "E609D4442D244A15CD4AA132D7C66E1C9E0D53291FBD972D98C845130AEF8410"
+      },
+      "drafts": {
+        "0adb5595-6a8f-4127-8501-e93b9d0598cb": {
+          "title": "HelpdeskCRMC Admin Workspace",
+          "visualDirection": "Existing 230px sidebar, white operational surfaces, charcoal text, gold actions, teal status accents; compact overview with office workload and assignment queue",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-10-03T10:15:54+08:00"
+    },
+    "/dashboard_student-category-cards": {
+      "targetKind": "existing-ui",
+      "projectId": "7841c4c3-f50a-448f-948b-1258c8ded07c",
+      "baselineDraftId": "8878175b-1dc4-4179-ba9c-80ed1211f5a0",
+      "activeDraftId": "186bf14b-d4de-4e0e-ba2e-e59a784927f6",
+      "designSystemPath": ".superdesign/design-system.md",
+      "referenceIds": [
+        "brand-office-crmc",
+        "brand-office-finance",
+        "brand-office-guidance",
+        "brand-department-ccs",
+        "brand-department-cbe",
+        "brand-department-cte",
+        "brand-department-ccje",
+        "brand-office-itcd",
+        "brand-department-psychology"
+      ],
+      "brandAssets": {
+        "logo": {
+          "assetKey": "brand-office-crmc",
+          "url": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/7841c4c3-f50a-448f-948b-1258c8ded07c/brand-assets/brand-office-crmc/CRMC_LOGO.png",
+          "sourcePath": "public/assets/images/offices_logo/CRMC LOGO.png"
+        },
+        "officeLogos": {
+          "finance": "brand-office-finance",
+          "guidance": "brand-office-guidance",
+          "ccs": "brand-department-ccs",
+          "cbe": "brand-department-cbe",
+          "cte": "brand-department-cte",
+          "ccje": "brand-department-ccje",
+          "itcd": "brand-office-itcd",
+          "psychology": "brand-department-psychology"
+        }
+      },
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "public/dashboard_student.php:200:350",
+        "public/dashboard_student.php:360:490",
+        "public/dashboard_student.php:520:545",
+        "public/dashboard_student.php:1045:1080",
+        "public/dashboard_student.php:1145:1170",
+        "public/assets/css/dashboard_student.css"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "776ADB30244D49C4C0CAE7F0A8EB20A6367BCA528DF3981C8BBFE57EB7AAD8A6",
+        "public/dashboard_student.php": "750D112EE500C88F82BE48E508B5695B186CF805F84FB1F061C99316165B9DD8",
+        "public/assets/css/dashboard_student.css": "50F304769A7DFCCEFF8D5A4DA241416D9644F5A76C48FAD0BF00435F29E1165B"
+      },
+      "drafts": {
+        "186bf14b-d4de-4e0e-ba2e-e59a784927f6": {
+          "title": "HelpdeskCRMC Responsive Student Dashboard",
+          "visualDirection": "Soft warm charcoal (#5b5955) category cards with white readable text and branded logos; white General Inquiry card",
+          "parentDraftId": "8878175b-1dc4-4179-ba9c-80ed1211f5a0",
+          "currentVersion": 10
+        }
+      },
+      "updatedAt": "2026-10-02T11:10:00+08:00"
+    }
+  }
+}

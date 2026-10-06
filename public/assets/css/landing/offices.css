@@ -1,0 +1,43 @@
+.trust {
+  text-align: center;
+  padding: 36px 0 60px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.marquee {
+  overflow: hidden;
+  width: 100%;
+  margin-top: 20px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  gap: 40px;
+  width: max-content;
+  animation: marquee 24s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.office-chip {
+  flex: none;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+  opacity: .75;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}

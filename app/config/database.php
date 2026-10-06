@@ -20,6 +20,7 @@ function getDbConnection(): mysqli
             env('DB_PASS', ''),
             env('DB_NAME', 'helpdeskcrmc')
         );
+        $conn->set_charset('utf8mb4');
 
         if ($conn->connect_error) {
             // Logged, not echoed — never leak DB errors to the browser.

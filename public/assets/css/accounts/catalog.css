@@ -1,0 +1,29 @@
+.catalog-section {
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+}
+
+.catalog-section h2 {
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.catalog-form {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 16px;
+  max-width: 780px;
+  margin-bottom: 24px;
+}
+
+.catalog-form .full {
+  grid-column: 1/-1;
+}
+
+.account-shell [hidden] {
+  display: none !important;
+}
+
+.account-shell h1,.account-shell h2,.account-shell p {
+  overflow-wrap: anywhere;
+}

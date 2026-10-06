@@ -1,11 +1,11 @@
 <div class="escalation-card">
   <div class="esc-header">
-    <h3>Escalate Your Concern</h3>
-    <p>Fill out the form below and we'll forward your concern to the appropriate office</p>
+    <h3>Request staff assistance</h3>
   </div>
 
   <form class="esc-form" data-escalation-form>
     <div class="esc-alert esc-alert-error" style="display: none;" data-error-msg></div>
+    <div class="esc-duplicate-notice" data-duplicate-notice role="status" aria-live="polite" tabindex="-1" hidden></div>
 
     <div class="esc-group">
       <label for="esc-fullname">Full Name <span class="esc-req">*</span></label>
@@ -72,264 +72,18 @@
       </div>
     </div>
 
-    <button type="submit" class="esc-btn">Submit Concern</button>
+    <button type="submit" class="esc-btn">
+      <span data-submit-label>Submit Concern</span>
+      <span class="esc-spinner" data-submit-spinner aria-hidden="true" hidden></span>
+    </button>
+    <p class="esc-analysis-status" data-analysis-status role="status" aria-live="polite" hidden></p>
   </form>
 
   <div class="esc-success" style="display: none;" data-success-msg>
     <div class="esc-success-icon">✓</div>
     <h3>Concern Forwarded Successfully!</h3>
-    <p>Your concern has been forwarded to the appropriate office. A staff member will review your inquiry and get back to you within 2-3 working days.</p>
+    <p>Your concern was submitted to the selected office. You can follow staff replies in My Concerns.</p>
+    <p class="esc-success-urgency" data-urgency-result></p>
     <p class="esc-success-note">You can track the status of your concern in the <strong>My Concerns</strong> section.</p>
   </div>
 </div>
-
-<style>
-.escalation-card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 20px;
-  margin: 12px 0;
-  font-size: 14px;
-}
-
-.esc-header {
-  margin-bottom: 18px;
-}
-
-.esc-header h3 {
-  margin: 0 0 4px;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.esc-header p {
-  margin: 0;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.esc-form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.esc-alert {
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  margin-bottom: 8px;
-}
-
-.esc-alert-error {
-  background: rgba(184, 35, 28, .08);
-  border: 1px solid rgba(184, 35, 28, .2);
-  color: var(--red);
-}
-
-.esc-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.esc-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.esc-group label {
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--ink);
-}
-
-.esc-req {
-  color: var(--red);
-}
-
-.esc-group input,
-.esc-group select,
-.esc-group textarea {
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--cream);
-  color: var(--ink);
-  font-family: inherit;
-  font-size: 13px;
-  transition: all .2s;
-}
-
-.esc-group input:focus,
-.esc-group select:focus,
-.esc-group textarea:focus {
-  outline: none;
-  border-color: var(--amber);
-  box-shadow: 0 0 0 3px rgba(236, 201, 75, .12);
-}
-
-.esc-group textarea {
-  resize: vertical;
-  min-height: 70px;
-  line-height: 1.4;
-}
-
-.esc-btn {
-  padding: 10px 16px;
-  background: var(--amber);
-  color: var(--ink);
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all .2s;
-  margin-top: 4px;
-}
-
-.esc-btn:hover:not(:disabled) {
-  background: var(--amber-dk);
-  transform: translateY(-1px);
-}
-
-.esc-btn:disabled {
-  opacity: .6;
-  cursor: not-allowed;
-}
-
-.esc-success {
-  padding: 24px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  text-align: center;
-}
-
-.esc-success-icon {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  margin: 0 auto 16px;
-}
-
-.esc-success h3 {
-  margin: 0 0 8px;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.esc-success p {
-  margin: 0 0 12px;
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-.esc-success-note {
-  font-size: 13px;
-  color: var(--ink);
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.esc-file-upload {
-  margin-top: 4px;
-}
-
-.esc-file-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: var(--cream);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--ink);
-  transition: all .2s;
-}
-
-.esc-file-btn:hover {
-  border-color: var(--amber);
-  background: var(--card);
-}
-
-.esc-file-btn svg {
-  opacity: 0.7;
-}
-
-.esc-file-list {
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.esc-file-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  font-size: 13px;
-}
-
-.esc-file-name {
-  flex: 1;
-  color: var(--ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.esc-file-size {
-  color: var(--muted);
-  margin: 0 8px;
-  font-size: 12px;
-}
-
-.esc-file-remove {
-  background: none;
-  border: none;
-  color: var(--red);
-  cursor: pointer;
-  padding: 4px;
-  font-size: 16px;
-  line-height: 1;
-}
-
-@media (max-width: 500px) {
-  .esc-row {
-    grid-template-columns: 1fr;
-  }
-
-  .escalation-card {
-    padding: 16px;
-  }
-
-  .esc-success {
-    padding: 20px;
-  }
-
-  .esc-success-icon {
-    width: 48px;
-    height: 48px;
-    font-size: 28px;
-  }
-}
-</style>

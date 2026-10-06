@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../app/config/env.php';
 require_once __DIR__ . '/../../app/middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../../app/controllers/GeminiAiController.php';
 require_once __DIR__ . '/../../app/helpers/csrf.php';
+require_once __DIR__ . '/../../app/models/AdminWorkspace.php';
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -20,11 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Require authenticated session
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
+requireApiUser(['student']);
 
 // Verify CSRF token from header
 if (!csrf_verify_header()) {
@@ -36,7 +33,7 @@ if (!csrf_verify_header()) {
 // Get and validate input
 $input = json_decode(file_get_contents('php://input'), true);
 
-if (!isset($input['message']) || empty(trim($input['message']))) {
+if (!is_array($input) || !is_string($input['message'] ?? null) || trim($input['message']) === '') {
     http_response_code(400);
     echo json_encode(['error' => 'Message is required']);
     exit;
@@ -44,31 +41,37 @@ if (!isset($input['message']) || empty(trim($input['message']))) {
 
 $message = trim($input['message']);
 $conversationHistory = $input['history'] ?? [];
-
-// Log the request
-error_log("Gemini AI Chat Request from user {$_SESSION['user_id']}: $message");
+if (!is_array($conversationHistory)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid conversation history']);
+    exit;
+}
+foreach ($conversationHistory as $entry) {
+    if (
+        !is_array($entry) || !is_string($entry['message'] ?? null)
+        || !in_array($entry['role'] ?? null, ['user', 'student', 'model', 'assistant'], true)
+    ) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid conversation history']);
+        exit;
+    }
+}
+session_write_close();
 
 // Call Gemini AI
 $controller = new GeminiAiController();
-
-// Check if Gemini is configured
-if (!$controller->isConfigured()) {
-    error_log("Gemini API not configured - falling back to keyword matching");
-    echo json_encode([
-        'success' => false,
-        'fallback' => true,
-        'error' => 'AI service not configured'
-    ]);
-    exit;
+$knowledge = [];
+try {
+    $knowledge = (new AdminWorkspace())->publishedKnowledge($message);
+} catch (Throwable $error) {
+    error_log('Published knowledge unavailable: ' . $error->getMessage());
 }
 
 // Generate AI response
 $result = $controller->generateResponse($message, [
-    'history' => $conversationHistory
+    'history' => $conversationHistory,
+    'knowledge' => $knowledge,
 ]);
-
-// Log the actual result for debugging
-error_log("Ben AI Result: " . json_encode($result));
 
 // Return response
 if ($result['success']) {
@@ -76,16 +79,14 @@ if ($result['success']) {
         'success' => true,
         'matched' => true,
         'answer' => $result['answer'],
-        'source' => 'gemini-ai',
-        'generated' => true
+        'source' => $result['source'] ?? 'gemini-ai',
+        'generated' => $result['generated'] ?? true,
     ]);
 } else {
-    // If AI fails, return fallback flag so frontend can use keyword matching
-    http_response_code(200);
+    http_response_code(503);
     echo json_encode([
         'success' => false,
         'matched' => false,
-        'fallback' => $result['fallback'] ?? false,
-        'error' => $result['error'] ?? 'Unknown error'
+        'error' => $result['error'] ?? 'Ben’s AI service is temporarily unavailable. Please try again shortly or submit your concern to staff.',
     ]);
 }

@@ -1,0 +1,111 @@
+.app {
+  height: 100dvh;
+  min-height: 0;
+  background: var(--cream);
+}
+
+.sidebar {
+  flex-basis: 240px;
+  padding: 22px 16px;
+  background: #fdfcfa;
+}
+
+.brand {
+  gap: 12px;
+  margin-bottom: 28px;
+  padding: 0 8px;
+}
+
+.brand img {
+  height: 30px;
+}
+
+.brand-name {
+  font-size: 15px;
+}
+
+.office-card {
+  border-radius: 14px;
+  padding: 14px;
+  margin: 0 2px 26px;
+  background: linear-gradient(135deg,#fffdfa,#fdfcfa);
+}
+
+.nav-item {
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.header {
+  padding: 22px 28px 16px;
+}
+
+.header-top {
+  display: flex;
+  grid-template-columns: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 0;
+}
+
+.header-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 22px;
+  min-width: 0;
+}
+
+.header-tools .header-stats {
+  flex: none;
+  padding-right: 22px;
+  border-right: 1px solid var(--line);
+}
+
+.header-tools .search-bar {
+  width: 256px;
+  max-width: 256px;
+  flex: none;
+  margin: 0;
+}
+
+.mobile-header-logo {
+  display: none;
+}
+
+.header-title h1 {
+  font-size: 22px;
+  letter-spacing: -.03em;
+}
+
+.header-stats {
+  gap: 28px;
+}
+
+.stat-box {
+  text-align: center;
+  min-width: 62px;
+}
+
+.stat-label {
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+.stat-value {
+  font-size: 22px;
+}
+
+.search-bar {
+  max-width: 340px;
+  border-radius: 10px;
+  padding: 9px 12px;
+}
+
+.content-area {
+  min-height: 0;
+  gap: 0;
+  background: var(--card);
+}

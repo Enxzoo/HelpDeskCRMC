@@ -6,16 +6,13 @@
 
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../app/config/database.php';
+require_once __DIR__ . '/../../app/middleware/AuthMiddleware.php';
 
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
+requireApiUser(['student']);
 
-$studentId = (int)$_SESSION['user_id'];
+$studentId = (int) $_SESSION['user_id'];
 
 try {
     $db = getDbConnection();
@@ -27,6 +24,12 @@ try {
             i.subject,
             i.description,
             i.status,
+            COALESCE(i.priority_override, i.ai_priority, 'Needs triage') as urgency_priority,
+            i.ai_priority,
+            i.ai_priority_reason,
+            i.ai_priority_confidence,
+            i.priority_override,
+            i.duplicate_of_inquiry_id,
             i.created_at,
             o.office_name,
             (SELECT COUNT(*) FROM inquiry_responses WHERE inquiry_id = i.inquiry_id) as reply_count
@@ -50,6 +53,7 @@ try {
                 ir.response_id,
                 ir.message,
                 ir.created_at,
+                u.role AS sender_role,
                 CONCAT(u.first_name, ' ', u.last_name) as staff_name
             FROM inquiry_responses ir
             JOIN users u ON ir.staff_id = u.user_id
@@ -68,6 +72,12 @@ try {
             'subject' => $inq['subject'],
             'message' => $inq['description'],
             'status' => $inq['status'],
+            'urgency_priority' => $inq['urgency_priority'],
+            'ai_priority' => $inq['ai_priority'],
+            'ai_priority_reason' => $inq['ai_priority_reason'],
+            'ai_priority_confidence' => $inq['ai_priority_confidence'],
+            'priority_override' => $inq['priority_override'],
+            'duplicate_of_inquiry_id' => $inq['duplicate_of_inquiry_id'],
             'office' => $inq['office_name'],
             'created_at' => $inq['created_at'],
             'reply_count' => $inq['reply_count'],
@@ -84,6 +94,6 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => $e->getMessage()
+        'error' => 'Unable to load concerns.'
     ]);
 }

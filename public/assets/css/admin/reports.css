@@ -1,0 +1,104 @@
+.report-form {
+  padding-bottom: 26px;
+  margin-bottom: 26px;
+  border-bottom: 1px solid var(--line);
+}
+
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  margin: 0 0 20px;
+}
+
+.segmented label {
+  cursor: pointer;
+  position: relative;
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.segmented span {
+  display: block;
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 5px;
+}
+
+.segmented input:checked+span {
+  background: var(--active-bg);
+  color: #805900;
+}
+
+.segmented input:focus-visible+span {
+  outline: 2px solid var(--amber-dk);
+}
+
+.report-fields {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.report-fields label {
+  flex: 1;
+  min-width: 135px;
+  max-width: 250px;
+}
+
+.report-fields .button {
+  min-height: 40px;
+}
+
+.report-heading {
+  flex-wrap: wrap;
+}
+
+.report-heading p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.6;
+}
+
+.report-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.report-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 70px 10px;
+  color: var(--muted);
+  gap: 18px;
+}
+
+.report-empty .icon {
+  width: 32px;
+  height: 32px;
+  opacity: .6;
+}
+
+.report-empty h2 {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.report-footer {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 16px;
+  line-height: 1.6;
+}

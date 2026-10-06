@@ -31,7 +31,7 @@ function csrf_field(): string
 function csrf_verify(): bool
 {
     $token = $_POST['_csrf_token'] ?? '';
-    return $token !== '' && hash_equals($_SESSION['_csrf_token'] ?? '', $token);
+    return is_string($token) && $token !== '' && hash_equals($_SESSION['_csrf_token'] ?? '', $token);
 }
 
 /**
@@ -41,5 +41,5 @@ function csrf_verify(): bool
 function csrf_verify_header(): bool
 {
     $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
-    return $token !== '' && hash_equals($_SESSION['_csrf_token'] ?? '', $token);
+    return is_string($token) && $token !== '' && hash_equals($_SESSION['_csrf_token'] ?? '', $token);
 }

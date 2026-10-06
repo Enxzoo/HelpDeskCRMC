@@ -1,0 +1,18 @@
+:root {
+  --ink: #1c1b18;
+  --ink-2: #26241f;
+  --amber: #ecc94b;
+  --amber-dk: #c98a06;
+  --red: #b8231c;
+  --teal: #1e7a8c;
+  --blue: #1e40af;
+  --cream: #fbf6ee;
+  --card: #fff;
+  --line: #ece3d6;
+  --muted: #847c6e;
+  --sidebar-bg: #fdfcfa;
+  --hover-bg: #f1ede4;
+  --active-bg: #faf1dc;
+  --body-font: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --heading-font: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+}

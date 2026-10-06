@@ -19,14 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 // Require authenticated student session
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
+requireApiUser(['student']);
 
 try {
-    $studentId = (int)$_SESSION['user_id'];
+    $studentId = (int) $_SESSION['user_id'];
     $inquiryModel = new Inquiry();
 
     // Get all inquiries for this student

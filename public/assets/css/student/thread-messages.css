@@ -1,0 +1,132 @@
+.thread-messages-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 22px clamp(16px, 4vw, 40px);
+  overscroll-behavior: contain;
+}
+
+.thread-messages-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 840px;
+  margin: 0 auto;
+  width: 100%;
+  min-height: 100%;
+}
+
+.thread-message {
+  display: flex;
+  gap: 12px;
+  width: fit-content;
+  max-width: min(80%, 680px);
+}
+
+.thread-message.student {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.thread-message.staff {
+  align-self: flex-start;
+}
+
+.thread-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.thread-message.student .thread-avatar {
+  background: linear-gradient(135deg, var(--amber), var(--amber-dk));
+  color: var(--ink);
+}
+
+.thread-message.staff .thread-avatar {
+  background: linear-gradient(135deg, #b8231c, #8f1912);
+}
+
+.message-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.message-sender {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+.thread-message.student .message-sender {
+  text-align: right;
+}
+
+.message-bubble {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 15px;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.thread-message.student .message-bubble {
+  background: linear-gradient(135deg, var(--amber), var(--amber-dk));
+  border: none;
+  color: var(--ink);
+  border-top-right-radius: 4px;
+}
+
+.thread-message.staff .message-bubble {
+  border-top-left-radius: 4px;
+}
+
+.message-time {
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.thread-message.student .message-time {
+  text-align: right;
+}
+
+.thread-day-divider {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  margin: 8px 0;
+  position: relative;
+}
+
+.thread-day-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--line);
+  z-index: 0;
+}
+
+.thread-day-divider span {
+  background: var(--cream);
+  padding: 0 12px;
+  position: relative;
+  z-index: 1;
+}

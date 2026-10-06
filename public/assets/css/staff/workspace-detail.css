@@ -1,0 +1,149 @@
+.detail-panel {
+  min-width: 0;
+  background: #fff;
+}
+
+.mobile-detail-nav {
+  display: none;
+}
+
+.detail-header {
+  padding: 22px 26px 18px;
+}
+
+.detail-header-top {
+  align-items: flex-start;
+  margin: 0;
+}
+
+.detail-overline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.detail-id {
+  padding: 4px 8px;
+  border: 1px solid #f0e2bd;
+  border-radius: 6px;
+  background: #fffaf0;
+  color: var(--amber-dk);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.detail-title h2 {
+  margin-bottom: 8px;
+  font-size: 19px;
+  line-height: 1.35;
+  letter-spacing: -.02em;
+}
+
+.urgency-reason {
+  max-width: 680px;
+  margin: 0 0 4px;
+  color: #5c5648;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.urgency-meta {
+  margin-bottom: 12px;
+  color: #847c6e;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.duplicate-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: -5px 0 10px;
+  color: #6b5318;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.duplicate-indicator[hidden] {
+  display: none;
+}
+
+.duplicate-indicator button {
+  padding: 2px 5px;
+  border: 0;
+  border-radius: 4px;
+  background: #fff3d5;
+  color: #704f08;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.duplicate-indicator button:hover:not(:disabled) {
+  background: #f4e4b8;
+}
+
+.duplicate-indicator button:focus-visible {
+  outline: 2px solid var(--amber-dk);
+  outline-offset: 2px;
+}
+
+.duplicate-indicator button:disabled {
+  color: var(--muted);
+  cursor: default;
+}
+
+.detail-meta {
+  gap: 13px;
+  font-size: 10px;
+}
+
+.detail-actions {
+  gap: 8px;
+}
+
+.btn {
+  min-height: 38px;
+  padding: 9px 13px;
+  border-radius: 9px;
+  font-size: 10px;
+}
+
+.btn-success {
+  background: #14845b;
+  color: #fff;
+}
+
+.btn-success:hover {
+  background: #0f704c;
+}
+
+.btn-secondary {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+}
+
+.btn-secondary:hover {
+  border-color: var(--amber-dk);
+  background: #fafaf9;
+}
+
+.thread {
+  padding: 28px clamp(18px,4vw,52px);
+  background: linear-gradient(180deg,rgba(251,246,238,.6),rgba(251,246,238,.2));
+}
+
+.message {
+  max-width: min(80%,720px);
+}
+
+.message-bubble {
+  padding: 14px 17px;
+  border-radius: 16px;
+  font-size: 13px;
+}

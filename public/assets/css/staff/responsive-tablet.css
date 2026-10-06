@@ -1,0 +1,39 @@
+@media (max-width:1024px) and (min-width:769px) {
+  .sidebar {
+    flex-basis: 210px;
+  }
+
+  .queue-panel {
+    flex-basis: 320px;
+  }
+
+  .header {
+    padding: 18px 20px;
+  }
+
+  .header-top {
+    gap: 18px;
+  }
+
+  .header-tools {
+    gap: 14px;
+  }
+
+  .header-tools .header-stats {
+    gap: 15px;
+    padding-right: 14px;
+  }
+
+  .header-tools .search-bar {
+    width: 220px;
+    max-width: 220px;
+  }
+
+  .header-title h1 {
+    font-size: 20px;
+  }
+
+  .detail-actions {
+    flex-wrap: wrap;
+  }
+}

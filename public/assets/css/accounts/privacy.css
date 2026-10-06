@@ -1,0 +1,58 @@
+.privacy-copy {
+  line-height: 1.8;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+  letter-spacing: 0;
+}
+
+.privacy-copy * {
+  letter-spacing: 0;
+}
+
+.privacy-copy h2 {
+  font-size: 18px;
+  margin: 30px 0 12px;
+}
+
+.privacy-copy ul {
+  padding-left: 22px;
+}
+
+.privacy-copy li+li {
+  margin-top: 8px;
+}
+
+.privacy-copy a:not(.button) {
+  color: #845b00;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.legal-version {
+  color: #625e54;
+  font-size: 13px;
+}
+
+.legal-nav,.legal-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.legal-footer {
+  margin-top: 32px;
+  border-bottom: 0;
+}
+
+.privacy-copy p {
+  margin-bottom: 16px;
+}
+
+body.student-account-page {
+  background: var(--cream);
+  color: var(--ink);
+}

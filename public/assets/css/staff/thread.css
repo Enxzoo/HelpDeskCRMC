@@ -1,0 +1,53 @@
+.thread {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+}
+
+.message {
+  margin-bottom: 14px;
+  max-width: 75%;
+}
+
+.message.student {
+  align-self: flex-start;
+}
+
+.message.staff {
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.message-header {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.message-bubble {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 3px;
+  color: var(--ink);
+}
+
+.message.student .message-bubble {
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+
+.message.staff .message-bubble {
+  background: linear-gradient(135deg, var(--amber), var(--amber-dk));
+  color: var(--ink);
+  border: none;
+}
+
+.message-time {
+  font-size: 10px;
+  color: var(--muted);
+}
