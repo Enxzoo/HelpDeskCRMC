@@ -51,11 +51,12 @@
 
 .registration-progress .is-complete,
 .registration-progress .is-complete .registration-progress-number {
-  color: var(--teal);
+  color: var(--ink);
 }
 
 .registration-progress .is-complete .registration-progress-number {
-  border-color: var(--teal);
+  border-color: var(--amber-dk);
+  background: var(--cream);
 }
 
 .register-container .profile-section {
@@ -113,8 +114,11 @@
 }
 
 .registration-footer a {
-  color: var(--teal);
+  color: var(--ink);
   font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--amber-dk);
+  text-underline-offset: 3px;
 }
 
 .registration-footer a:hover {
@@ -133,13 +137,19 @@
 }
 
 .registration-agreements a {
-  color: var(--teal);
+  color: var(--ink);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .register-container .account-state {
   margin: 0 0 24px;
+  border-left-color: var(--amber-dk);
+  background: var(--cream);
+}
+
+.register-container .account-state strong {
+  color: var(--ink);
 }
 
 @media (max-width:600px) {
