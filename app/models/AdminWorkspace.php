@@ -84,8 +84,8 @@ class AdminWorkspace
         $office = self::id($input, 'office_id');
         $this->activeOffice($office);
         $password = $input['password'] ?? '';
-        if (!is_string($password) || strlen($password) > 72 || (($create || $password !== '') && strlen($password) < 12)) {
-            throw new AdminRequestException('Password must contain 12 to 72 bytes.');
+        if (!is_string($password) || strlen($password) > 72 || (($create || $password !== '') && strlen($password) < 8)) {
+            throw new AdminRequestException('Password must contain 8 to 72 bytes.');
         }
         $active = $input['is_active'] ?? true;
         if (!is_bool($active))
