@@ -7,7 +7,7 @@ const InquiryAttachments = (() => {
   }
 
   function icon(name) {
-    const image = document.createElement('img');
+    const image = (globalThis.HelpdeskLocator || document).createElement('img');
     image.src = `assets/icons/${name}.svg`;
     image.alt = '';
     image.width = 16;
@@ -26,16 +26,16 @@ const InquiryAttachments = (() => {
     const list = form.querySelector('.esc-file-list');
     list.replaceChildren();
     state.items.forEach(item => {
-      const row = document.createElement('div');
+      const row = (globalThis.HelpdeskLocator || document).createElement('div');
       row.className = 'esc-file-item';
-      const name = document.createElement('span');
+      const name = (globalThis.HelpdeskLocator || document).createElement('span');
       name.className = 'esc-file-name';
       name.textContent = item.file.name;
       name.title = item.file.name;
-      const details = document.createElement('span');
+      const details = (globalThis.HelpdeskLocator || document).createElement('span');
       details.className = 'esc-file-size';
       details.textContent = `${sizeLabel(item.file.size)} - ${item.status || 'Selected'}`;
-      const remove = document.createElement('button');
+      const remove = (globalThis.HelpdeskLocator || document).createElement('button');
       remove.type = 'button';
       remove.className = 'esc-file-remove';
       remove.title = `Remove ${item.file.name}`;
@@ -122,19 +122,19 @@ const InquiryAttachments = (() => {
   }
 
   function create(attachments = []) {
-    const list = document.createElement('ul');
+    const list = (globalThis.HelpdeskLocator || document).createElement('ul');
     list.className = 'inquiry-attachments';
     list.setAttribute('aria-label', 'Attached files');
     for (const attachment of attachments) {
       const id = Number(attachment.attachment_id);
       if (!Number.isSafeInteger(id) || id < 1) continue;
-      const row = document.createElement('li');
-      const link = document.createElement('a');
+      const row = (globalThis.HelpdeskLocator || document).createElement('li');
+      const link = (globalThis.HelpdeskLocator || document).createElement('a');
       link.href = `api/download_attachment.php?id=${id}`;
       link.title = `Download ${attachment.file_name}`;
-      const name = document.createElement('span');
+      const name = (globalThis.HelpdeskLocator || document).createElement('span');
       name.textContent = attachment.file_name;
-      const size = document.createElement('small');
+      const size = (globalThis.HelpdeskLocator || document).createElement('small');
       size.textContent = sizeLabel(Number(attachment.file_size) || 0);
       link.append(icon('download'), name, size);
       row.append(link);

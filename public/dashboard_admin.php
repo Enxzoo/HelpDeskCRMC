@@ -12,12 +12,12 @@ $overview = (new AdminWorkspace())->overview();
 $name = (string) ($_SESSION['name'] ?? 'Administrator');
 $initials = mb_strtoupper(mb_substr($name, 0, 1));
 $escape = static fn($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
-$icon = static fn($name) => '<img class="icon" src="assets/icons/' . $name . '.svg" alt="" width="18" height="18">';
+$icon = static fn($name) => '<img class="icon"' . dev_locator_attributes(__FILE__, __LINE__) . ' src="assets/icons/' . $name . '.svg" alt="" width="18" height="18">';
 $stats = $overview['stats'];
 $schoolPrograms = (new StudentProfile())->catalog(true)['programs'];
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html <?= dev_locator_attributes(__FILE__, __LINE__) ?> lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -31,351 +31,351 @@ $schoolPrograms = (new StudentProfile())->catalog(true)['programs'];
         defer></script>
 </head>
 
-<body>
-    <div class="admin-app">
+<body <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+    <div class="admin-app" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
         <?php $workspaceRole = 'admin';
         $workspacePage = 'overview';
         $workspaceDashboard = true;
         require __DIR__ . '/assets/components/workspace-sidebar.php'; ?>
-        <button type="button" id="sidebarBackdrop" class="sidebar-backdrop" aria-label="Close navigation"
+        <button type="button" id="sidebarBackdrop" class="sidebar-backdrop" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-label="Close navigation"
             hidden></button>
-        <main class="admin-main">
-            <header class="admin-header"><button type="button" class="icon-button mobile-menu" id="menuToggle"
+        <main class="admin-main" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <header class="admin-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><button type="button" class="icon-button mobile-menu" id="menuToggle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                     aria-label="Open navigation" aria-controls="adminSidebar" aria-expanded="false"
                     title="Navigation"><?= $icon('menu') ?></button>
-                <div class="breadcrumb"><span>Administration</span><span aria-hidden="true">/</span><strong
-                        id="breadcrumbView">Overview</strong></div>
-                <div class="header-tools"><time><?= $escape(date('M j, Y')) ?></time><button type="button"
-                        class="icon-button" id="refreshView" title="Refresh current view"
+                <div class="breadcrumb" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Administration</span><span <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">/</span><strong
+                        id="breadcrumbView" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>>Overview</strong></div>
+                <div class="header-tools" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><time <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape(date('M j, Y')) ?></time><button type="button"
+                        class="icon-button" id="refreshView" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?> title="Refresh current view"
                         aria-label="Refresh current view"><?= $icon('refresh-cw') ?></button><?php require __DIR__ . '/assets/components/notification-center.php'; ?>
                 </div>
             </header>
-            <div class="admin-content">
-                <div class="admin-alert" id="adminAlert" role="alert" hidden><span id="adminAlertText"></span><button
-                        type="button" class="icon-button" id="dismissAlert" title="Dismiss"
+            <div class="admin-content" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <div class="admin-alert" id="adminAlert" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="alert" hidden><span id="adminAlertText" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></span><button
+                        type="button" class="icon-button" id="dismissAlert" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?> title="Dismiss"
                         aria-label="Dismiss message"><?= $icon('x') ?></button></div>
-                <section id="view-overview" class="admin-view" aria-labelledby="overviewTitle">
-                    <div class="page-heading">
-                        <div>
-                            <h1 id="overviewTitle">Dashboard overview</h1>
-                            <p>Across all offices</p>
-                        </div><a class="button primary" href="#reports"><?= $icon('file-chart-column') ?>Generate
+                <section id="view-overview" class="admin-view" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="overviewTitle">
+                    <div class="page-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <h1 id="overviewTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Dashboard overview</h1>
+                            <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Across all offices</p>
+                        </div><a class="button primary" <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#reports"><?= $icon('file-chart-column') ?>Generate
                             report</a>
                     </div>
-                    <div class="metric-grid" id="overviewMetrics">
-                        <article class="metric">
-                            <div>Open concerns <?= $icon('inbox') ?></div>
-                            <strong><?= $stats['total'] - $stats['resolved'] ?></strong><small>Pending, in progress
+                    <div class="metric-grid" id="overviewMetrics" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <article class="metric" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Open concerns <?= $icon('inbox') ?></div>
+                            <strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $stats['total'] - $stats['resolved'] ?></strong><small <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Pending, in progress
                                 &amp; on hold</small>
                         </article>
-                        <article class="metric">
-                            <div>Unassigned <?= $icon('user-round-plus') ?></div>
-                            <strong><?= $stats['unassigned'] ?></strong><small>Awaiting a staff member</small>
+                        <article class="metric" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Unassigned <?= $icon('user-round-plus') ?></div>
+                            <strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $stats['unassigned'] ?></strong><small <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Awaiting a staff member</small>
                         </article>
-                        <article class="metric">
-                            <div>Resolved <?= $icon('circle-check') ?></div>
-                            <strong><?= $stats['resolved'] ?></strong><small><?= $stats['total'] ? round($stats['resolved'] / $stats['total'] * 100) : 0 ?>%
+                        <article class="metric" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Resolved <?= $icon('circle-check') ?></div>
+                            <strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $stats['resolved'] ?></strong><small <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $stats['total'] ? round($stats['resolved'] / $stats['total'] * 100) : 0 ?>%
                                 of submitted concerns</small>
                         </article>
-                        <article class="metric">
-                            <div>Active staff <?= $icon('users') ?></div>
-                            <strong><?= $stats['active_staff'] ?></strong><small>Across all offices</small>
+                        <article class="metric" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Active staff <?= $icon('users') ?></div>
+                            <strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $stats['active_staff'] ?></strong><small <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Across all offices</small>
                         </article>
                     </div>
-                    <div class="overview-split">
-                        <section class="workload">
-                            <div class="section-heading">
-                                <h2>Office workload</h2><span>Open concerns</span>
+                    <div class="overview-split" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <section class="workload" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <div class="section-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                <h2 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Office workload</h2><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Open concerns</span>
                             </div>
-                            <div id="officeWorkload"></div>
+                            <div id="officeWorkload" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
                         </section>
-                        <section class="status-summary">
-                            <h2>Concern status</h2>
-                            <div id="statusSummary"></div>
-                            <div class="system-totals" id="systemTotals"></div>
+                        <section class="status-summary" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <h2 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Concern status</h2>
+                            <div id="statusSummary" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
+                            <div class="system-totals" id="systemTotals" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
                         </section>
                     </div>
-                    <section class="assignment-summary">
-                        <div class="section-heading">
-                            <h2>Awaiting assignment</h2><a href="#concerns" id="viewUnassigned">View all
+                    <section class="assignment-summary" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <div class="section-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <h2 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Awaiting assignment</h2><a href="#concerns" id="viewUnassigned" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>View all
                                 <?= $icon('arrow-up-right') ?></a>
                         </div>
-                        <div class="table-scroll">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Concern</th>
-                                        <th>Office</th>
-                                        <th>Priority</th>
-                                        <th>Received</th>
-                                        <th class="align-right">Action</th>
+                        <div class="table-scroll" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <table <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                <thead <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                    <tr <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                        <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Concern</th>
+                                        <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Office</th>
+                                        <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Priority</th>
+                                        <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Received</th>
+                                        <th class="align-right" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody id="overviewQueue"></tbody>
+                                <tbody id="overviewQueue" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></tbody>
                             </table>
                         </div>
                     </section>
                 </section>
-                <section id="view-staff" class="admin-view" aria-labelledby="staffTitle" hidden>
-                    <div class="page-heading">
-                        <div>
-                            <h1 id="staffTitle">Staff accounts</h1>
-                            <p id="staffSummary">Loading staff...</p>
-                        </div><button type="button" class="button primary" id="addStaff"><?= $icon('plus') ?>Add
+                <section id="view-staff" class="admin-view" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="staffTitle" hidden>
+                    <div class="page-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <h1 id="staffTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Staff accounts</h1>
+                            <p id="staffSummary" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Loading staff...</p>
+                        </div><button type="button" class="button primary" id="addStaff" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $icon('plus') ?>Add
                             staff</button>
                     </div>
-                    <div class="filter-bar"><label class="search-field"><?= $icon('search') ?><input type="search"
-                                id="staffSearch" placeholder="Search staff" aria-label="Search staff"
-                                maxlength="150"></label><label><span class="sr-only">Office</span><select
-                                id="staffOffice">
-                                <option value="">All offices</option><?php foreach ($offices as $office): ?>
-                                    <option value="<?= (int) $office['office_id'] ?>"><?= $escape($office['office_name']) ?>
+                    <div class="filter-bar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><label class="search-field" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $icon('search') ?><input type="search"
+                                id="staffSearch" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?> placeholder="Search staff" aria-label="Search staff"
+                                maxlength="150"></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span class="sr-only" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Office</span><select
+                                id="staffOffice" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>>
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All offices</option><?php foreach ($offices as $office): ?>
+                                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="<?= (int) $office['office_id'] ?>"><?= $escape($office['office_name']) ?>
                                     </option><?php endforeach; ?>
-                            </select></label><label><span class="sr-only">Account status</span><select id="staffStatus">
-                                <option value="">All statuses</option>
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
+                            </select></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span class="sr-only" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Account status</span><select id="staffStatus" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All statuses</option>
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="1">Active</option>
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="0">Inactive</option>
                             </select></label></div>
-                    <div class="table-scroll">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Staff member</th>
-                                    <th>Office</th>
-                                    <th>Status</th>
-                                    <th>Open concerns</th>
-                                    <th>Last sign-in</th>
-                                    <th class="align-right">Actions</th>
+                    <div class="table-scroll" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <table <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <thead <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                <tr <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Staff member</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Office</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Status</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Open concerns</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Last sign-in</th>
+                                    <th class="align-right" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="staffRows"></tbody>
+                            <tbody id="staffRows" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></tbody>
                         </table>
                     </div>
-                    <div class="pagination" id="staffPagination"></div>
+                    <div class="pagination" id="staffPagination" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
                 </section>
-                <section id="view-knowledge" class="admin-view" aria-labelledby="knowledgeTitle" hidden>
-                    <div class="page-heading">
-                        <div>
-                            <h1 id="knowledgeTitle">Knowledge base</h1>
-                            <p id="knowledgeSummary">Loading entries...</p>
-                        </div><button type="button" class="button primary" id="addKnowledge"><?= $icon('plus') ?>Add
+                <section id="view-knowledge" class="admin-view" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="knowledgeTitle" hidden>
+                    <div class="page-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <h1 id="knowledgeTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Knowledge base</h1>
+                            <p id="knowledgeSummary" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Loading entries...</p>
+                        </div><button type="button" class="button primary" id="addKnowledge" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $icon('plus') ?>Add
                             entry</button>
                     </div>
-                    <div class="filter-bar"><label class="search-field"><?= $icon('search') ?><input type="search"
-                                id="knowledgeSearch" placeholder="Search entries" aria-label="Search knowledge entries"
-                                maxlength="150"></label><label><span class="sr-only">Office</span><select
-                                id="knowledgeOffice">
-                                <option value="">All offices</option>
-                                <option value="global">General / All offices</option>
+                    <div class="filter-bar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><label class="search-field" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $icon('search') ?><input type="search"
+                                id="knowledgeSearch" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?> placeholder="Search entries" aria-label="Search knowledge entries"
+                                maxlength="150"></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span class="sr-only" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Office</span><select
+                                id="knowledgeOffice" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>>
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All offices</option>
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="global">General / All offices</option>
                                 <?php foreach ($offices as $office): ?>
-                                    <option value="<?= (int) $office['office_id'] ?>"><?= $escape($office['office_name']) ?>
+                                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="<?= (int) $office['office_id'] ?>"><?= $escape($office['office_name']) ?>
                                     </option><?php endforeach; ?>
-                            </select></label><label><span class="sr-only">Publishing status</span><select
-                                id="knowledgeStatus">
-                                <option value="">All statuses</option>
-                                <option>Published</option>
-                                <option>Draft</option>
+                            </select></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span class="sr-only" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Publishing status</span><select
+                                id="knowledgeStatus" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>>
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All statuses</option>
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Published</option>
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Draft</option>
                             </select></label></div>
-                    <div class="knowledge-list" id="knowledgeEntries"></div>
-                    <div class="pagination" id="knowledgePagination"></div>
+                    <div class="knowledge-list" id="knowledgeEntries" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
+                    <div class="pagination" id="knowledgePagination" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
                 </section>
-                <section id="view-concerns" class="admin-view" aria-labelledby="concernsTitle" hidden>
-                    <div class="page-heading">
-                        <div>
-                            <h1 id="concernsTitle">Concerns</h1>
-                            <p id="concernsSummary">Loading concerns...</p>
-                        </div><a href="#reports" class="button"><?= $icon('file-chart-column') ?>Reports</a>
+                <section id="view-concerns" class="admin-view" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="concernsTitle" hidden>
+                    <div class="page-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <h1 id="concernsTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Concerns</h1>
+                            <p id="concernsSummary" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Loading concerns...</p>
+                        </div><a href="#reports" class="button" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $icon('file-chart-column') ?>Reports</a>
                     </div>
-                    <form class="filter-bar" id="concernFilters"><label
-                            class="search-field"><?= $icon('search') ?><input type="search" id="concernSearch"
+                    <form class="filter-bar" id="concernFilters" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><label
+                            class="search-field" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= $icon('search') ?><input type="search" id="concernSearch" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                                 name="search" placeholder="Search concern or student" aria-label="Search concerns"
-                                maxlength="150"></label><label><span class="sr-only">Office</span><select
-                                id="concernOffice" name="office_id">
-                                <option value="">All offices</option><?php foreach ($offices as $office): ?>
-                                    <option value="<?= (int) $office['office_id'] ?>"><?= $escape($office['office_name']) ?>
+                                maxlength="150"></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span class="sr-only" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Office</span><select
+                                id="concernOffice" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?> name="office_id">
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All offices</option><?php foreach ($offices as $office): ?>
+                                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="<?= (int) $office['office_id'] ?>"><?= $escape($office['office_name']) ?>
                                     </option><?php endforeach; ?>
-                            </select></label><label><span class="sr-only">Concern status</span><select
-                                id="concernStatus" name="status">
-                                <option value="">All statuses</option><?php foreach (Inquiry::STATUSES as $status): ?>
-                                    <option><?= $escape($status) ?></option><?php endforeach; ?>
-                            </select></label><label><span class="sr-only">Assignment</span><select
-                                id="concernAssignment" name="assignment">
-                                <option value="">All assignments</option>
-                                <option value="unassigned">Unassigned</option>
+                            </select></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span class="sr-only" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Concern status</span><select
+                                id="concernStatus" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?> name="status">
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All statuses</option><?php foreach (Inquiry::STATUSES as $status): ?>
+                                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($status) ?></option><?php endforeach; ?>
+                            </select></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span class="sr-only" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Assignment</span><select
+                                id="concernAssignment" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?> name="assignment">
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All assignments</option>
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="unassigned">Unassigned</option>
                             </select></label></form>
-                    <div class="table-scroll">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Concern / Student</th>
-                                    <th>Office</th>
-                                    <th>Priority</th>
-                                    <th>Status</th>
-                                    <th>Assigned staff</th>
-                                    <th class="align-right">Action</th>
+                    <div class="table-scroll" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <table <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <thead <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                <tr <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Concern / Student</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Office</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Priority</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Status</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Assigned staff</th>
+                                    <th class="align-right" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="concernRows"></tbody>
+                            <tbody id="concernRows" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></tbody>
                         </table>
                     </div>
-                    <div class="pagination" id="concernPagination"></div>
+                    <div class="pagination" id="concernPagination" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
                 </section>
-                <section id="view-reports" class="admin-view" aria-labelledby="reportsTitle" hidden>
-                    <div class="page-heading">
-                        <div>
-                            <h1 id="reportsTitle">Reports</h1>
-                            <p>Inquiries &amp; concerns</p>
+                <section id="view-reports" class="admin-view" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="reportsTitle" hidden>
+                    <div class="page-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <h1 id="reportsTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Reports</h1>
+                            <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Inquiries &amp; concerns</p>
                         </div>
                     </div>
-                    <form id="reportForm" class="report-form">
-                        <fieldset class="segmented">
-                            <legend class="sr-only">Report type</legend><label><input type="radio" name="type"
-                                    value="concerns" checked><span>Concerns</span></label><label><input type="radio"
-                                    name="type" value="inquiries"><span>Ben inquiries</span></label>
+                    <form id="reportForm" class="report-form" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <fieldset class="segmented" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <legend class="sr-only" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Report type</legend><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="radio" name="type"
+                                    value="concerns" checked><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Concerns</span></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="radio"
+                                    name="type" value="inquiries"><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Ben inquiries</span></label>
                         </fieldset>
-                        <div class="report-fields"><label>From<input type="date" name="from" required
-                                    value="<?= date('Y-m-01') ?>"></label><label>To<input type="date" name="to" required
-                                    value="<?= date('Y-m-d') ?>"></label><label id="reportOfficeField">Office<select
+                        <div class="report-fields" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>From<input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="date" name="from" required
+                                    value="<?= date('Y-m-01') ?>"></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>To<input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="date" name="to" required
+                                    value="<?= date('Y-m-d') ?>"></label><label id="reportOfficeField" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Office<select <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                                     name="office_id">
-                                    <option value="">All offices</option><?php foreach ($offices as $office): ?>
-                                        <option value="<?= (int) $office['office_id'] ?>">
+                                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All offices</option><?php foreach ($offices as $office): ?>
+                                        <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="<?= (int) $office['office_id'] ?>">
                                             <?= $escape($office['office_name']) ?></option><?php endforeach; ?>
-                                </select></label><label id="reportStatusField">Status<select name="status">
-                                    <option value="">All statuses</option>
+                                </select></label><label id="reportStatusField" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Status<select <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="status">
+                                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All statuses</option>
                                     <?php foreach (Inquiry::STATUSES as $status): ?>
-                                        <option><?= $escape($status) ?></option><?php endforeach; ?>
-                                </select></label><label id="reportCategoryField" hidden>Category<select name="category"
+                                        <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($status) ?></option><?php endforeach; ?>
+                                </select></label><label id="reportCategoryField" <?= dev_locator_attributes(__FILE__, __LINE__) ?> hidden>Category<select <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="category"
                                     disabled>
-                                    <option value="">All categories</option>
+                                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All categories</option>
                                     <?php $categories = getDbConnection()->query('SELECT DISTINCT category FROM chat_sessions ORDER BY category');
                                     while ($category = $categories->fetch_assoc()): ?>
-                                        <option><?= $escape($category['category']) ?></option><?php endwhile; ?>
-                                </select></label><label>Program<select name="program_id">
-                                    <option value="">All programs</option>
+                                        <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($category['category']) ?></option><?php endwhile; ?>
+                                </select></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Program<select <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="program_id">
+                                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All programs</option>
                                     <?php foreach ($schoolPrograms as $program): ?>
-                                        <option value="<?= (int) $program['program_id'] ?>"><?= $escape($program['name']) ?>
+                                        <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="<?= (int) $program['program_id'] ?>"><?= $escape($program['name']) ?>
                                         </option><?php endforeach; ?>
                                 </select></label><button type="submit"
-                                class="button primary"><?= $icon('file-chart-column') ?>Generate report</button></div>
+                                class="button primary" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= $icon('file-chart-column') ?>Generate report</button></div>
                     </form>
-                    <div class="report-empty" id="reportEmpty"><?= $icon('chart-no-axes-combined') ?>
-                        <h2>No report generated</h2>
+                    <div class="report-empty" id="reportEmpty" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $icon('chart-no-axes-combined') ?>
+                        <h2 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>No report generated</h2>
                     </div>
-                    <section id="reportPreview" hidden>
-                        <div class="section-heading report-heading">
-                            <div>
-                                <h2 id="reportPreviewTitle"></h2>
-                                <p id="reportPreviewMeta"></p>
+                    <section id="reportPreview" <?= dev_locator_attributes(__FILE__, __LINE__) ?> hidden>
+                        <div class="section-heading report-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                <h2 id="reportPreviewTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></h2>
+                                <p id="reportPreviewMeta" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></p>
                             </div>
-                            <div class="report-actions"><button type="button" class="button"
-                                    id="printReport"><?= $icon('printer') ?>Print / PDF</button><button type="button"
-                                    class="button primary" id="downloadReport"><?= $icon('download') ?>Download
+                            <div class="report-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><button type="button" class="button"
+                                    id="printReport" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= $icon('printer') ?>Print / PDF</button><button type="button"
+                                    class="button primary" id="downloadReport" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= $icon('download') ?>Download
                                     CSV</button></div>
                         </div>
-                        <div class="table-scroll">
-                            <table>
-                                <thead id="reportHead"></thead>
-                                <tbody id="reportRows"></tbody>
+                        <div class="table-scroll" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <table <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                <thead id="reportHead" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></thead>
+                                <tbody id="reportRows" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></tbody>
                             </table>
                         </div>
-                        <p class="report-footer" id="reportFooter"></p>
+                        <p class="report-footer" id="reportFooter" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></p>
                     </section>
                 </section>
             </div>
         </main>
     </div>
-    <dialog class="admin-dialog" id="staffDialog" aria-labelledby="staffDialogTitle">
-        <form id="staffForm">
-            <div class="dialog-heading">
-                <h2 id="staffDialogTitle">Add staff</h2><button type="button" class="icon-button"
+    <dialog class="admin-dialog" id="staffDialog" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="staffDialogTitle">
+        <form id="staffForm" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="dialog-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <h2 id="staffDialogTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Add staff</h2><button type="button" class="icon-button" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                     data-close="staffDialog" aria-label="Close" title="Close"><?= $icon('x') ?></button>
-            </div><input type="hidden" name="user_id">
-            <div class="form-grid"><label>First name<input name="first_name" required maxlength="100"
-                        autocomplete="given-name"></label><label>Last name<input name="last_name" required
-                        maxlength="100" autocomplete="family-name"></label><label class="full">Email address<input type="email"
+            </div><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="hidden" name="user_id">
+            <div class="form-grid" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>First name<input <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="first_name" required maxlength="100"
+                        autocomplete="given-name"></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Last name<input <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="last_name" required
+                        maxlength="100" autocomplete="family-name"></label><label class="full" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Email address<input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="email"
                         name="email" required maxlength="150" autocomplete="email"></label><label
-                    class="full">Office assignment<select name="office_id" required>
-                        <option value="">Select office</option><?php foreach ($offices as $office): ?>
-                            <option value="<?= (int) $office['office_id'] ?>"><?= $escape($office['office_name']) ?></option>
+                    class="full" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>>Office assignment<select <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="office_id" required>
+                        <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">Select office</option><?php foreach ($offices as $office): ?>
+                            <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="<?= (int) $office['office_id'] ?>"><?= $escape($office['office_name']) ?></option>
                         <?php endforeach; ?>
-                    </select></label><label class="full"><span id="staffPasswordLabel">Password (8+ characters)</span><input
+                    </select></label><label class="full" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span id="staffPasswordLabel" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Password (8+ characters)</span><input <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                         type="password" name="password" minlength="8" maxlength="72"
-                        autocomplete="new-password" placeholder="Minimum 8 characters"></label><label class="checkbox-label full"><input type="checkbox"
+                        autocomplete="new-password" placeholder="Minimum 8 characters"></label><label class="checkbox-label full" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="checkbox"
                         name="is_active" checked>Active account</label></div>
-            <p class="form-error" role="alert" hidden></p>
-            <div class="dialog-actions"><button type="button" class="button"
-                    data-close="staffDialog">Cancel</button><button type="submit" class="button primary">Save staff
+            <p class="form-error" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="alert" hidden></p>
+            <div class="dialog-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><button type="button" class="button" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
+                    data-close="staffDialog">Cancel</button><button type="submit" class="button primary" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Save staff
                     account</button></div>
         </form>
     </dialog>
-    <dialog class="admin-dialog knowledge-dialog" id="knowledgeDialog" aria-labelledby="knowledgeDialogTitle">
-        <form id="knowledgeForm">
-            <div class="dialog-heading">
-                <h2 id="knowledgeDialogTitle">Add knowledge entry</h2><button type="button" class="icon-button"
+    <dialog class="admin-dialog knowledge-dialog" id="knowledgeDialog" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="knowledgeDialogTitle">
+        <form id="knowledgeForm" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="dialog-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <h2 id="knowledgeDialogTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Add knowledge entry</h2><button type="button" class="icon-button" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                     data-close="knowledgeDialog" aria-label="Close" title="Close"><?= $icon('x') ?></button>
-            </div><input type="hidden" name="entry_id">
-            <div class="form-grid"><label class="full">Title<input name="title" required
-                        maxlength="150"></label><label>Office<select name="office_id">
-                        <option value="">General / All offices</option><?php foreach ($offices as $office): ?>
-                            <option value="<?= (int) $office['office_id'] ?>"><?= $escape($office['office_name']) ?></option>
+            </div><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="hidden" name="entry_id">
+            <div class="form-grid" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><label class="full" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Title<input <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="title" required
+                        maxlength="150"></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Office<select <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="office_id">
+                        <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">General / All offices</option><?php foreach ($offices as $office): ?>
+                            <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="<?= (int) $office['office_id'] ?>"><?= $escape($office['office_name']) ?></option>
                         <?php endforeach; ?>
-                    </select></label><label>Status<select name="status">
-                        <option>Draft</option>
-                        <option>Published</option>
-                    </select></label><label class="full">Content<textarea name="content" rows="10" required
+                    </select></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Status<select <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="status">
+                        <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Draft</option>
+                        <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Published</option>
+                    </select></label><label class="full" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Content<textarea <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="content" rows="10" required
                         maxlength="6000"></textarea></label></div>
-            <p class="form-error" role="alert" hidden></p>
-            <div class="dialog-actions"><button type="button" class="button"
-                    data-close="knowledgeDialog">Cancel</button><button type="submit" class="button primary">Save
+            <p class="form-error" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="alert" hidden></p>
+            <div class="dialog-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><button type="button" class="button" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
+                    data-close="knowledgeDialog">Cancel</button><button type="submit" class="button primary" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Save
                     entry</button></div>
         </form>
     </dialog>
-    <dialog class="admin-dialog concern-dialog" id="concernDialog" aria-labelledby="concernDialogTitle">
-        <div class="dialog-heading">
-            <div><small id="concernDialogId"></small>
-                <h2 id="concernDialogTitle">Concern</h2>
-            </div><button type="button" class="icon-button" data-close="concernDialog" aria-label="Close"
+    <dialog class="admin-dialog concern-dialog" id="concernDialog" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="concernDialogTitle">
+        <div class="dialog-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>><small id="concernDialogId" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></small>
+                <h2 id="concernDialogTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Concern</h2>
+            </div><button type="button" class="icon-button" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-close="concernDialog" aria-label="Close"
                 title="Close"><?= $icon('x') ?></button>
         </div>
-        <div id="concernDetail"></div>
-        <form id="assignmentForm"><input type="hidden" name="inquiry_id"><label>Assigned staff<select name="staff_id"
-                    id="assignmentStaff"></select></label>
-            <p class="form-error" role="alert" hidden></p>
-            <div class="dialog-actions"><button type="button" class="button"
+        <div id="concernDetail" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
+        <form id="assignmentForm" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="hidden" name="inquiry_id"><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Assigned staff<select name="staff_id"
+                    id="assignmentStaff" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>></select></label>
+            <p class="form-error" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="alert" hidden></p>
+            <div class="dialog-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><button type="button" class="button" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                     data-close="concernDialog">Close</button><button type="submit" class="button primary"
-                    id="saveAssignment">Save assignment</button></div>
+                    id="saveAssignment" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>>Save assignment</button></div>
         </form>
     </dialog>
-    <dialog class="admin-dialog confirm-dialog" id="deleteDialog" aria-labelledby="deleteTitle"
+    <dialog class="admin-dialog confirm-dialog" id="deleteDialog" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="deleteTitle"
         aria-describedby="deleteMessage">
-        <form id="deleteForm">
-            <div class="dialog-heading">
-                <h2 id="deleteTitle">Delete?</h2><button type="button" class="icon-button" data-close="deleteDialog"
+        <form id="deleteForm" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="dialog-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <h2 id="deleteTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Delete?</h2><button type="button" class="icon-button" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-close="deleteDialog"
                     aria-label="Close" title="Close"><?= $icon('x') ?></button>
             </div>
-            <p id="deleteMessage"></p>
-            <p class="form-error" role="alert" hidden></p>
-            <div class="dialog-actions"><button type="button" class="button"
-                    data-close="deleteDialog">Cancel</button><button type="submit" class="button danger">Delete</button>
+            <p id="deleteMessage" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></p>
+            <p class="form-error" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="alert" hidden></p>
+            <div class="dialog-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><button type="button" class="button" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
+                    data-close="deleteDialog">Cancel</button><button type="submit" class="button danger" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Delete</button>
             </div>
         </form>
     </dialog>
-    <dialog class="action-confirm-dialog" id="actionConfirmDialog" aria-labelledby="actionConfirmTitle"
+    <dialog class="action-confirm-dialog" id="actionConfirmDialog" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="actionConfirmTitle"
         aria-describedby="actionConfirmMessage">
-        <div class="action-confirm-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-                <path d="M12 3 3.8 7v5.3c0 4.2 3.5 7.9 8.2 9.2 4.7-1.3 8.2-5 8.2-9.2V7L12 3Z" />
-                <path d="M12 8v4m0 4h.01" />
+        <div class="action-confirm-icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">
+            <svg <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+                <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 3 3.8 7v5.3c0 4.2 3.5 7.9 8.2 9.2 4.7-1.3 8.2-5 8.2-9.2V7L12 3Z" />
+                <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 8v4m0 4h.01" />
             </svg>
         </div>
-        <h2 id="actionConfirmTitle">Please confirm</h2>
-        <p id="actionConfirmMessage"></p>
-        <div class="action-confirm-actions">
-            <button type="button" class="action-confirm-continue" id="actionConfirmContinue">Confirm</button>
-            <button type="button" class="action-confirm-cancel" id="actionConfirmCancel">Cancel</button>
+        <h2 id="actionConfirmTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Please confirm</h2>
+        <p id="actionConfirmMessage" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></p>
+        <div class="action-confirm-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <button type="button" class="action-confirm-continue" id="actionConfirmContinue" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Confirm</button>
+            <button type="button" class="action-confirm-cancel" id="actionConfirmCancel" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Cancel</button>
         </div>
     </dialog>
-    <div class="admin-toast" id="adminToast" role="status" aria-live="polite" hidden></div>
+    <div class="admin-toast" id="adminToast" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="status" aria-live="polite" hidden></div>
     <script>window.ADMIN_BOOTSTRAP = <?= json_encode(['offices' => $offices, 'overview' => $overview], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE) ?>;</script>
     <script src="assets/js/student_account_actions.js?v=<?= md5_file(__DIR__ . '/assets/js/student_account_actions.js') ?>" defer></script>
 </body>

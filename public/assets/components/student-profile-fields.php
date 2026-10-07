@@ -6,18 +6,18 @@ $input = static function (
     bool $required = false,
     string $type = 'text'
 ) use ($values, $escape): void {
-    echo '<label for="' . $key . '">'
+    echo '<label' . dev_locator_attributes(__FILE__, __LINE__) . ' for="' . $key . '">'
         . $escape($label)
-        . '<input id="' . $key . '" name="' . $key . '" type="' . $type
+        . '<input' . dev_locator_attributes(__FILE__, __LINE__) . ' id="' . $key . '" name="' . $key . '" type="' . $type
         . '" maxlength="' . $max . '"'
         . ($required ? ' required' : '')
         . ' value="' . $escape($values[$key] ?? '') . '"></label>';
 };
 ?>
 <?php if (empty($academicOnly)): ?>
-    <fieldset class="profile-section"<?= !empty($registrationSteps) ? ' data-registration-step="0"' : '' ?>>
-        <legend>Personal details</legend>
-        <div class="profile-grid">
+    <fieldset <?= dev_locator_attributes(__FILE__, __LINE__) ?> class="profile-section"<?= !empty($registrationSteps) ? ' data-registration-step="0"' : '' ?>>
+        <legend <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Personal details</legend>
+        <div class="profile-grid" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
             <?php
             $input('first_name', 'First name', 100, true);
             $input('last_name', 'Last name', 100, true);
@@ -31,18 +31,18 @@ $input = static function (
         </div>
     </fieldset>
 <?php endif; ?>
-<fieldset class="profile-section"<?= !empty($registrationSteps) ? ' data-registration-step="1"' : '' ?>>
-    <legend>Academic details</legend>
-    <div class="profile-grid">
+<fieldset <?= dev_locator_attributes(__FILE__, __LINE__) ?> class="profile-section"<?= !empty($registrationSteps) ? ' data-registration-step="1"' : '' ?>>
+    <legend <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Academic details</legend>
+    <div class="profile-grid" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
         <?php if (empty($academicOnly)): ?>
             <?php $input('student_number', 'Student ID number', 30, true); ?>
         <?php endif; ?>
-        <label for="college_id">
+        <label <?= dev_locator_attributes(__FILE__, __LINE__) ?> for="college_id">
             College
-            <select id="college_id" name="college_id" required>
-                <option value="">Select college</option>
+            <select id="college_id" <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="college_id" required>
+                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">Select college</option>
                 <?php foreach ($catalog['colleges'] as $college): ?>
-                    <option
+                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                         value="<?= (int)$college['college_id'] ?>"
                         <?= (string)($values['college_id'] ?? '') === (string)$college['college_id']
                             ? 'selected' : '' ?>
@@ -50,12 +50,12 @@ $input = static function (
                 <?php endforeach; ?>
             </select>
         </label>
-        <label for="program_id" class="full">
+        <label for="program_id" class="full" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
             Program / Course
-            <select id="program_id" name="program_id" required>
-                <option value="">Select program</option>
+            <select id="program_id" <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="program_id" required>
+                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">Select program</option>
                 <?php foreach ($catalog['programs'] as $program): ?>
-                    <option
+                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                         value="<?= (int)$program['program_id'] ?>"
                         data-college="<?= (int)$program['college_id'] ?>"
                         data-years="<?= (int)$program['max_year_level'] ?>"
@@ -65,12 +65,12 @@ $input = static function (
                 <?php endforeach; ?>
             </select>
         </label>
-        <label for="year_level">
+        <label <?= dev_locator_attributes(__FILE__, __LINE__) ?> for="year_level">
             Year level
-            <select id="year_level" name="year_level" required>
-                <option value="">Select year level</option>
+            <select id="year_level" <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="year_level" required>
+                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">Select year level</option>
                 <?php for ($year = 1; $year <= 8; $year++): ?>
-                    <option
+                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                         value="<?= $year ?>"
                         <?= (string)($values['year_level'] ?? '') === (string)$year ? 'selected' : '' ?>
                     >Year <?= $year ?></option>
@@ -78,12 +78,12 @@ $input = static function (
             </select>
         </label>
         <?php $input('section', 'Section / Block (optional)', 50); ?>
-        <label for="term_id">
+        <label <?= dev_locator_attributes(__FILE__, __LINE__) ?> for="term_id">
             Academic year / Term
-            <select id="term_id" name="term_id" required>
-                <option value="">Select academic term</option>
+            <select id="term_id" <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="term_id" required>
+                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">Select academic term</option>
                 <?php foreach ($catalog['terms'] as $term): ?>
-                    <option
+                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                         value="<?= (int)$term['term_id'] ?>"
                         <?= (string)($values['term_id'] ?? '') === (string)$term['term_id']
                             ? 'selected' : '' ?>
@@ -91,12 +91,12 @@ $input = static function (
                 <?php endforeach; ?>
             </select>
         </label>
-        <label for="enrollment_type">
+        <label <?= dev_locator_attributes(__FILE__, __LINE__) ?> for="enrollment_type">
             Enrollment classification
-            <select id="enrollment_type" name="enrollment_type" required>
-                <option value="">Select classification</option>
+            <select id="enrollment_type" <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="enrollment_type" required>
+                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">Select classification</option>
                 <?php foreach (['Regular', 'Irregular', 'Transferee', 'Returning'] as $classification): ?>
-                    <option
+                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                         <?= ($values['enrollment_type'] ?? '') === $classification ? 'selected' : '' ?>
                     ><?= $classification ?></option>
                 <?php endforeach; ?>

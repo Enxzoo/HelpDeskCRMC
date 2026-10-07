@@ -51,7 +51,7 @@ $workspacePage = 'school_catalog';
 $workspaceTitle = 'School catalog';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html <?= dev_locator_attributes(__FILE__, __LINE__) ?> lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -64,89 +64,89 @@ $workspaceTitle = 'School catalog';
     <script src="assets/js/workspace.js?v=<?= md5_file(__DIR__ . '/assets/js/workspace.js') ?>" defer></script>
 </head>
 
-<body class="student-account-page">
-    <div class="workspace-app">
+<body class="student-account-page" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+    <div class="workspace-app" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
         <?php require __DIR__ . '/assets/components/workspace-sidebar.php'; ?>
-        <main class="workspace-main">
+        <main class="workspace-main" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
             <?php require __DIR__ . '/assets/components/workspace-header.php'; ?>
-            <div class="account-shell wide">
-                <h1 class="account-title">School catalog</h1>
+            <div class="account-shell wide" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <h1 class="account-title" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>School catalog</h1>
                 <?php if ($notice): ?>
-                    <div class="account-success" role="status"><?= $escape($notice) ?></div>
+                    <div class="account-success" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="status"><?= $escape($notice) ?></div>
                 <?php endif; ?><?php if ($error): ?>
-                    <div class="account-error" role="alert"><?= $escape($error) ?></div><?php endif; ?>
+                    <div class="account-error" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="alert"><?= $escape($error) ?></div><?php endif; ?>
                 <?php foreach (['college' => ['colleges', 'college_id', 'Colleges'], 'program' => ['programs', 'program_id', 'Programs / Courses'], 'term' => ['terms', 'term_id', 'Academic terms']] as $kind => [$list, $key, $title]): ?>
                     <?php $values = $editing && $editing['kind'] === $kind ? $editing : [];
                     if ($error && ($_POST['kind'] ?? '') === $kind)
                         foreach ($_POST as $field => $value)
                             if (is_string($value))
                                 $values[$field] = $value; ?>
-                    <section class="catalog-section">
-                        <h2><?= $title ?></h2>
-                        <form method="POST" class="catalog-form"><?= csrf_field() ?><input type="hidden" name="kind"
-                                value="<?= $kind ?>"><input type="hidden" name="catalog_id"
+                    <section class="catalog-section" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <h2 <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $title ?></h2>
+                        <form method="POST" class="catalog-form" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= csrf_field() ?><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="hidden" name="kind"
+                                value="<?= $kind ?>"><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="hidden" name="catalog_id"
                                 value="<?= $escape($values['catalog_id'] ?? '') ?>">
                             <?php if ($kind !== 'term'): ?>
-                                <label>Code<input name="code" required maxlength="<?= $kind === 'college' ? '20' : '30' ?>"
-                                        value="<?= $escape($values['code'] ?? '') ?>"></label><label>Name<input name="name"
+                                <label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Code<input <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="code" required maxlength="<?= $kind === 'college' ? '20' : '30' ?>"
+                                        value="<?= $escape($values['code'] ?? '') ?>"></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Name<input <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="name"
                                         required maxlength="<?= $kind === 'college' ? '150' : '200' ?>"
                                         value="<?= $escape($values['name'] ?? '') ?>"></label>
-                                <?php if ($kind === 'program'): ?><label>College<select name="college_id" required>
-                                            <option value="">Select college</option>
+                                <?php if ($kind === 'program'): ?><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>College<select <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="college_id" required>
+                                            <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">Select college</option>
                                             <?php foreach ($catalog['colleges'] as $college): ?>
-                                                <option value="<?= (int) $college['college_id'] ?>" <?= (string) ($values['college_id'] ?? '') === (string) $college['college_id'] ? 'selected' : '' ?>>
+                                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="<?= (int) $college['college_id'] ?>" <?= (string) ($values['college_id'] ?? '') === (string) $college['college_id'] ? 'selected' : '' ?>>
                                                     <?= $escape($college['name']) ?></option><?php endforeach; ?>
-                                        </select></label><label>Maximum year level<input type="number" name="max_year_level" min="1"
+                                        </select></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Maximum year level<input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="number" name="max_year_level" min="1"
                                             max="8" required
                                             value="<?= $escape($values['max_year_level'] ?? '4') ?>"></label><?php endif; ?>
-                                <label class="checkbox-label"><input type="checkbox" name="is_active" value="1" <?= !$values || (int) ($values['is_active'] ?? 0) ? 'checked' : '' ?>>Available for registration</label>
-                            <?php else: ?><label>Academic year<input name="academic_year" placeholder="2026-2027"
+                                <label class="checkbox-label" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="checkbox" name="is_active" value="1" <?= !$values || (int) ($values['is_active'] ?? 0) ? 'checked' : '' ?>>Available for registration</label>
+                            <?php else: ?><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Academic year<input <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="academic_year" placeholder="2026-2027"
                                         pattern="20[0-9]{2}-20[0-9]{2}" maxlength="9" required
-                                        value="<?= $escape($values['academic_year'] ?? '') ?>"></label><label>Term<select
+                                        value="<?= $escape($values['academic_year'] ?? '') ?>"></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Term<select <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                                         name="semester"
                                         required><?php foreach (['1st Semester', '2nd Semester', 'Summer'] as $semester): ?>
-                                            <option <?= ($values['semester'] ?? '') === $semester ? 'selected' : '' ?>><?= $semester ?>
+                                            <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> <?= ($values['semester'] ?? '') === $semester ? 'selected' : '' ?>><?= $semester ?>
                                             </option><?php endforeach; ?>
-                                    </select></label><label class="checkbox-label"><input type="checkbox"
+                                    </select></label><label class="checkbox-label" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="checkbox"
                                         name="registration_open" value="1" <?= (int) ($values['registration_open'] ?? 0) ? 'checked' : '' ?>>Registration open</label><?php endif; ?>
-                            <div class="account-actions full"><?php if (!empty($values['catalog_id'])): ?><a class="button"
+                            <div class="account-actions full" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?php if (!empty($values['catalog_id'])): ?><a class="button" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                                         href="school_catalog.php">Cancel edit</a><?php endif; ?><button type="submit"
-                                    class="button primary"><img class="icon"
+                                    class="button primary" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><img class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                                         src="assets/icons/<?= empty($values['catalog_id']) ? 'plus' : 'circle-check' ?>.svg"
                                         alt=""><?= empty($values['catalog_id']) ? 'Add' : 'Save' ?>     <?= $kind ?></button>
                             </div>
                         </form>
-                        <div class="table-scroll">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th><?= $kind === 'term' ? 'Academic year' : 'Code' ?></th>
-                                        <th><?= $kind === 'term' ? 'Term' : 'Name' ?></th><?php if ($kind === 'program'): ?>
-                                            <th>College</th>
-                                            <th>Year levels</th><?php endif; ?>
-                                        <th>Registration</th>
-                                        <th></th>
+                        <div class="table-scroll" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <table <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                <thead <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                    <tr <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                        <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $kind === 'term' ? 'Academic year' : 'Code' ?></th>
+                                        <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $kind === 'term' ? 'Term' : 'Name' ?></th><?php if ($kind === 'program'): ?>
+                                            <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>College</th>
+                                            <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Year levels</th><?php endif; ?>
+                                        <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Registration</th>
+                                        <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>></th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                                     <?php foreach ($catalog[$list] as $item): ?>
-                                        <tr>
-                                            <td><?= $escape($item[$kind === 'term' ? 'academic_year' : 'code']) ?></td>
-                                            <td><?= $escape($item[$kind === 'term' ? 'semester' : 'name']) ?></td>
+                                        <tr <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                            <td <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($item[$kind === 'term' ? 'academic_year' : 'code']) ?></td>
+                                            <td <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($item[$kind === 'term' ? 'semester' : 'name']) ?></td>
                                             <?php if ($kind === 'program'): ?>
-                                                <td><?= $escape($item['college_name']) ?></td>
-                                                <td><?= (int) $item['max_year_level'] ?></td><?php endif; ?>
-                                            <td><?= (int) $item[$kind === 'term' ? 'registration_open' : 'is_active'] ? 'Open' : 'Closed' ?>
+                                                <td <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($item['college_name']) ?></td>
+                                                <td <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= (int) $item['max_year_level'] ?></td><?php endif; ?>
+                                            <td <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= (int) $item[$kind === 'term' ? 'registration_open' : 'is_active'] ? 'Open' : 'Closed' ?>
                                             </td>
-                                            <td><a class="icon-button"
+                                            <td <?= dev_locator_attributes(__FILE__, __LINE__) ?>><a class="icon-button" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                                                     href="?kind=<?= $kind ?>&amp;catalog_id=<?= (int) $item[$key] ?>"
                                                     title="Edit <?= $kind ?>"
                                                     aria-label="Edit <?= $escape($item[$kind === 'term' ? 'academic_year' : 'code']) ?>"><img
-                                                        class="icon" src="assets/icons/pencil.svg" alt=""></a></td>
+                                                        class="icon" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?> src="assets/icons/pencil.svg" alt=""></a></td>
                                         </tr><?php endforeach; ?>
                                     <?php if (!$catalog[$list]): ?>
-                                        <tr>
-                                            <td colspan="6" class="empty-cell">No <?= strtolower($title) ?> yet.</td>
+                                        <tr <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                            <td colspan="6" class="empty-cell" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>No <?= strtolower($title) ?> yet.</td>
                                         </tr><?php endif; ?>
                                 </tbody>
                             </table>

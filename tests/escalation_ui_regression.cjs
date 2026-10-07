@@ -6,9 +6,9 @@ const { JSDOM } = require('jsdom');
 
 const root = path.resolve(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'public/dashboard_student.php'), 'utf8');
-const template = fs.readFileSync(path.join(root, 'public/assets/components/escalation-form.html'), 'utf8');
 const api = fs.readFileSync(path.join(root, 'public/api/submit_inquiry.php'), 'utf8');
 const php = process.argv[2] || 'php';
+const template = execFileSync(php, [path.join(root, 'public/assets/components/escalation-form.php')], { encoding: 'utf8' });
 const runPhp = code => execFileSync(php, ['-r', code], { encoding: 'utf8' });
 const profileBlock = source.match(/\$profile = \$studentProfileView\['profile'\];[\s\S]*?\n\];/)[0];
 const profile = {

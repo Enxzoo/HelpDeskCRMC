@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html <?= dev_locator_attributes(__FILE__, __LINE__) ?> lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -54,63 +54,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         defer></script>
 </head>
 
-<body>
-    <header>
-        <div class="wrap">
-            <div class="navbar">
-                <div class="brand"><img class="brand-mark" src="assets/images/helpdesk-logo.png"
-                        alt="Helpdesk CRMC"><span class="brand-text">Helpdesk<span>CRMC</span></span></div>
-                <nav class="links">
-                    <a href="index.php#about">About</a><a href="index.php#how">How it works</a><a
-                        href="index.php#offices">Offices</a><a href="index.php#faq">FAQs</a>
+<body <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+    <header <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="wrap" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="navbar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <div class="brand" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="brand-mark" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/helpdesk-logo.png"
+                        alt="Helpdesk CRMC"><span class="brand-text" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Helpdesk<span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>CRMC</span></span></div>
+                <nav class="links" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <a <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="index.php#about">About</a><a <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="index.php#how">How it works</a><a <?= dev_locator_attributes(__FILE__, __LINE__) ?>
+                        href="index.php#offices">Offices</a><a <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="index.php#faq">FAQs</a>
                 </nav>
-                <div class="navbar-cta">
-                    <a class="btn btn-ghost" href="login.php">Sign in</a>
-                    <a class="btn btn-dark" href="register.php">Create account</a>
+                <div class="navbar-cta" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <a class="btn btn-ghost" <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="login.php">Sign in</a>
+                    <a class="btn btn-dark" <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="register.php">Create account</a>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <h1>Welcome back</h1>
-                <p>Sign in to your account to continue</p>
+    <div class="login-container" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="login-card" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="login-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <h1 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Welcome back</h1>
+                <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Sign in to your account to continue</p>
             </div>
 
             <?php if ($error): ?>
-                <div class="error-message">
+                <div class="error-message" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                     <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
                 </div>
             <?php endif; ?>
 
-            <form method="POST" action="">
+            <form <?= dev_locator_attributes(__FILE__, __LINE__) ?> method="POST" action="">
                 <?= csrf_field() ?>
 
-                <div class="form-group">
-                    <label for="email">Email address</label>
-                    <input type="email" id="email" name="email" required autofocus
+                <div class="form-group" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <label <?= dev_locator_attributes(__FILE__, __LINE__) ?> for="email">Email address</label>
+                    <input type="email" id="email" <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="email" required autofocus
                         value="<?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8') ?>">
                 </div>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="profile-password">
-                        <input type="password" id="password" name="password" required autocomplete="current-password">
-                        <button type="button" class="password-toggle" data-password-toggle="password"
+                <div class="form-group" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <label <?= dev_locator_attributes(__FILE__, __LINE__) ?> for="password">Password</label>
+                    <div class="profile-password" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <input type="password" id="password" <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="password" required autocomplete="current-password">
+                        <button type="button" class="password-toggle" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-password-toggle="password"
                             title="Show password" aria-label="Show password" aria-controls="password">
-                            <img src="assets/icons/eye.svg" alt="">
+                            <img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/icons/eye.svg" alt="">
                         </button>
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn">Sign in</button>
+                <button type="submit" class="submit-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Sign in</button>
             </form>
 
-            <div class="login-footer">
-                <p>Don't have an account?</p>
-                <a class="btn btn-dark create-account-btn" href="register.php">Create account</a>
+            <div class="login-footer" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Don't have an account?</p>
+                <a class="btn btn-dark create-account-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="register.php">Create account</a>
             </div>
         </div>
     </div>

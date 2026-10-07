@@ -23,6 +23,7 @@ header {
   font-weight: 800;
   font-size: 16px;
   letter-spacing: .01em;
+  text-decoration: none;
 }
 
 .brand-mark {
@@ -36,6 +37,7 @@ header {
 .brand-text {
   display: inline-block;
   color: var(--ink);
+  line-height: 1;
 }
 
 .brand-text span {

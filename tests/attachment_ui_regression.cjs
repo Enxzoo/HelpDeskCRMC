@@ -1,15 +1,16 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const { execFileSync } = require('node:child_process');
 const { JSDOM } = require('jsdom');
 const root = path.resolve(__dirname, '..');
-const template = fs.readFileSync(path.join(root, 'public/assets/components/escalation-form.html'), 'utf8');
+const template = execFileSync(process.env.PHP_BINARY || 'php', [path.join(root, 'public/assets/components/escalation-form.php')], { encoding: 'utf8' });
 const moduleSource = fs.readFileSync(path.join(root, 'public/assets/js/inquiry_attachments.js'), 'utf8');
 const extract = (page, name) => {
   const source = fs.readFileSync(path.join(root, 'public', page), 'utf8');
   const match = source.match(new RegExp('^([ \\t]*)(?:async )?function ' + name + '\\([^]*?^\\1}', 'm'));
   assert.ok(match, 'Missing function: ' + name);
-  return match[0];
+  return match[0].replace(/<\?= (?:addslashes\()?dev_locator_attributes\(__FILE__, __LINE__(?: - \d+)?\)\)? \?>/g, '');
 };
 
 (async () => {

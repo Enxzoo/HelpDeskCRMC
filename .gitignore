@@ -12,13 +12,15 @@ storage/attachments/*
 
 # Logs — keep folder, ignore contents
 logs/*.log
+/debug.log
 
 # Old Flask AI service (removed - now using Gemini)
 ai-service/
 
 # OS/editor junk
 .DS_Store
-.vscode/
+.vscode/*
+!.vscode/extensions.json
 *.swp
 
 # XAMPP/local

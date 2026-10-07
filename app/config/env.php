@@ -32,6 +32,7 @@ loadEnv(__DIR__ . '/../../.env');
 define('GEMINI_API_KEY', env('GEMINI_API_KEY', ''));
 $triageModel = trim((string)env('GEMINI_TRIAGE_MODEL', ''));
 define('GEMINI_TRIAGE_MODEL', $triageModel !== '' ? $triageModel : 'gemini-3.6-flash');
+define('GEMINI_FALLBACK_MODEL', trim((string)env('GEMINI_FALLBACK_MODEL', 'gemini-3.5-flash')));
 
 define('GROQ_API_KEY', env('GROQ_API_KEY', ''));
 $groqTriageModel = trim((string)env('GROQ_TRIAGE_MODEL', ''));

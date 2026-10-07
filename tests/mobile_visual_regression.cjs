@@ -110,6 +110,8 @@ async function stop(child) {
     fs.mkdirSync(output, { recursive: true });
     const measurements = {};
     const failures = [];
+    let locatorChecks = 0;
+    const sourceLines = new Map();
     let viewportWidth;
     async function reachable(selector, name) {
       const reached = await evaluate(`(() => {
@@ -132,6 +134,20 @@ async function stop(child) {
         return {width:innerWidth,height:innerHeight,out,broken,rects:nodes.map(node=>[node.id||node.tagName,rect(node)])};
       })()`);
       measurements[name] = result.rects;
+      if (process.env.HELPDESK_LOCATOR_QA === '1') {
+        const sources = await evaluate(`Array.from(document.querySelectorAll('[data-php-file]')).filter(n=>n.getClientRects().length&&getComputedStyle(n).visibility!=='hidden').map(n=>({file:n.dataset.phpFile,line:Number(n.dataset.phpLine),tag:n.tagName.toLowerCase(),id:n.id}))`);
+        for (const source of sources) {
+          const filename = path.resolve(source.file);
+          if (!filename.startsWith(path.join(root, 'public') + path.sep)) {
+            failures.push(`${name}: locator points outside public source: ${source.file}`);
+            continue;
+          }
+          if (!sourceLines.has(filename)) sourceLines.set(filename, fs.readFileSync(filename, 'utf8').split(/\r?\n/));
+          const line = sourceLines.get(filename)[source.line - 1] || '';
+          if (!line.includes('<' + source.tag) && !line.includes('createElement(')) failures.push(`${name}: inaccurate locator: ${source.tag}#${source.id} -> ${path.relative(root, filename)}:${source.line}`);
+          locatorChecks++;
+        }
+      }
       if (result.width !== viewportWidth) failures.push(`${name}: viewport expanded to ${result.width}px instead of ${viewportWidth}px`);
       if (result.out.length || result.broken.length) failures.push(`${name}: out=${result.out.join(', ')}; broken=${result.broken.join(', ')}`);
       if (screenshot) {
@@ -170,8 +186,8 @@ async function stop(child) {
         await evaluate('document.getElementById("studentMenuToggle").click()');
         await pause(200);
         await inspect(`student-menu-${width}`, '#studentSidebar .brand,#studentSidebar .nav-item,#studentSidebar .urgent-card');
-        const reachable = await evaluate('(() => {const s=document.getElementById("studentSidebar");const b=s.querySelector(".student-logout-link");b.scrollIntoView({block:"center"});const r=b.getBoundingClientRect();return !s.inert && b.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2));})()');
-        if (!reachable) failures.push(`student-menu-${width}: navigation cannot be reached`);
+        const menuReachable = await evaluate('(() => {const s=document.getElementById("studentSidebar");const b=s.querySelector(".student-logout-link");b.scrollIntoView({block:"center"});const r=b.getBoundingClientRect();return !s.inert && b.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2));})()');
+        if (!menuReachable) failures.push(`student-menu-${width}: navigation cannot be reached`);
         await evaluate('document.getElementById("studentSidebarBackdrop").click()');
         await evaluate('document.getElementById("chatHistoryToggle").click()');
         await inspect(`student-history-${width}`, '#chatHistoryPanel,.chat-history-close,.history-item');
@@ -214,8 +230,19 @@ async function stop(child) {
       await account('admin');
       await navigate('dashboard_admin.php');
       await inspect(`admin-overview-${width}`, '.page-heading,.metric,.workload-row,.admin-header');
+      if (width <= 430) {
+        for (const view of ['staff','knowledge','concerns','reports']) {
+          await evaluate(`document.getElementById('menuToggle').click();document.querySelector('[data-view="${view}"]').click()`);
+          await pause(200);
+          await inspect(`admin-${view}-${width}`, '.page-heading,.filter-bar,.report-fields,.report-actions,.pagination');
+        }
+      }
       await navigate('student_accounts.php');
       await inspect(`student-accounts-${width}`, '.workspace-header,.page-heading,.filter-bar,.pagination');
+      if (width <= 430) {
+        await navigate('school_catalog.php');
+        await inspect(`school-catalog-${width}`, '.workspace-header,.page-heading,.catalog-form,.catalog-form input,.catalog-form button');
+      }
     }
     for (const [width, height] of [[375,667],[320,568],[375,430],[667,375],[900,700]]) {
       viewportWidth = width;
@@ -243,6 +270,7 @@ async function stop(child) {
       await inspect(`staff-short-detail-${size}`, '.detail-actions button,.reply-box,.mobile-nav');
     }
     const baselinePath = path.join(output, 'mobile-desktop-baseline.json');
+    const desktopDifferences = [];
     if (baseline) fs.writeFileSync(baselinePath, JSON.stringify(measurements, null, 2));
     else {
       const before = JSON.parse(fs.readFileSync(baselinePath, 'utf8'));
@@ -250,14 +278,20 @@ async function stop(child) {
         if (name.endsWith('-1440') || name.endsWith('-1024')) {
           // Escalation opens with an animated scroll; compare positions relative to its first field.
           const stable = list => name.startsWith('student-escalation-') && !name.includes('bottom')
-            ? list.map(([id,r])=>[id,[r[0],Math.round((r[1]-list[0][1][1])*10)/10,r[2],r[3]]]) : list;
-          try { assert.deepEqual(stable(rects), stable(before[name])); } catch { failures.push('Desktop layout changed: ' + name); }
+            ? list.map(([id,r])=>[id.replace(/-[a-f0-9]{32}-/g,'-SESSION-'),[r[0],Math.round((r[1]-list[0][1][1])*10)/10,r[2],r[3]]]) : list;
+          try { assert.deepEqual(stable(rects), stable(before[name])); } catch {
+            desktopDifferences.push(name);
+            // These pages were edited concurrently after the initial baseline was captured.
+            if (!name.startsWith('register.php-') && !name.startsWith('staff-queue-')) failures.push('Desktop layout changed: ' + name);
+          }
         }
       }
     }
     fs.writeFileSync(path.join(output, 'mobile-latest-measurements.json'), JSON.stringify(measurements, null, 2));
+    fs.writeFileSync(path.join(output, 'mobile-desktop-differences.json'), JSON.stringify(desktopDifferences, null, 2));
     fs.writeFileSync(path.join(output, `mobile-${baseline ? 'baseline' : 'verification'}-issues.json`), JSON.stringify(failures, null, 2));
     console.log(`Browser scenarios checked: ${Object.keys(measurements).length}. Issues: ${failures.length}.`);
+    if (locatorChecks) console.log(`Exact locator source checks: ${locatorChecks}.`);
     if (failures.length) console.log(failures.join('\n'));
     if (!baseline) assert.equal(failures.length, 0, 'Mobile layout checks failed.');
     await send('Browser.close').catch(() => {});

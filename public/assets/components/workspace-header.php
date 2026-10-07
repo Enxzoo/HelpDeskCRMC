@@ -1,5 +1,5 @@
-<header class="workspace-header">
-    <button type="button" class="icon-button workspace-menu" id="workspaceMenuToggle" aria-label="Open navigation" aria-controls="workspaceSidebar" aria-expanded="false" title="Navigation"><img class="icon" src="assets/icons/menu.svg" alt=""></button>
-    <div class="workspace-breadcrumb"><span><?= $workspaceRole === 'admin' ? 'Administration' : 'Student portal' ?></span><span aria-hidden="true">/</span><strong><?= htmlspecialchars($workspaceTitle, ENT_QUOTES, 'UTF-8') ?></strong></div>
-    <img class="workspace-header-logo" src="assets/images/helpdesk-logo.png" alt="CRMC" width="28" height="28">
+<header class="workspace-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+    <button type="button" class="icon-button workspace-menu" id="workspaceMenuToggle" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-label="Open navigation" aria-controls="workspaceSidebar" aria-expanded="false" title="Navigation"><img class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/icons/menu.svg" alt=""></button>
+    <div class="workspace-breadcrumb" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $workspaceRole === 'admin' ? 'Administration' : 'Student portal' ?></span><span <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">/</span><strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($workspaceTitle, ENT_QUOTES, 'UTF-8') ?></strong></div>
+    <img class="workspace-header-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/helpdesk-logo.png" alt="CRMC" width="28" height="28">
 </header>

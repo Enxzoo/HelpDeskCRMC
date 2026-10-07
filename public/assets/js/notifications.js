@@ -52,20 +52,20 @@
     const list = get('notificationList');
     list.replaceChildren();
     if (!items.length) {
-      const empty = document.createElement('p');
+      const empty = (globalThis.HelpdeskLocator || document).createElement('p');
       empty.className = 'notification-empty';
       empty.textContent = 'No notifications yet';
       list.appendChild(empty);
     }
     for (const item of items) {
-      const button = document.createElement('button');
+      const button = (globalThis.HelpdeskLocator || document).createElement('button');
       button.type = 'button';
       button.className = `notification-item${item.is_read ? '' : ' unread'}`;
-      const title = document.createElement('strong');
+      const title = (globalThis.HelpdeskLocator || document).createElement('strong');
       title.textContent = item.title;
-      const message = document.createElement('p');
+      const message = (globalThis.HelpdeskLocator || document).createElement('p');
       message.textContent = item.message;
-      const time = document.createElement('time');
+      const time = (globalThis.HelpdeskLocator || document).createElement('time');
       const date = new Date(item.created_at * 1000);
       time.dateTime = date.toISOString();
       time.textContent = date.toLocaleString();

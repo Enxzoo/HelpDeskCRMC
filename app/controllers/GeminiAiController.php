@@ -5,10 +5,14 @@
  * Generates intelligent, contextual responses - NOT predefined answers
  */
 
+class GeminiTransientException extends RuntimeException {}
+
 class GeminiAiController
 {
     private const GEMINI_API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/';
     private const TIMEOUT = 30;
+    private const PRIMARY_RESPONSE_WAIT = 12;
+    private const FALLBACK_RESPONSE_WAIT = 20;
     private string $apiKey;
     private string $systemPrompt;
     private ?Closure $requester;
@@ -27,16 +31,35 @@ class GeminiAiController
             error_log('Ben chat unavailable: Gemini API key is not configured.');
             return ['success' => false, 'error' => 'Ben’s AI service is not configured.'];
         }
+        $primary = defined('GEMINI_TRIAGE_MODEL') ? GEMINI_TRIAGE_MODEL : 'gemini-3.6-flash';
+        $fallback = defined('GEMINI_FALLBACK_MODEL') ? GEMINI_FALLBACK_MODEL : 'gemini-3.5-flash';
+        $models = array_values(array_unique(array_filter([$primary, $fallback])));
+        $sentText = false;
+        $forwardChunk = $onChunk === null ? null : static function (string $text) use ($onChunk, &$sentText): void {
+            if ($text !== '') $sentText = true;
+            $onChunk($text);
+        };
         try {
-            return ['success' => true, 'answer' => $this->callGeminiApi($message, $context, $onChunk),
-                'source' => 'gemini-ai', 'generated' => true];
+            foreach ($models as $index => $model) {
+                try {
+                    $wait = $index === 0 ? self::PRIMARY_RESPONSE_WAIT : self::FALLBACK_RESPONSE_WAIT;
+                    $answer = $this->callGeminiApi($message, $context, $forwardChunk, $model, $wait);
+                    return ['success' => true, 'answer' => $answer, 'source' => 'gemini-ai', 'generated' => true];
+                } catch (GeminiTransientException $e) {
+                    // Never join a second model's answer onto an already visible stream.
+                    if ($sentText || !isset($models[$index + 1])) throw $e;
+                    error_log('Ben chat: primary request failed (' . $e->getCode() . '); trying fallback.');
+                    if ($this->requester === null) usleep(random_int(250000, 500000));
+                }
+            }
+            throw new RuntimeException('No Gemini model is configured.');
         } catch (Exception $e) {
             error_log('Gemini API Error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Ben’s AI service is temporarily unavailable. Please try again shortly or submit your concern to staff.'];
         }
     }
 
-    private function requestBody(string $message, array $context): array
+    private function requestBody(string $message, array $context, string $model): array
     {
         $contents = [];
         $history = $context['history'] ?? [];
@@ -79,17 +102,20 @@ class GeminiAiController
                 ['category' => 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'],
             ],
         ];
-        $model = defined('GEMINI_TRIAGE_MODEL') ? GEMINI_TRIAGE_MODEL : 'gemini-3.6-flash';
         if (preg_match('/^gemini-3[.-]/', $model)) {
             $requestBody['generationConfig']['thinkingConfig'] = ['thinkingLevel' => 'low'];
         }
         return $requestBody;
     }
 
-    private static function responseText(array $result): string
+    private static function responseText(array $result, string $model = ''): string
     {
-        if (isset($result['error']) || !empty($result['promptFeedback']['blockReason'])) {
+        if (!empty($result['promptFeedback']['blockReason'])) {
             throw new RuntimeException('Gemini could not complete this response.');
+        }
+        if (isset($result['error'])) {
+            $error = is_array($result['error']) ? $result['error'] : [];
+            throw self::httpFailure((int)($error['code'] ?? 0), $error, $model);
         }
         $candidate = $result['candidates'][0] ?? [];
         if (isset($candidate['finishReason']) && $candidate['finishReason'] !== 'STOP') {
@@ -102,7 +128,7 @@ class GeminiAiController
         return $text;
     }
 
-    private static function consumeStream(string &$buffer, Closure $onChunk, string &$answer, bool &$complete): void
+    private static function consumeStream(string &$buffer, Closure $onChunk, string &$answer, bool &$complete, string $model = ''): void
     {
         while (preg_match('/\r?\n\r?\n/', $buffer, $delimiter, PREG_OFFSET_CAPTURE)) {
             $offset = $delimiter[0][1];
@@ -115,7 +141,7 @@ class GeminiAiController
             if ($data === []) continue;
             $result = json_decode(implode("\n", $data), true, 512, JSON_THROW_ON_ERROR);
             if (!is_array($result)) throw new RuntimeException('Invalid Gemini stream event.');
-            $text = self::responseText($result);
+            $text = self::responseText($result, $model);
             if ($text !== '') {
                 $answer .= $text;
                 $onChunk($text);
@@ -125,10 +151,52 @@ class GeminiAiController
         if (strlen($buffer) > 1048576) throw new RuntimeException('Gemini stream event is too large.');
     }
 
-    private function callGeminiApi(string $message, array $context, ?Closure $onChunk): string
+    private static function httpFailure(int $status, array $error = [], string $model = ''): RuntimeException
     {
-        $requestBody = $this->requestBody($message, $context);
-        $model = defined('GEMINI_TRIAGE_MODEL') ? GEMINI_TRIAGE_MODEL : 'gemini-3.6-flash';
+        $reason = match ($status) {
+            401, 403 => 'authentication or permission denied',
+            404 => 'configured Gemini model or endpoint was not found',
+            429 => 'Gemini quota or rate limit reached',
+            default => 'provider returned an error',
+        };
+        $message = "Gemini request failed with HTTP $status ($reason).";
+        $modelQuota = false;
+        if ($status === 429 && $model !== '' && is_array($error['details'] ?? null)) {
+            // Only a quota explicitly scoped to this model can justify switching models.
+            foreach ($error['details'] as $detail) {
+                if (!is_array($detail) || ($detail['@type'] ?? '') !== 'type.googleapis.com/google.rpc.QuotaFailure') continue;
+                if (!is_array($detail['violations'] ?? null) || $detail['violations'] === []) {
+                    $modelQuota = false;
+                    break;
+                }
+                foreach ($detail['violations'] as $violation) {
+                    if (!is_array($violation) || ($violation['quotaDimensions']['model'] ?? '') !== $model
+                        || !str_contains((string)($violation['quotaId'] ?? ''), 'PerModel')) {
+                        $modelQuota = false;
+                        break 2;
+                    }
+                    $modelQuota = true;
+                }
+            }
+        }
+        return $modelQuota || in_array($status, [408, 500, 502, 503, 504], true)
+            ? new GeminiTransientException($message, $status)
+            : new RuntimeException($message, $status);
+    }
+
+    private static function connectionFailure(int $code): RuntimeException
+    {
+        $message = "Gemini connection failed (cURL $code).";
+        return in_array($code, [CURLE_COULDNT_RESOLVE_PROXY, CURLE_COULDNT_RESOLVE_HOST,
+            CURLE_COULDNT_CONNECT, CURLE_PARTIAL_FILE, CURLE_OPERATION_TIMEDOUT,
+            CURLE_GOT_NOTHING, CURLE_SEND_ERROR, CURLE_RECV_ERROR], true)
+            ? new GeminiTransientException($message, $code)
+            : new RuntimeException($message, $code);
+    }
+
+    private function callGeminiApi(string $message, array $context, ?Closure $onChunk, string $model, int $responseWait): string
+    {
+        $requestBody = $this->requestBody($message, $context, $model);
         $method = $onChunk === null ? ':generateContent?' : ':streamGenerateContent?alt=sse&';
         $url = self::GEMINI_API_BASE_URL . rawurlencode($model) . $method . 'key=' . rawurlencode($this->apiKey);
         if ($this->requester !== null) {
@@ -142,15 +210,24 @@ class GeminiAiController
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_TIMEOUT, self::TIMEOUT);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $onChunk === null ? $responseWait : self::TIMEOUT);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 8);
-        $buffer = $answer = '';
+        $buffer = $answer = $errorBody = '';
         $complete = false;
+        $responseExpired = false;
         if ($onChunk !== null) {
-            curl_setopt($ch, CURLOPT_WRITEFUNCTION, static function ($handle, string $chunk) use (&$buffer, &$answer, &$complete, $onChunk): int {
+            $started = hrtime(true);
+            curl_setopt($ch, CURLOPT_NOPROGRESS, false);
+            curl_setopt($ch, CURLOPT_XFERINFOFUNCTION, static function () use (&$answer, &$responseExpired, $started, $responseWait): int {
+                $responseExpired = $answer === '' && (hrtime(true) - $started) / 1e9 >= $responseWait;
+                return $responseExpired ? 1 : 0;
+            });
+            curl_setopt($ch, CURLOPT_WRITEFUNCTION, static function ($handle, string $chunk) use (&$buffer, &$answer, &$errorBody, &$complete, $onChunk, $model): int {
                 if (curl_getinfo($handle, CURLINFO_HTTP_CODE) === 200) {
                     $buffer .= $chunk;
-                    self::consumeStream($buffer, $onChunk, $answer, $complete);
+                    self::consumeStream($buffer, $onChunk, $answer, $complete, $model);
+                } else {
+                    $errorBody .= substr($chunk, 0, max(0, 65536 - strlen($errorBody)));
                 }
                 return strlen($chunk);
             });
@@ -158,30 +235,26 @@ class GeminiAiController
         try {
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            if (curl_errno($ch)) throw new RuntimeException('Gemini connection failed: ' . curl_error($ch));
+            if ($httpCode !== 0 && $httpCode !== 200) {
+                $errorResponse = json_decode($onChunk === null ? (string)$response : $errorBody, true);
+                $error = is_array($errorResponse['error'] ?? null) ? $errorResponse['error'] : [];
+                throw self::httpFailure((int)$httpCode, $error, $model);
+            }
+            if ($responseExpired) throw new GeminiTransientException('Gemini timed out before the first reply.');
+            if (curl_errno($ch)) throw self::connectionFailure(curl_errno($ch));
         } finally {
             curl_close($ch);
-        }
-        if ($httpCode !== 200) {
-            $failureReason = match ((int)$httpCode) {
-                401, 403 => 'authentication or permission denied',
-                404 => 'configured Gemini model or endpoint was not found',
-                429 => 'Gemini quota or rate limit reached',
-                default => 'provider returned an error',
-            };
-            error_log("Gemini API request failed with HTTP $httpCode ($failureReason).");
-            throw new RuntimeException("Gemini request failed with HTTP $httpCode ($failureReason).");
         }
         if ($onChunk !== null) {
             if (trim($buffer) !== '') {
                 $buffer .= "\n\n";
-                self::consumeStream($buffer, $onChunk, $answer, $complete);
+                self::consumeStream($buffer, $onChunk, $answer, $complete, $model);
             }
             if (!$complete || trim($answer) === '') throw new RuntimeException('Gemini stream ended before the answer completed.');
             return trim($answer);
         }
         $result = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
-        $answer = is_array($result) ? self::responseText($result) : '';
+        $answer = is_array($result) ? self::responseText($result, $model) : '';
         if (trim($answer) === '') throw new RuntimeException('Gemini returned no answer.');
         return trim($answer);
     }

@@ -62,7 +62,7 @@ $available = $catalog['programs'] !== [] && $catalog['terms'] !== [];
 $escape = static fn($value): string => htmlspecialchars((string) ($value ?? ''), ENT_QUOTES, 'UTF-8');
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html <?= dev_locator_attributes(__FILE__, __LINE__) ?> lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -79,86 +79,82 @@ $escape = static fn($value): string => htmlspecialchars((string) ($value ?? ''),
         defer></script>
 </head>
 
-<body>
-    <header>
-        <div class="wrap">
-            <div class="navbar">
-                <a class="brand" href="index.php">
-                    <img class="brand-mark" src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
-                    <span class="brand-text">Helpdesk<span>CRMC</span></span>
-                </a>
-                <nav class="links">
-                    <a href="index.php#about">About</a>
-                    <a href="index.php#how">How it works</a>
-                    <a href="index.php#offices">Offices</a>
-                    <a href="index.php#faq">FAQs</a>
+<body <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+    <header <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="wrap" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="navbar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <div class="brand" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="brand-mark" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/helpdesk-logo.png"
+                        alt="Helpdesk CRMC"><span class="brand-text" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Helpdesk<span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>CRMC</span></span></div>
+                <nav class="links" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <a <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="index.php#about">About</a><a <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="index.php#how">How it works</a><a <?= dev_locator_attributes(__FILE__, __LINE__) ?>
+                        href="index.php#offices">Offices</a><a <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="index.php#faq">FAQs</a>
                 </nav>
-                <div class="navbar-cta">
-                    <a class="btn btn-ghost" href="login.php">Sign in</a>
-                    <a class="btn btn-dark" href="register.php" aria-current="page">Create account</a>
+                <div class="navbar-cta" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <a class="btn btn-ghost" <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="login.php">Sign in</a>
+                    <a class="btn btn-dark" <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="register.php" aria-current="page">Create account</a>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="login-container register-container">
-        <div class="login-card">
-            <div class="login-header">
-                <h1>Create student account</h1>
-                <p>Enter your student details to get started</p>
+    <main class="login-container register-container" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="login-card" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="login-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <h1 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Create student account</h1>
+                <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Enter your student details to get started</p>
             </div>
 
-            <ol class="registration-progress" aria-label="Registration progress" hidden>
-                <li data-registration-progress="0"><span
-                        class="registration-progress-number">1</span><span>Personal</span></li>
-                <li data-registration-progress="1"><span
-                        class="registration-progress-number">2</span><span>Academic</span></li>
-                <li data-registration-progress="2"><span
-                        class="registration-progress-number">3</span><span>Security</span></li>
+            <ol class="registration-progress" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-label="Registration progress" hidden>
+                <li <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-registration-progress="0"><span
+                        class="registration-progress-number" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>>1</span><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Personal</span></li>
+                <li <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-registration-progress="1"><span
+                        class="registration-progress-number" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>>2</span><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Academic</span></li>
+                <li <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-registration-progress="2"><span
+                        class="registration-progress-number" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>>3</span><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Security</span></li>
             </ol>
 
             <?php if ($error): ?>
-                <div class="error-message" role="alert"><?= $escape($error) ?></div>
+                <div class="error-message" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="alert"><?= $escape($error) ?></div>
             <?php endif; ?>
 
             <?php if (!$available): ?>
-                <div class="account-state">
-                    <strong>Academic options are unavailable</strong>
-                    <p>Contact the Registrar for assistance with the program or academic term list.</p>
+                <div class="account-state" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Academic options are unavailable</strong>
+                    <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Contact the Registrar for assistance with the program or academic term list.</p>
                 </div>
             <?php endif; ?>
 
-            <form method="POST" class="account-form" id="studentRegistration"
+            <form method="POST" class="account-form" id="studentRegistration" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                 data-initial-step="<?= $_SERVER['REQUEST_METHOD'] === 'POST' ? 2 : 0 ?>">
                 <?= csrf_field() ?>
                 <?php $registrationSteps = true;
                 require __DIR__ . '/assets/components/student-profile-fields.php'; ?>
 
-                <div data-registration-step="2">
-                    <fieldset class="profile-section">
-                        <legend>Account security</legend>
-                        <div class="profile-grid">
-                            <label for="email" class="full">
+                <div <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-registration-step="2">
+                    <fieldset class="profile-section" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <legend <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Account security</legend>
+                        <div class="profile-grid" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <label for="email" class="full" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                                 Email address
-                                <input type="email" id="email" name="email" required maxlength="150"
+                                <input type="email" id="email" <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="email" required maxlength="150"
                                     autocomplete="email" value="<?= $escape($values['email']) ?>">
                             </label>
-                            <label for="password" class="profile-password">
+                            <label for="password" class="profile-password" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                                 Password (8+ characters)
-                                <input type="password" id="password" name="password" required minlength="8"
+                                <input type="password" id="password" <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="password" required minlength="8"
                                     maxlength="72" autocomplete="new-password">
-                                <button type="button" class="password-toggle" data-password-toggle="password"
+                                <button type="button" class="password-toggle" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-password-toggle="password"
                                     title="Show password" aria-label="Show password" aria-controls="password">
-                                    <img src="assets/icons/eye.svg" alt="">
+                                    <img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/icons/eye.svg" alt="">
                                 </button>
                             </label>
-                            <label for="confirm_password" class="profile-password">
+                            <label for="confirm_password" class="profile-password" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                                 Confirm password
-                                <input type="password" id="confirm_password" name="confirm_password" required
+                                <input type="password" id="confirm_password" <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="confirm_password" required
                                     minlength="8" maxlength="72" autocomplete="new-password">
-                                <button type="button" class="password-toggle" data-password-toggle="confirm_password"
+                                <button type="button" class="password-toggle" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-password-toggle="confirm_password"
                                     title="Show password" aria-label="Show password" aria-controls="confirm_password">
-                                    <img src="assets/icons/eye.svg" alt="">
+                                    <img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/icons/eye.svg" alt="">
                                 </button>
                             </label>
                         </div>
@@ -167,17 +163,17 @@ $escape = static fn($value): string => htmlspecialchars((string) ($value ?? ''),
                     <?php require __DIR__ . '/assets/components/student-profile-acknowledgement.php'; ?>
                 </div>
 
-                <div class="registration-actions">
-                    <button type="button" class="btn btn-ghost registration-back" data-registration-back hidden>Back</button>
-                    <button type="button" class="submit-btn registration-next" data-registration-next hidden>Continue</button>
-                    <button type="submit" class="submit-btn registration-submit" data-registration-submit <?= $available ? '' : 'disabled' ?>>
-                        <span>Create account</span>
+                <div class="registration-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <button type="button" class="btn btn-ghost registration-back" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-registration-back hidden>Back</button>
+                    <button type="button" class="submit-btn registration-next" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-registration-next hidden>Continue</button>
+                    <button type="submit" class="submit-btn registration-submit" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-registration-submit <?= $available ? '' : 'disabled' ?>>
+                        <span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Create account</span>
                     </button>
                 </div>
             </form>
 
-            <div class="registration-footer">
-                Already have an account? <a href="login.php">Sign in</a>
+            <div class="registration-footer" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                Already have an account? <a <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="login.php">Sign in</a>
             </div>
         </div>
     </main>

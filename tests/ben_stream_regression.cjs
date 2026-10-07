@@ -39,7 +39,7 @@ function response(text, chunkSize = 1) {
   const extract = name => {
     const match = dashboard.match(new RegExp('^([ \\t]*)function ' + name + '\\([^]*?^\\1}', 'm'));
     assert.ok(match, 'Missing renderer: ' + name);
-    return match[0];
+    return match[0].replace(/<\?= (?:addslashes\()?dev_locator_attributes\(__FILE__, __LINE__(?: - \d+)?\)\)? \?>/g, '');
   };
   const dom = new JSDOM('<div id="chatThreadInner"></div>', { runScripts: 'outside-only' });
   dom.window.scrollChatToBottom = () => {};

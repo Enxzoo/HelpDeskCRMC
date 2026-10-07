@@ -73,7 +73,7 @@ foreach ($inquiries as $inquiry) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html <?= dev_locator_attributes(__FILE__, __LINE__) ?> lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -89,133 +89,133 @@ foreach ($inquiries as $inquiry) {
   <script src="assets/js/workspace.js?v=<?= md5_file(__DIR__ . '/assets/js/workspace.js') ?>" defer></script>
 </head>
 
-<body>
+<body <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
 
-  <svg style="display:none" aria-hidden="true">
-    <defs>
-      <symbol id="i-chat" viewBox="0 0 24 24">
-        <path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
+  <svg <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="display:none" aria-hidden="true">
+    <defs <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <symbol id="i-chat" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
       </symbol>
-      <symbol id="i-clock" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 7v5l3 3" />
+      <symbol id="i-clock" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="12" cy="12" r="9" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 7v5l3 3" />
       </symbol>
-      <symbol id="i-user" viewBox="0 0 24 24">
-        <circle cx="12" cy="8" r="3.5" />
-        <path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5" />
+      <symbol id="i-user" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="12" cy="8" r="3.5" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5" />
       </symbol>
-      <symbol id="i-logout" viewBox="0 0 24 24">
-        <path d="M9 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3" />
-        <path d="M14 8l4 4-4 4" />
-        <path d="M18 12H9" />
+      <symbol id="i-logout" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M9 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M14 8l4 4-4 4" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M18 12H9" />
       </symbol>
-      <symbol id="i-search" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="7" />
-        <path d="m21 21-4.35-4.35" />
+      <symbol id="i-search" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="11" cy="11" r="7" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="m21 21-4.35-4.35" />
       </symbol>
-      <symbol id="i-send" viewBox="0 0 24 24">
-        <path d="m22 2-7 20-4-9-9-4 20-7z" />
+      <symbol id="i-send" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="m22 2-7 20-4-9-9-4 20-7z" />
       </symbol>
-      <symbol id="i-check" viewBox="0 0 24 24">
-        <path d="M5 13l4 4L19 7" />
+      <symbol id="i-check" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M5 13l4 4L19 7" />
       </symbol>
-      <symbol id="i-paperclip" viewBox="0 0 24 24">
-        <path d="M8 12.5l6-6a3 3 0 0 1 4.2 4.2l-8 8a5 5 0 1 1-7-7l7-7" />
+      <symbol id="i-paperclip" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M8 12.5l6-6a3 3 0 0 1 4.2 4.2l-8 8a5 5 0 1 1-7-7l7-7" />
       </symbol>
-      <symbol id="i-building" viewBox="0 0 24 24">
-        <rect x="3" y="4" width="18" height="16" rx="2" />
-        <path d="M9 8h6M9 12h6M9 16h4" />
+      <symbol id="i-building" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <rect <?= dev_locator_attributes(__FILE__, __LINE__) ?> x="3" y="4" width="18" height="16" rx="2" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M9 8h6M9 12h6M9 16h4" />
       </symbol>
     </defs>
   </svg>
 
-  <div class="app">
+  <div class="app" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
     <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="brand">
-        <img src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
-        <div class="brand-name">Helpdesk<span>CRMC</span></div>
+    <aside class="sidebar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <div class="brand" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
+        <div class="brand-name" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Helpdesk<span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>CRMC</span></div>
       </div>
 
-      <div class="office-card">
-        <div class="office-header">Assigned Office</div>
-        <div class="office-identity">
+      <div class="office-card" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="office-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Assigned Office</div>
+        <div class="office-identity" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
           <?php if ($officeLogo): ?>
-            <img class="office-identity-logo" src="<?= htmlspecialchars($officeLogo, ENT_QUOTES, 'UTF-8') ?>" alt=""
+            <img class="office-identity-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="<?= htmlspecialchars($officeLogo, ENT_QUOTES, 'UTF-8') ?>" alt=""
               loading="lazy">
           <?php else: ?>
-            <span class="office-identity-initial" aria-hidden="true"><?= htmlspecialchars($officeIcon) ?></span>
+            <span class="office-identity-initial" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true"><?= htmlspecialchars($officeIcon) ?></span>
           <?php endif; ?>
-          <div class="office-name"><?= htmlspecialchars($officeName) ?></div>
+          <div class="office-name" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($officeName) ?></div>
         </div>
       </div>
 
-      <div class="nav-section">
-        <div class="nav-label">Workspace</div>
-        <a class="nav-item active" href="#concerns" id="navConcerns">
-          <svg class="icon">
-            <use href="#i-chat" />
+      <div class="nav-section" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="nav-label" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Workspace</div>
+        <a class="nav-item active" href="#concerns" id="navConcerns" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-chat" />
           </svg>
           Concerns Queue
         </a>
-        <a class="nav-item" href="#history" id="navHistory">
-          <svg class="icon">
-            <use href="#i-clock" />
+        <a class="nav-item" href="#history" id="navHistory" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-clock" />
           </svg>
           History
         </a>
       </div>
 
-      <div class="sidebar-spacer"></div>
+      <div class="sidebar-spacer" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
 
-      <a href="logout.php" class="nav-item student-logout-link" style="margin-top:8px;"><svg class="icon">
-          <use href="#i-logout" />
+      <a href="logout.php" class="nav-item student-logout-link" <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="margin-top:8px;"><svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-logout" />
         </svg>
         Logout</a>
 
-      <div class="sidebar-foot">
-        <div class="sidebar-profile">
-          <div class="avatar"><?= htmlspecialchars($initials) ?></div>
-          <div>
-            <div class="user-name"><?= htmlspecialchars($_SESSION['name']) ?></div>
-            <div class="user-sub">Staff Member</div>
+      <div class="sidebar-foot" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="sidebar-profile" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="avatar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($initials) ?></div>
+          <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="user-name" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($_SESSION['name']) ?></div>
+            <div class="user-sub" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Staff Member</div>
           </div>
         </div>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <div class="main">
+    <div class="main" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
       <!-- Header -->
-      <header class="header">
-        <div class="header-top">
-          <div class="header-title">
-            <div>
-              <h1 id="mainTitle">Concerns Queue</h1>
-              <div class="header-subtitle" id="mainSubtitle">Manage and respond to student inquiries</div>
+      <header class="header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="header-top" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="header-title" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <h1 id="mainTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Concerns Queue</h1>
+              <div class="header-subtitle" id="mainSubtitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Manage and respond to student inquiries</div>
             </div>
-            <img class="mobile-header-logo" src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
+            <img class="mobile-header-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
           </div>
-          <div class="header-tools">
-            <div class="header-stats">
-              <div class="stat-box">
-                <div class="stat-value pending" id="pendingCount"><?= $pendingCount ?></div>
-                <div class="stat-label">Pending</div>
+          <div class="header-tools" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="header-stats" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <div class="stat-box" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <div class="stat-value pending" id="pendingCount" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $pendingCount ?></div>
+                <div class="stat-label" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Pending</div>
               </div>
-              <div class="stat-box">
-                <div class="stat-value progress" id="inProgressCount"><?= $inProgressCount ?></div>
-                <div class="stat-label">In Progress</div>
+              <div class="stat-box" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <div class="stat-value progress" id="inProgressCount" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $inProgressCount ?></div>
+                <div class="stat-label" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>In Progress</div>
               </div>
-              <div class="stat-box">
-                <div class="stat-value resolved" id="resolvedCount"><?= $resolvedCount ?></div>
-                <div class="stat-label">Resolved</div>
+              <div class="stat-box" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <div class="stat-value resolved" id="resolvedCount" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $resolvedCount ?></div>
+                <div class="stat-label" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Resolved</div>
               </div>
             </div>
-            <div class="search-bar">
-              <svg class="icon" aria-hidden="true">
-                <use href="#i-search" />
+            <div class="search-bar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">
+                <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-search" />
               </svg>
-              <input type="search" placeholder="Search inquiry..." id="searchInput"
+              <input type="search" placeholder="Search inquiry..." id="searchInput" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                 aria-label="Search concerns by subject, student, or inquiry ID">
             </div>
             <?php require __DIR__ . '/assets/components/notification-center.php'; ?>
@@ -224,241 +224,241 @@ foreach ($inquiries as $inquiry) {
       </header>
 
       <!-- Content Area -->
-      <div class="content-area" data-view="list">
+      <div class="content-area" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-view="list">
         <!-- Queue Panel -->
-        <div class="queue-panel">
-          <div class="queue-header">
-            <h3 class="queue-title" id="queueTitle">Active Concerns</h3>
-            <div class="queue-controls">
-              <div class="filter-group" role="group" aria-label="Filter concerns">
-                <button class="filter-btn active" type="button" data-status="all" aria-pressed="true">All</button>
-                <button class="filter-btn" type="button" data-status="pending" aria-pressed="false">Pending</button>
-                <button class="filter-btn" type="button" data-status="in_progress" aria-pressed="false">In
+        <div class="queue-panel" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="queue-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <h3 class="queue-title" id="queueTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Active Concerns</h3>
+            <div class="queue-controls" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <div class="filter-group" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="group" aria-label="Filter concerns">
+                <button class="filter-btn active" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="button" data-status="all" aria-pressed="true">All</button>
+                <button class="filter-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="button" data-status="pending" aria-pressed="false">Pending</button>
+                <button class="filter-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="button" data-status="in_progress" aria-pressed="false">In
                   Progress</button>
-                <button class="filter-btn" type="button" data-status="resolved" aria-pressed="false">Resolved</button>
-                <button class="filter-btn" type="button" data-status="needs_triage" aria-pressed="false">Needs
+                <button class="filter-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="button" data-status="resolved" aria-pressed="false">Resolved</button>
+                <button class="filter-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="button" data-status="needs_triage" aria-pressed="false">Needs
                   triage</button>
               </div>
-              <div class="sort-group">
-                <label for="sortSelect" class="sort-label">Sort by:</label>
-                <select id="sortSelect" class="sort-select" aria-label="Sort concerns">
-                  <option value="urgency">Urgency (High to Low)</option>
-                  <option value="time-newest">Time (Newest First)</option>
-                  <option value="time-oldest">Time (Oldest First)</option>
-                  <option value="status">Status</option>
+              <div class="sort-group" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <label for="sortSelect" class="sort-label" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Sort by:</label>
+                <select id="sortSelect" class="sort-select" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-label="Sort concerns">
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="urgency">Urgency (High to Low)</option>
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="time-newest">Time (Newest First)</option>
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="time-oldest">Time (Oldest First)</option>
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="status">Status</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <div class="queue-list" id="concernsList">
+          <div class="queue-list" id="concernsList" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
             <?php if (empty($inquiries)): ?>
-              <div class="empty-state" id="queueEmptyNotice">
-                <svg class="icon" viewBox="0 0 24 24">
-                  <path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
+              <div class="empty-state" id="queueEmptyNotice" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+                  <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
                 </svg>
-                <p>No concerns in queue</p>
+                <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>No concerns in queue</p>
               </div>
             <?php else: ?>
               <?php foreach ($inquiries as $index => $inquiry): ?>
                 <?php $urgency = $inquiry['urgency_priority'] ?? 'Needs triage'; ?>
                 <?php $urgencyClass = strtolower(str_replace(['/', ' '], '-', $urgency)); ?>
-                <button class="concern-card <?= $index === 0 ? 'selected' : '' ?>" type="button"
+                <button class="concern-card <?= $index === 0 ? 'selected' : '' ?>" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="button"
                   data-inquiry-id="<?= $inquiry['inquiry_id'] ?>"
                   data-status="<?= htmlspecialchars(str_replace(' ', '_', strtolower($inquiry['status'])), ENT_QUOTES, 'UTF-8') ?>"
                   data-priority="<?= htmlspecialchars($urgencyClass, ENT_QUOTES, 'UTF-8') ?>"
                   data-created-at="<?= htmlspecialchars($inquiry['created_at'], ENT_QUOTES, 'UTF-8') ?>"
                   aria-pressed="<?= $index === 0 ? 'true' : 'false' ?>">
-                  <span class="concern-card-topline">
+                  <span class="concern-card-topline" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                     <span
-                      class="concern-status-badge status-<?= htmlspecialchars(str_replace(' ', '-', strtolower($inquiry['status'])), ENT_QUOTES, 'UTF-8') ?>">
+                      class="concern-status-badge status-<?= htmlspecialchars(str_replace(' ', '-', strtolower($inquiry['status'])), ENT_QUOTES, 'UTF-8') ?>" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>>
                       <?= htmlspecialchars($inquiry['status'], ENT_QUOTES, 'UTF-8') ?>
                     </span>
                     <span
-                      class="urgency-badge urgency-<?= htmlspecialchars($urgencyClass, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($urgency, ENT_QUOTES, 'UTF-8') ?></span>
+                      class="urgency-badge urgency-<?= htmlspecialchars($urgencyClass, ENT_QUOTES, 'UTF-8') ?>" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= htmlspecialchars($urgency, ENT_QUOTES, 'UTF-8') ?></span>
                   </span>
-                  <span class="concern-subject"><?= htmlspecialchars($inquiry['subject'], ENT_QUOTES, 'UTF-8') ?></span>
+                  <span class="concern-subject" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($inquiry['subject'], ENT_QUOTES, 'UTF-8') ?></span>
                   <?php if (!empty($inquiry['duplicate_of_inquiry_id'])): ?>
-                    <span class="duplicate-flag">Possible repeat · linked to
+                    <span class="duplicate-flag" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Possible repeat · linked to
                       INQ-<?= (int) $inquiry['duplicate_of_inquiry_id'] ?></span>
                   <?php endif; ?>
-                  <span class="concern-meta">
+                  <span class="concern-meta" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                     <span
-                      class="concern-student"><?= htmlspecialchars($inquiry['student_name'], ENT_QUOTES, 'UTF-8') ?></span>
+                      class="concern-student" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= htmlspecialchars($inquiry['student_name'], ENT_QUOTES, 'UTF-8') ?></span>
                     <span
-                      class="concern-time"><?= htmlspecialchars(date('M j, g:i A', strtotime($inquiry['created_at'])), ENT_QUOTES, 'UTF-8') ?></span>
+                      class="concern-time" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= htmlspecialchars(date('M j, g:i A', strtotime($inquiry['created_at'])), ENT_QUOTES, 'UTF-8') ?></span>
                   </span>
-                  <span class="concern-id">INQ-<?= (int) $inquiry['inquiry_id'] ?></span>
+                  <span class="concern-id" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>INQ-<?= (int) $inquiry['inquiry_id'] ?></span>
                 </button>
               <?php endforeach; ?>
-              <div class="empty-state" id="queueEmptyNotice" hidden>
-                <p>No concerns match this filter.</p>
+              <div class="empty-state" id="queueEmptyNotice" <?= dev_locator_attributes(__FILE__, __LINE__) ?> hidden>
+                <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>No concerns match this filter.</p>
               </div>
             <?php endif; ?>
           </div>
         </div>
 
         <!-- History Panel -->
-        <div class="history-panel" id="historyPanel" hidden>
-          <div class="queue-header">
-            <h3 class="queue-title">Resolved Concerns</h3>
-            <div class="queue-controls">
-              <div class="history-search">
-                <svg class="icon" aria-hidden="true">
-                  <use href="#i-search" />
+        <div class="history-panel" id="historyPanel" <?= dev_locator_attributes(__FILE__, __LINE__) ?> hidden>
+          <div class="queue-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <h3 class="queue-title" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Resolved Concerns</h3>
+            <div class="queue-controls" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <div class="history-search" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">
+                  <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-search" />
                 </svg>
-                <input type="search" placeholder="Search resolved concerns..." id="historySearch"
+                <input type="search" placeholder="Search resolved concerns..." id="historySearch" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                   aria-label="Search resolved concerns by subject, student, or inquiry ID">
               </div>
-              <div class="sort-group">
-                <label for="historySortSelect" class="sort-label">Sort by:</label>
-                <select id="historySortSelect" class="sort-select" aria-label="Sort resolved concerns">
-                  <option value="resolved-newest">Recently Resolved</option>
-                  <option value="resolved-oldest">Oldest First</option>
-                  <option value="subject">Subject A-Z</option>
-                  <option value="student">Student Name</option>
+              <div class="sort-group" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <label for="historySortSelect" class="sort-label" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Sort by:</label>
+                <select id="historySortSelect" class="sort-select" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-label="Sort resolved concerns">
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="resolved-newest">Recently Resolved</option>
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="resolved-oldest">Oldest First</option>
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="subject">Subject A-Z</option>
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="student">Student Name</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <div class="queue-list" id="historyList">
-            <div class="empty-state" id="historyEmptyNotice">
-              <svg class="icon" viewBox="0 0 24 24">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <div class="queue-list" id="historyList" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="empty-state" id="historyEmptyNotice" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+                <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p>No resolved concerns found</p>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>No resolved concerns found</p>
             </div>
           </div>
         </div>
 
         <!-- Detail Panel -->
-        <div class="detail-panel" id="detailPanel">
+        <div class="detail-panel" id="detailPanel" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
           <?php if (!empty($inquiries)): ?>
             <?php $firstInquiry = $inquiries[0]; ?>
             <?php $firstUrgency = $firstInquiry['urgency_priority'] ?? 'Needs triage'; ?>
             <?php $firstUrgencyClass = strtolower(str_replace(['/', ' '], '-', $firstUrgency)); ?>
-            <div class="mobile-detail-nav">
-              <button class="back-to-queue" id="backToQueue" type="button">
-                <svg class="icon" aria-hidden="true">
-                  <use href="#i-back" />
+            <div class="mobile-detail-nav" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <button class="back-to-queue" id="backToQueue" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="button">
+                <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">
+                  <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-back" />
                 </svg>
                 Back to Queue
               </button>
             </div>
-            <div class="detail-header">
-              <div class="detail-header-top">
-                <div class="detail-title">
-                  <div class="detail-overline">
-                    <span class="detail-id" id="detailId">INQ-<?= (int) $firstInquiry['inquiry_id'] ?></span>
+            <div class="detail-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <div class="detail-header-top" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <div class="detail-title" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                  <div class="detail-overline" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <span class="detail-id" id="detailId" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>INQ-<?= (int) $firstInquiry['inquiry_id'] ?></span>
                     <span
                       class="concern-status-badge status-<?= htmlspecialchars(str_replace(' ', '-', strtolower($firstInquiry['status'])), ENT_QUOTES, 'UTF-8') ?>"
-                      id="detailStatus"><?= htmlspecialchars($firstInquiry['status'], ENT_QUOTES, 'UTF-8') ?></span>
+                      id="detailStatus" <?= dev_locator_attributes(__FILE__, __LINE__ - 2) ?>><?= htmlspecialchars($firstInquiry['status'], ENT_QUOTES, 'UTF-8') ?></span>
                     <span class="urgency-badge urgency-<?= htmlspecialchars($firstUrgencyClass, ENT_QUOTES, 'UTF-8') ?>"
-                      id="detailUrgency"><?= htmlspecialchars($firstUrgency, ENT_QUOTES, 'UTF-8') ?></span>
+                      id="detailUrgency" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= htmlspecialchars($firstUrgency, ENT_QUOTES, 'UTF-8') ?></span>
                   </div>
-                  <h2 id="detailTitle"><?= htmlspecialchars($firstInquiry['subject'], ENT_QUOTES, 'UTF-8') ?></h2>
-                  <div class="duplicate-indicator" id="duplicateIndicator" hidden>
-                    <span>This concern was submitted as a possible repeat of</span>
-                    <button type="button" id="duplicateRootLink"></button>
+                  <h2 id="detailTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($firstInquiry['subject'], ENT_QUOTES, 'UTF-8') ?></h2>
+                  <div class="duplicate-indicator" id="duplicateIndicator" <?= dev_locator_attributes(__FILE__, __LINE__) ?> hidden>
+                    <span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>This concern was submitted as a possible repeat of</span>
+                    <button type="button" id="duplicateRootLink" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></button>
                   </div>
-                  <p class="urgency-reason" id="urgencyReason">
+                  <p class="urgency-reason" id="urgencyReason" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                     <?= htmlspecialchars($firstInquiry['priority_override'] !== null ? 'Staff-set urgency. ' : '', ENT_QUOTES, 'UTF-8') ?>  <?= htmlspecialchars($firstInquiry['ai_priority_reason'] ?? 'Automated urgency review is unavailable. Please assess this concern during triage.', ENT_QUOTES, 'UTF-8') ?>
                   </p>
-                  <p class="urgency-meta" id="urgencyMeta">
+                  <p class="urgency-meta" id="urgencyMeta" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                     <?= $firstInquiry['priority_override'] !== null ? 'Staff override' . (!empty($firstInquiry['priority_override_staff_name']) ? ' by ' . htmlspecialchars($firstInquiry['priority_override_staff_name'], ENT_QUOTES, 'UTF-8') : '') : ($firstInquiry['ai_priority_confidence'] !== null ? 'AI estimate · ' . (int) round((float) $firstInquiry['ai_priority_confidence'] * 100) . '% confidence' : 'Needs staff triage') ?>
                   </p>
-                  <div class="detail-meta">
-                    <div class="meta-item">
-                      <svg class="icon">
-                        <use href="#i-user" />
+                  <div class="detail-meta" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <div class="meta-item" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                      <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-user" />
                       </svg>
                       <span class="meta-label"
-                        id="detailStudent"><?= htmlspecialchars($firstInquiry['student_name'], ENT_QUOTES, 'UTF-8') ?></span>
+                        id="detailStudent" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= htmlspecialchars($firstInquiry['student_name'], ENT_QUOTES, 'UTF-8') ?></span>
                     </div>
-                    <div class="meta-item">
-                      <span id="detailStudentNumber">ID:
+                    <div class="meta-item" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                      <span id="detailStudentNumber" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>ID:
                         <?= htmlspecialchars($firstInquiry['student_number'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></span>
                     </div>
-                    <div class="meta-item"><span
-                        id="detailAcademic"><?= htmlspecialchars(implode(' | ', array_filter([$firstInquiry['student_program'] ?? '', !empty($firstInquiry['student_year_level']) ? 'Year ' . $firstInquiry['student_year_level'] : '', $firstInquiry['student_section'] ?? '', $firstInquiry['student_academic_year'] ?? '', $firstInquiry['student_semester'] ?? ''])) ?: 'Academic details not recorded', ENT_QUOTES, 'UTF-8') ?></span>
+                    <div class="meta-item" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span
+                        id="detailAcademic" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= htmlspecialchars(implode(' | ', array_filter([$firstInquiry['student_program'] ?? '', !empty($firstInquiry['student_year_level']) ? 'Year ' . $firstInquiry['student_year_level'] : '', $firstInquiry['student_section'] ?? '', $firstInquiry['student_academic_year'] ?? '', $firstInquiry['student_semester'] ?? ''])) ?: 'Academic details not recorded', ENT_QUOTES, 'UTF-8') ?></span>
                     </div>
-                    <div class="meta-item">
-                      <span id="detailDate">Submitted
+                    <div class="meta-item" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                      <span id="detailDate" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Submitted
                         <?= htmlspecialchars(date('M j, Y \a\t g:i A', strtotime($firstInquiry['created_at'])), ENT_QUOTES, 'UTF-8') ?></span>
                     </div>
                   </div>
                 </div>
-                <div class="detail-actions">
-                  <button class="btn btn-success" id="resolveButton" type="button" <?= $firstInquiry['status'] === 'Resolved' ? 'disabled' : '' ?>>
-                    <svg class="icon" aria-hidden="true">
-                      <use href="#i-check" />
+                <div class="detail-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                  <button class="btn btn-success" id="resolveButton" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="button" <?= $firstInquiry['status'] === 'Resolved' ? 'disabled' : '' ?>>
+                    <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">
+                      <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-check" />
                     </svg>
-                    <span>Mark Resolved</span>
+                    <span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Mark Resolved</span>
                   </button>
-                  <button class="btn btn-secondary" id="reassignButton" type="button">Reassign</button>
+                  <button class="btn btn-secondary" id="reassignButton" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="button">Reassign</button>
                 </div>
               </div>
             </div>
 
-            <div class="thread" id="messageThread">
-              <div class="message student">
-                <div class="message-header"><?= htmlspecialchars($firstInquiry['student_name'], ENT_QUOTES, 'UTF-8') ?>
+            <div class="thread" id="messageThread" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <div class="message student" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <div class="message-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($firstInquiry['student_name'], ENT_QUOTES, 'UTF-8') ?>
                 </div>
-                <div class="message-bubble" id="originalMessage">
+                <div class="message-bubble" id="originalMessage" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                   <?= nl2br(htmlspecialchars($firstInquiry['description'], ENT_QUOTES, 'UTF-8')) ?></div>
-                <div class="message-time">
+                <div class="message-time" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                   <?= htmlspecialchars(date('M j, g:i A', strtotime($firstInquiry['created_at'])), ENT_QUOTES, 'UTF-8') ?>
                 </div>
               </div>
             </div>
 
-            <div class="reply-section">
-              <div class="status-row">
-                <label for="statusSelect">Status</label>
-                <select id="statusSelect">
-                  <option value="Pending" <?= $firstInquiry['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
-                  <option value="In Progress" <?= $firstInquiry['status'] === 'In Progress' ? 'selected' : '' ?>>In Progress
+            <div class="reply-section" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <div class="status-row" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <label <?= dev_locator_attributes(__FILE__, __LINE__) ?> for="statusSelect">Status</label>
+                <select id="statusSelect" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="Pending" <?= $firstInquiry['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="In Progress" <?= $firstInquiry['status'] === 'In Progress' ? 'selected' : '' ?>>In Progress
                   </option>
-                  <option value="On Hold" <?= $firstInquiry['status'] === 'On Hold' ? 'selected' : '' ?>>On Hold</option>
-                  <option value="Resolved" <?= $firstInquiry['status'] === 'Resolved' ? 'selected' : '' ?>>Resolved</option>
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="On Hold" <?= $firstInquiry['status'] === 'On Hold' ? 'selected' : '' ?>>On Hold</option>
+                  <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="Resolved" <?= $firstInquiry['status'] === 'Resolved' ? 'selected' : '' ?>>Resolved</option>
                 </select>
-                <details class="priority-disclosure">
-                  <summary>
-                    <span>Urgency</span>
+                <details class="priority-disclosure" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                  <summary <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Urgency</span>
                     <strong
-                      id="urgencyControlSummary"><?= htmlspecialchars($firstUrgency, ENT_QUOTES, 'UTF-8') ?></strong>
+                      id="urgencyControlSummary" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= htmlspecialchars($firstUrgency, ENT_QUOTES, 'UTF-8') ?></strong>
                   </summary>
-                  <div class="priority-popover">
-                    <label for="priorityOverride">Staff urgency override</label>
-                    <select id="priorityOverride">
-                      <option value="" <?= $firstInquiry['priority_override'] === null ? 'selected' : '' ?>>Keep AI
+                  <div class="priority-popover" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <label <?= dev_locator_attributes(__FILE__, __LINE__) ?> for="priorityOverride">Staff urgency override</label>
+                    <select id="priorityOverride" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                      <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="" <?= $firstInquiry['priority_override'] === null ? 'selected' : '' ?>>Keep AI
                         recommendation</option>
-                      <option value="Critical/Urgent" <?= $firstInquiry['priority_override'] === 'Critical/Urgent' ? 'selected' : '' ?>>Critical/Urgent</option>
-                      <option value="High" <?= $firstInquiry['priority_override'] === 'High' ? 'selected' : '' ?>>High
+                      <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="Critical/Urgent" <?= $firstInquiry['priority_override'] === 'Critical/Urgent' ? 'selected' : '' ?>>Critical/Urgent</option>
+                      <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="High" <?= $firstInquiry['priority_override'] === 'High' ? 'selected' : '' ?>>High
                       </option>
-                      <option value="Normal" <?= $firstInquiry['priority_override'] === 'Normal' ? 'selected' : '' ?>>Normal
+                      <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="Normal" <?= $firstInquiry['priority_override'] === 'Normal' ? 'selected' : '' ?>>Normal
                       </option>
-                      <option value="Low" <?= $firstInquiry['priority_override'] === 'Low' ? 'selected' : '' ?>>Low</option>
+                      <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="Low" <?= $firstInquiry['priority_override'] === 'Low' ? 'selected' : '' ?>>Low</option>
                     </select>
-                    <button type="button" class="btn btn-secondary" id="savePriorityOverride">Save urgency</button>
+                    <button type="button" class="btn btn-secondary" id="savePriorityOverride" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Save urgency</button>
                   </div>
                 </details>
               </div>
-              <form id="replyForm">
-                <div class="reply-box">
-                  <textarea class="reply-input" id="replyText" placeholder="Compose your response..."
+              <form id="replyForm" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <div class="reply-box" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                  <textarea class="reply-input" id="replyText" <?= dev_locator_attributes(__FILE__, __LINE__) ?> placeholder="Compose your response..."
                     aria-label="Compose your response" required></textarea>
-                  <div class="reply-actions">
-                    <button type="submit" class="btn btn-primary">
-                      <svg class="icon">
-                        <use href="#i-send" />
+                  <div class="reply-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                    <button type="submit" class="btn btn-primary" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                      <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-send" />
                       </svg>
                       Send
                     </button>
-                    <button type="button" class="btn btn-secondary" id="attachButton">
-                      <svg class="icon">
-                        <use href="#i-paperclip" />
+                    <button type="button" class="btn btn-secondary" id="attachButton" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                      <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-paperclip" />
                       </svg>
                       Attach File
                     </button>
@@ -467,11 +467,11 @@ foreach ($inquiries as $inquiry) {
               </form>
             </div>
           <?php else: ?>
-            <div class="no-selection">
-              <svg class="icon" viewBox="0 0 24 24">
-                <path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
+            <div class="no-selection" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+                <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
               </svg>
-              <p>Select a concern to view details</p>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Select a concern to view details</p>
             </div>
           <?php endif; ?>
         </div>
@@ -479,30 +479,30 @@ foreach ($inquiries as $inquiry) {
     </div>
   </div>
 
-  <nav class="mobile-nav" aria-label="Mobile navigation">
-    <button class="mobile-nav-item active" type="button" data-mobile-view="queue" id="mobileQueueBtn">
-      <svg class="icon" aria-hidden="true">
-        <use href="#i-chat" />
-      </svg><span>Queue</span>
+  <nav class="mobile-nav" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-label="Mobile navigation">
+    <button class="mobile-nav-item active" type="button" data-mobile-view="queue" id="mobileQueueBtn" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">
+        <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-chat" />
+      </svg><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Queue</span>
     </button>
-    <button class="mobile-nav-item" type="button" data-mobile-view="history" id="mobileHistoryBtn">
-      <svg class="icon" aria-hidden="true">
-        <use href="#i-clock" />
-      </svg><span>History</span>
+    <button class="mobile-nav-item" type="button" data-mobile-view="history" id="mobileHistoryBtn" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">
+        <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-clock" />
+      </svg><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>History</span>
     </button>
-    <button class="mobile-nav-item" id="mobileProfileToggle" type="button" aria-expanded="false"
+    <button class="mobile-nav-item" id="mobileProfileToggle" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="button" aria-expanded="false"
       aria-controls="mobileProfileMenu">
-      <svg class="icon" aria-hidden="true">
-        <use href="#i-user" />
-      </svg><span>Profile</span>
+      <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">
+        <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-user" />
+      </svg><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Profile</span>
     </button>
   </nav>
-  <div class="mobile-profile-menu" id="mobileProfileMenu" hidden>
-    <div class="mobile-profile-name"><?= htmlspecialchars($_SESSION['name'], ENT_QUOTES, 'UTF-8') ?></div>
-    <div class="mobile-profile-role">Staff Member · <?= htmlspecialchars($officeName, ENT_QUOTES, 'UTF-8') ?></div>
-    <a href="logout.php" class="mobile-profile-logout student-logout-link">
-      <svg class="icon" aria-hidden="true">
-        <use href="#i-logout" />
+  <div class="mobile-profile-menu" id="mobileProfileMenu" <?= dev_locator_attributes(__FILE__, __LINE__) ?> hidden>
+    <div class="mobile-profile-name" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($_SESSION['name'], ENT_QUOTES, 'UTF-8') ?></div>
+    <div class="mobile-profile-role" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Staff Member · <?= htmlspecialchars($officeName, ENT_QUOTES, 'UTF-8') ?></div>
+    <a href="logout.php" class="mobile-profile-logout student-logout-link" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">
+        <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-logout" />
       </svg>Logout
     </a>
   </div>
@@ -1019,23 +1019,23 @@ foreach ($inquiries as $inquiry) {
       });
 
       historyCard.innerHTML = `
-        <div class="history-card-header">
-          <div class="history-status-badge">
-            <svg class="icon">
-              <use href="#i-check" />
+        <div class="history-card-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="history-status-badge" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-check" />
             </svg>
             Resolved
           </div>
-          <div class="history-date">${formattedDate}</div>
+          <div class="history-date" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${formattedDate}</div>
         </div>
-        <div class="history-subject">${inquiry.subject || 'No subject'}</div>
-        <div class="history-meta">
-          <div class="history-student">${inquiry.student_name || 'Unknown Student'}</div>
-          <div class="history-id">INQ-${inquiry.inquiry_id}</div>
+        <div class="history-subject" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${inquiry.subject || 'No subject'}</div>
+        <div class="history-meta" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="history-student" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${inquiry.student_name || 'Unknown Student'}</div>
+          <div class="history-id" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>INQ-${inquiry.inquiry_id}</div>
         </div>
-        <div class="history-resolved-by">
-          <svg class="icon">
-            <use href="#i-user" />
+        <div class="history-resolved-by" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-user" />
           </svg>
           Resolved by ${inquiry.resolved_by || 'Staff'}
         </div>
@@ -1136,7 +1136,7 @@ foreach ($inquiries as $inquiry) {
       document.body.classList.remove('detail-open');
     }
 
-    function switchToHistory() {
+    async function switchToHistory() {
       currentView = 'history';
       document.getElementById('mainTitle').textContent = 'Concern History';
       document.getElementById('mainSubtitle').textContent = 'View resolved and archived inquiries';
@@ -1147,12 +1147,49 @@ foreach ($inquiries as $inquiry) {
       document.querySelector('.queue-panel').hidden = true;
       document.getElementById('historyPanel').hidden = false;
 
-      // Load resolved inquiries into history
-      historyData = inquiriesData.filter(inquiry => inquiry.status === 'Resolved');
-      filterHistoryData();
+      // Load history from backend
+      await loadHistoryData();
 
       workspace.dataset.view = 'list';
       document.body.classList.remove('detail-open');
+    }
+
+    async function loadHistoryData() {
+      try {
+        const response = await fetch('api/get_history.php', {
+          method: 'GET',
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          }
+        });
+
+        if (!response.ok) throw new Error('Failed to load history');
+        const data = await response.json();
+
+        if (data.success) {
+          historyData = data.history || [];
+          filterHistoryData();
+        } else {
+          throw new Error(data.error || 'Failed to load history');
+        }
+      } catch (error) {
+        console.error('Error loading history:', error);
+        historyData = [];
+        filterHistoryData();
+        // Show error in history panel
+        const historyList = document.getElementById('historyList');
+        const emptyNotice = document.getElementById('historyEmptyNotice');
+        historyList.innerHTML = '';
+        emptyNotice.innerHTML = `
+          <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+            <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 2L2 7v10c0 5.55 3.84 10 9 11 5.16-1 9-5.45 9-11V7l-10-5z"/>
+            <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M9 12l2 2 4-4"/>
+          </svg>
+          <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Failed to load history. Please try again.</p>
+        `;
+        emptyNotice.hidden = false;
+        historyList.appendChild(emptyNotice);
+      }
     }
 
     document.getElementById('navConcerns')?.addEventListener('click', (e) => {
@@ -1181,19 +1218,19 @@ foreach ($inquiries as $inquiry) {
     else if (currentInquiryId) renderSelectedInquiry(inquiriesData[0]);
   </script>
 
-  <dialog class="action-confirm-dialog" id="actionConfirmDialog" aria-labelledby="actionConfirmTitle"
+  <dialog class="action-confirm-dialog" id="actionConfirmDialog" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="actionConfirmTitle"
     aria-describedby="actionConfirmMessage">
-    <div class="action-confirm-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 3 3.8 7v5.3c0 4.2 3.5 7.9 8.2 9.2 4.7-1.3 8.2-5 8.2-9.2V7L12 3Z" />
-        <path d="M12 8v4m0 4h.01" />
+    <div class="action-confirm-icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">
+      <svg <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 3 3.8 7v5.3c0 4.2 3.5 7.9 8.2 9.2 4.7-1.3 8.2-5 8.2-9.2V7L12 3Z" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 8v4m0 4h.01" />
       </svg>
     </div>
-    <h2 id="actionConfirmTitle">Please confirm</h2>
-    <p id="actionConfirmMessage"></p>
-    <div class="action-confirm-actions">
-      <button type="button" class="action-confirm-continue" id="actionConfirmContinue">Confirm</button>
-      <button type="button" class="action-confirm-cancel" id="actionConfirmCancel">Cancel</button>
+    <h2 id="actionConfirmTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Please confirm</h2>
+    <p id="actionConfirmMessage" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></p>
+    <div class="action-confirm-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <button type="button" class="action-confirm-continue" id="actionConfirmContinue" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Confirm</button>
+      <button type="button" class="action-confirm-cancel" id="actionConfirmCancel" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Cancel</button>
     </div>
   </dialog>
 

@@ -83,7 +83,7 @@ $studentEscalationProfile = [
 ];
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html <?= dev_locator_attributes(__FILE__, __LINE__) ?> lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -101,160 +101,160 @@ $studentEscalationProfile = [
     defer></script>
 </head>
 
-<body>
+<body <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
 
-  <svg style="display:none" aria-hidden="true">
-    <defs>
-      <symbol id="i-home" viewBox="0 0 24 24">
-        <path d="M3 11.5 12 4l9 7.5" />
-        <path d="M5.5 10v9a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1v-9" />
+  <svg <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="display:none" aria-hidden="true">
+    <defs <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <symbol id="i-home" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M3 11.5 12 4l9 7.5" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M5.5 10v9a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1v-9" />
       </symbol>
-      <symbol id="i-file" viewBox="0 0 24 24">
-        <path d="M6 3h9l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
-        <path d="M14 3v5h5" />
-        <path d="M8.5 13h7M8.5 17h7" />
+      <symbol id="i-file" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M6 3h9l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M14 3v5h5" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M8.5 13h7M8.5 17h7" />
       </symbol>
-      <symbol id="i-user" viewBox="0 0 24 24">
-        <circle cx="12" cy="8" r="3.5" />
-        <path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5" />
+      <symbol id="i-user" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="12" cy="8" r="3.5" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5" />
       </symbol>
-      <symbol id="i-logout" viewBox="0 0 24 24">
-        <path d="M9 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3" />
-        <path d="M14 8l4 4-4 4" />
-        <path d="M18 12H9" />
+      <symbol id="i-logout" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M9 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M14 8l4 4-4 4" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M18 12H9" />
       </symbol>
-      <symbol id="i-chat" viewBox="0 0 24 24">
-        <path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
+      <symbol id="i-chat" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
       </symbol>
-      <symbol id="i-search" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="7" />
-        <path d="m21 21-4.35-4.35" />
+      <symbol id="i-search" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="11" cy="11" r="7" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="m21 21-4.35-4.35" />
       </symbol>
-      <symbol id="i-bell" viewBox="0 0 24 24">
-        <path d="M6 10a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z" />
-        <path d="M10 19a2 2 0 0 0 4 0" />
+      <symbol id="i-bell" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M6 10a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M10 19a2 2 0 0 0 4 0" />
       </symbol>
-      <symbol id="i-folder" viewBox="0 0 24 24">
-        <path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z" />
+      <symbol id="i-folder" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z" />
       </symbol>
-      <symbol id="i-dollar" viewBox="0 0 24 24">
-        <path d="M12 2v20" />
-        <path d="M17 6.5c0-1.8-2-3-5-3s-5 1.4-5 3.2 2 2.8 5 3.3 5 1.5 5 3.3-2 3.2-5 3.2-5-1.2-5-3" />
+      <symbol id="i-dollar" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 2v20" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M17 6.5c0-1.8-2-3-5-3s-5 1.4-5 3.2 2 2.8 5 3.3 5 1.5 5 3.3-2 3.2-5 3.2-5-1.2-5-3" />
       </symbol>
-      <symbol id="i-users" viewBox="0 0 24 24">
-        <circle cx="9" cy="8" r="3" />
-        <path d="M3.5 19c1-3 3-4.5 5.5-4.5s4.5 1.5 5.5 4.5" />
-        <circle cx="17" cy="8.5" r="2.3" />
-        <path d="M15.5 14.2c2.2.4 3.5 1.8 4.4 4.3" />
+      <symbol id="i-users" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="9" cy="8" r="3" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M3.5 19c1-3 3-4.5 5.5-4.5s4.5 1.5 5.5 4.5" />
+        <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="17" cy="8.5" r="2.3" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M15.5 14.2c2.2.4 3.5 1.8 4.4 4.3" />
       </symbol>
-      <symbol id="i-info" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 11v6" />
-        <path d="M12 7.5v.01" />
+      <symbol id="i-info" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="12" cy="12" r="9" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 11v6" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 7.5v.01" />
       </symbol>
-      <symbol id="i-book" viewBox="0 0 24 24">
-        <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v18H6.5A2.5 2.5 0 0 1 4 18.5Z" />
-        <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H12v18h5.5a2.5 2.5 0 0 0 2.5-2.5Z" />
+      <symbol id="i-book" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v18H6.5A2.5 2.5 0 0 1 4 18.5Z" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M20 5.5A2.5 2.5 0 0 0 17.5 3H12v18h5.5a2.5 2.5 0 0 0 2.5-2.5Z" />
       </symbol>
-      <symbol id="i-key" viewBox="0 0 24 24">
-        <circle cx="8" cy="15" r="4" />
-        <path d="M11 12 20 3" />
-        <path d="M16 7l3 3" />
-        <path d="M13 10l2.5 2.5" />
+      <symbol id="i-key" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="8" cy="15" r="4" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M11 12 20 3" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M16 7l3 3" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M13 10l2.5 2.5" />
       </symbol>
-      <symbol id="i-cross" viewBox="0 0 24 24">
-        <path d="M12 4v16M4 12h16" stroke-width="3" />
+      <symbol id="i-cross" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 4v16M4 12h16" stroke-width="3" />
       </symbol>
-      <symbol id="i-monitor" viewBox="0 0 24 24">
-        <rect x="3" y="4" width="18" height="13" rx="1.5" />
-        <path d="M9 21h6M12 17v4" />
+      <symbol id="i-monitor" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <rect <?= dev_locator_attributes(__FILE__, __LINE__) ?> x="3" y="4" width="18" height="13" rx="1.5" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M9 21h6M12 17v4" />
       </symbol>
-      <symbol id="i-briefcase" viewBox="0 0 24 24">
-        <rect x="3" y="8" width="18" height="12" rx="1.5" />
-        <path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      <symbol id="i-briefcase" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <rect <?= dev_locator_attributes(__FILE__, __LINE__) ?> x="3" y="8" width="18" height="12" rx="1.5" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
       </symbol>
-      <symbol id="i-code" viewBox="0 0 24 24">
-        <path d="m9 8-4 4 4 4" />
-        <path d="m15 8 4 4-4 4" />
+      <symbol id="i-code" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="m9 8-4 4 4 4" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="m15 8 4 4-4 4" />
       </symbol>
-      <symbol id="i-chart" viewBox="0 0 24 24">
-        <path d="M4 20V10M12 20V4M20 20v-7" />
+      <symbol id="i-chart" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M4 20V10M12 20V4M20 20v-7" />
       </symbol>
-      <symbol id="i-shield" viewBox="0 0 24 24">
-        <path d="M12 3l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V6Z" />
+      <symbol id="i-shield" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 3l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V6Z" />
       </symbol>
-      <symbol id="i-gear" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="3.2" />
-        <path
+      <symbol id="i-gear" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="12" cy="12" r="3.2" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?>
           d="M19.4 15a1.8 1.8 0 0 0 .3 1.9l.1.1a2.1 2.1 0 1 1-3 3l-.1-.1a1.8 1.8 0 0 0-1.9-.3 1.8 1.8 0 0 0-1.1 1.6V21a2.1 2.1 0 1 1-4.2 0v-.1a1.8 1.8 0 0 0-1.1-1.6 1.8 1.8 0 0 0-1.9.3l-.1.1a2.1 2.1 0 1 1-3-3l.1-.1a1.8 1.8 0 0 0 .3-1.9 1.8 1.8 0 0 0-1.6-1.1H2.9a2.1 2.1 0 1 1 0-4.2H3a1.8 1.8 0 0 0 1.6-1.1 1.8 1.8 0 0 0-.3-1.9l-.1-.1a2.1 2.1 0 1 1 3-3l.1.1a1.8 1.8 0 0 0 1.9.3H9.3A1.8 1.8 0 0 0 10.4 3V2.9a2.1 2.1 0 1 1 4.2 0V3a1.8 1.8 0 0 0 1.1 1.6 1.8 1.8 0 0 0 1.9-.3l.1-.1a2.1 2.1 0 1 1 3 3l-.1.1a1.8 1.8 0 0 0-.3 1.9v.1a1.8 1.8 0 0 0 1.6 1.1h.1a2.1 2.1 0 1 1 0 4.2H21a1.8 1.8 0 0 0-1.6 1.1Z" />
       </symbol>
-      <symbol id="i-x" viewBox="0 0 24 24">
-        <path d="M18 6L6 18M6 6l12 12" />
+      <symbol id="i-x" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M18 6L6 18M6 6l12 12" />
       </symbol>
-      <symbol id="i-send" viewBox="0 0 24 24">
-        <path d="m22 2-7 20-4-9-9-4 20-7z" />
+      <symbol id="i-send" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="m22 2-7 20-4-9-9-4 20-7z" />
       </symbol>
-      <symbol id="i-back" viewBox="0 0 24 24">
-        <path d="M15 6l-6 6 6 6" />
+      <symbol id="i-back" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M15 6l-6 6 6 6" />
       </symbol>
-      <symbol id="i-check" viewBox="0 0 24 24">
-        <path d="M5 13l4 4L19 7" />
+      <symbol id="i-check" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M5 13l4 4L19 7" />
       </symbol>
-      <symbol id="i-arrow-up" viewBox="0 0 24 24">
-        <path d="M12 19V5" />
-        <path d="M6 11l6-6 6 6" />
+      <symbol id="i-arrow-up" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 19V5" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M6 11l6-6 6 6" />
       </symbol>
-      <symbol id="i-paperclip" viewBox="0 0 24 24">
-        <path d="M8 12.5l6-6a3 3 0 0 1 4.2 4.2l-8 8a5 5 0 1 1-7-7l7-7" />
+      <symbol id="i-paperclip" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M8 12.5l6-6a3 3 0 0 1 4.2 4.2l-8 8a5 5 0 1 1-7-7l7-7" />
       </symbol>
-      <symbol id="i-reply" viewBox="0 0 24 24">
-        <path d="M9 8 4 12l5 4" />
-        <path d="M4 12h9a6 6 0 0 1 6 6v1" />
+      <symbol id="i-reply" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M9 8 4 12l5 4" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M4 12h9a6 6 0 0 1 6 6v1" />
       </symbol>
-      <symbol id="i-hash" viewBox="0 0 24 24">
-        <path d="M9 4 7 20M17 4l-2 16M4 9h16M3.5 15h16" />
+      <symbol id="i-hash" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M9 4 7 20M17 4l-2 16M4 9h16M3.5 15h16" />
       </symbol>
-      <symbol id="i-plus" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 8v8M8 12h8" />
+      <symbol id="i-plus" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="12" cy="12" r="9" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 8v8M8 12h8" />
       </symbol>
-      <symbol id="i-updown" viewBox="0 0 24 24">
-        <path d="M8 9l4-4 4 4" />
-        <path d="M16 15l-4 4-4-4" />
+      <symbol id="i-updown" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M8 9l4-4 4 4" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M16 15l-4 4-4-4" />
       </symbol>
-      <symbol id="i-collapse" viewBox="0 0 24 24">
-        <path d="M14 6l-6 6 6 6" />
-        <path d="M19 6l-6 6 6 6" />
+      <symbol id="i-collapse" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M14 6l-6 6 6 6" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M19 6l-6 6 6 6" />
       </symbol>
     </defs>
   </svg>
 
   <div class="app" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-    <aside class="sidebar" id="studentSidebar" aria-label="Student navigation">
-      <div class="brand">
-        <img src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
-        <div class="brand-name">Helpdesk<span>CRMC</span></div>
-        <button type="button" class="student-menu-close" id="studentMenuClose" aria-label="Close navigation" title="Close navigation"><img src="assets/icons/x.svg" alt="" width="20" height="20"></button>
+    <aside class="sidebar" id="studentSidebar" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-label="Student navigation">
+      <div class="brand" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
+        <div class="brand-name" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Helpdesk<span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>CRMC</span></div>
+        <button type="button" class="student-menu-close" id="studentMenuClose" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-label="Close navigation" title="Close navigation"><img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/icons/x.svg" alt="" width="20" height="20"></button>
       </div>
 
-      <a class="nav-item<?= $studentInitialView === 'home' ? ' active' : '' ?>" id="navAskBen"
-        href="dashboard_student.php" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><svg class="icon">
-          <use href="#i-home" />
+      <a class="nav-item<?= $studentInitialView === 'home' ? ' active' : '' ?>" id="navAskBen" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
+        href="dashboard_student.php"><svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-home" />
         </svg> Ask Ben</a>
-      <a class="nav-item" id="navMyConcerns" href="dashboard_student.php#concerns" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><svg class="icon">
-          <use href="#i-file" />
+      <a class="nav-item" id="navMyConcerns" <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="dashboard_student.php#concerns"><svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-file" />
         </svg> My Concerns</a>
-      <a class="nav-item<?= $studentInitialView === 'profile' ? ' active' : '' ?>" id="navProfile"
-        href="student_profile.php" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><svg class="icon">
-          <use href="#i-user" />
+      <a class="nav-item<?= $studentInitialView === 'profile' ? ' active' : '' ?>" id="navProfile" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
+        href="student_profile.php"><svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-user" />
         </svg> Profile</a>
 
-      <div class="nav-label">
-        <span>REPLIES FROM STAFF</span>
+      <div class="nav-label" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>REPLIES FROM STAFF</span>
       </div>
 
       <?php if (!empty($repliesByOffice)): ?>
-        <div class="staff-replies-list" aria-label="All replies from staff">
+        <div class="staff-replies-list" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-label="All replies from staff">
           <?php foreach ($repliesByOffice as $officeName => $replies): ?>
             <?php
             $officeInitial = mb_strtoupper(mb_substr($officeName, 0, 1));
@@ -266,16 +266,16 @@ $studentEscalationProfile = [
             ];
             $gradient = $colors[$officeName] ?? ['#847c6e', '#5c5648'];
             ?>
-            <div class="group">
-              <div class="group-head">
+            <div class="group" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <div class="group-head" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                 <?php if ($officeLogo): ?>
-                  <div class="badge has-office-logo"><img src="<?= htmlspecialchars($officeLogo, ENT_QUOTES, 'UTF-8') ?>"
+                  <div class="badge has-office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="<?= htmlspecialchars($officeLogo, ENT_QUOTES, 'UTF-8') ?>"
                       alt="" loading="lazy"></div>
                 <?php else: ?>
-                  <div class="badge" style="background:linear-gradient(135deg,<?= $gradient[0] ?>,<?= $gradient[1] ?>);">
+                  <div class="badge" <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="background:linear-gradient(135deg,<?= $gradient[0] ?>,<?= $gradient[1] ?>);">
                     <?= htmlspecialchars($officeInitial) ?></div>
                 <?php endif; ?>
-                <span><?= htmlspecialchars($officeName) ?></span>
+                <span <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($officeName) ?></span>
               </div>
               <?php foreach ($replies as $reply): ?>
                 <?php
@@ -288,319 +288,319 @@ $studentEscalationProfile = [
                 else
                   $timeAgo = floor($diff / 86400) . 'd';
                 ?>
-                <a class="channel" href="#" data-inquiry-id="<?= (int) $reply['inquiry_id'] ?>">
-                  <svg class="icon" style="width:15px;height:15px;">
-                    <use href="#i-chat" />
+                <a class="channel" <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#" data-inquiry-id="<?= (int) $reply['inquiry_id'] ?>">
+                  <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="width:15px;height:15px;">
+                    <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-chat" />
                   </svg>
-                  <span class="snippet"><?= htmlspecialchars(mb_substr($reply['subject'], 0, 25)) ?></span>
-                  <span class="time"><?= htmlspecialchars($timeAgo) ?></span>
+                  <span class="snippet" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars(mb_substr($reply['subject'], 0, 25)) ?></span>
+                  <span class="time" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($timeAgo) ?></span>
                 </a>
               <?php endforeach; ?>
             </div>
           <?php endforeach; ?>
         </div>
       <?php else: ?>
-        <div class="empty-replies">
-          <svg class="icon" style="width:20px;height:20px;color:#c4bba6;margin:0 auto 6px;">
-            <use href="#i-chat" />
+        <div class="empty-replies" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="width:20px;height:20px;color:#c4bba6;margin:0 auto 6px;">
+            <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-chat" />
           </svg>
-          <p>No replies yet</p>
-          <span>Staff will respond to your concerns within 2-3 working days</span>
+          <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>No replies yet</p>
+          <span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Staff will respond to your concerns within 2-3 working days</span>
         </div>
       <?php endif; ?>
 
-      <div class="sidebar-spacer"></div>
+      <div class="sidebar-spacer" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
 
-      <div class="urgent-card">
-        <h4>Need urgent help?</h4>
-        <p>Walk-in concerns are still welcome at the Student Affairs office.</p>
-        <button class="urgent-btn">Visit SASO</button>
+      <div class="urgent-card" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Need urgent help?</h4>
+        <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Walk-in concerns are still welcome at the Student Affairs office.</p>
+        <button class="urgent-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Visit SASO</button>
       </div>
 
-      <a href="logout.php" class="nav-item student-logout-link" style="margin-top:8px;"><svg class="icon">
-          <use href="#i-logout" />
+      <a href="logout.php" class="nav-item student-logout-link" <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="margin-top:8px;"><svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-logout" />
         </svg> Logout</a>
 
-      <div class="sidebar-foot">
-        <div class="sidebar-profile">
-          <div class="avatar"><?= htmlspecialchars($initials) ?></div>
-          <div>
-            <div class="user-name"><?= htmlspecialchars($_SESSION['name']) ?></div>
-            <div class="user-sub">
+      <div class="sidebar-foot" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="sidebar-profile" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="avatar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($initials) ?></div>
+          <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="user-name" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= htmlspecialchars($_SESSION['name']) ?></div>
+            <div class="user-sub" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
               <?= htmlspecialchars($studentProfileView['profile']['program_code'] ?: 'Student') ?><?= $studentProfileView['profile']['year_level'] ? ' &middot; Year ' . (int) $studentProfileView['profile']['year_level'] : '' ?>
             </div>
           </div>
         </div>
       </div>
     </aside>
-    <button type="button" class="student-nav-backdrop" id="studentSidebarBackdrop" aria-label="Close navigation" hidden></button>
+    <button type="button" class="student-nav-backdrop" id="studentSidebarBackdrop" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-label="Close navigation" hidden></button>
 
-    <main class="main" id="mainView" data-initial-view="<?= $studentInitialView ?>">
+    <main class="main" id="mainView" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-initial-view="<?= $studentInitialView ?>">
       <?php require __DIR__ . '/assets/components/student-profile-view.php'; ?>
-      <div class="student-notification-bar">
-        <button type="button" class="notification-icon-button student-menu-toggle" id="studentMenuToggle"
+      <div class="student-notification-bar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <button type="button" class="notification-icon-button student-menu-toggle" id="studentMenuToggle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
           data-mobile-query="(max-width: 960px)" aria-label="Open navigation" title="Navigation"
-          aria-controls="studentSidebar" aria-expanded="false"><img src="assets/icons/menu.svg" alt="" width="20" height="20"></button>
-        <button type="button" class="notification-icon-button chat-history-toggle" id="chatHistoryToggle"
-          aria-label="Chat history" title="Chat history" aria-controls="chatHistoryPanel" aria-expanded="false"><img
+          aria-controls="studentSidebar" aria-expanded="false"><img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/icons/menu.svg" alt="" width="20" height="20"></button>
+        <button type="button" class="notification-icon-button chat-history-toggle" id="chatHistoryToggle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
+          aria-label="Chat history" title="Chat history" aria-controls="chatHistoryPanel" aria-expanded="false"><img <?= dev_locator_attributes(__FILE__, __LINE__) ?>
             src="assets/icons/history.svg" alt="" width="20" height="20"></button>
         <?php require __DIR__ . '/assets/components/notification-center.php'; ?>
       </div>
-      <div class="blob blob-1"></div>
+      <div class="blob blob-1" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
 
-      <div id="heroView" <?= $studentInitialView === 'profile' ? ' style="display:none;"' : '' ?>>
-        <div class="hero">
-          <div class="hero-avatar"><img src="assets/images/ben-model.png" alt="Ben"></div>
-          <h1>Good morning, <?= htmlspecialchars($firstName) ?>. I'm <b>Ben</b></h1>
-          <p>I'm here to help you with your concern.</p>
-          <p class="sub">Choose a category below to get started</p>
-          <div class="search-pill" id="heroSearchPill">
-            <svg class="icon">
-              <use href="#i-search" />
+      <div id="heroView" <?= dev_locator_attributes(__FILE__, __LINE__) ?> <?= $studentInitialView === 'profile' ? ' style="display:none;"' : '' ?>>
+        <div class="hero" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="hero-avatar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/ben-model.png" alt="Ben"></div>
+            <h1 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Good morning, <?= htmlspecialchars($firstName) ?>. I'm <b <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Ben</b></h1>
+          <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>I'm here to help you with your concern.</p>
+          <p class="sub" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Choose a category below to get started</p>
+          <div class="search-pill" id="heroSearchPill" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-search" />
             </svg>
             <input type="text" aria-label="Describe your concern to Ben"
-              placeholder="Type your concern, e.g. 'I lost my student ID'" id="heroSearchInput" />
+              placeholder="Type your concern, e.g. 'I lost my student ID'" id="heroSearchInput" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?> />
           </div>
         </div>
 
-        <div class="content">
-          <div class="section-title">GENERAL</div>
-          <div class="general-card" data-category="General" role="button" tabindex="0"
-            <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-            <div class="ic"><img class="office-logo" src="assets/images/offices_logo/CRMC LOGO.png" alt=""
+        <div class="content" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="section-title" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>GENERAL</div>
+          <div class="general-card" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="General" role="button" tabindex="0"
+>
+            <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/CRMC LOGO.png" alt=""
                 loading="lazy"></div>
-            <div>
-              <h3>General Inquiry</h3>
-              <p>Ask a concern directly to Ben — no category needed.</p>
+            <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <h3 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>General Inquiry</h3>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Ask a concern directly to Ben — no category needed.</p>
             </div>
           </div>
 
-          <div class="section-title">OFFICES</div>
-          <div class="grid">
-            <div class="tile" data-category="Registrar" role="button" tabindex="0" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/CRMC LOGO.png" alt=""
+          <div class="section-title" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>OFFICES</div>
+          <div class="grid" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="tile" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="Registrar" role="button" tabindex="0">
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/CRMC LOGO.png" alt=""
                   loading="lazy"></div>
-              <h4>Registrar</h4>
-              <p>Enrollment, records, IDs</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Registrar</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Enrollment, records, IDs</p>
             </div>
-            <div class="tile alt" data-category="Finance" role="button" tabindex="0" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/finance-removebg-preview.png"
+            <div class="tile alt" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="Finance" role="button" tabindex="0">
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/finance-removebg-preview.png"
                   alt="" loading="lazy"></div>
-              <h4>Finance</h4>
-              <p>Fees, payments, receipts</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Finance</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Fees, payments, receipts</p>
             </div>
-            <div class="tile" data-category="SASO" role="button" tabindex="0" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/CRMC LOGO.png" alt=""
+            <div class="tile" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="SASO" role="button" tabindex="0">
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/CRMC LOGO.png" alt=""
                   loading="lazy"></div>
-              <h4>SASO</h4>
-              <p>Student affairs & orgs</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>SASO</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Student affairs & orgs</p>
             </div>
-            <div class="tile alt" data-category="Guidance" role="button" tabindex="0"
-              <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/guidance-removebg-preview.png"
+            <div class="tile alt" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="Guidance" role="button" tabindex="0"
+>
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/guidance-removebg-preview.png"
                   alt="" loading="lazy"></div>
-              <h4>Guidance</h4>
-              <p>Counseling & support</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Guidance</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Counseling & support</p>
             </div>
-            <div class="tile" data-category="Library" role="button" tabindex="0" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/CRMC LOGO.png" alt=""
+            <div class="tile" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="Library" role="button" tabindex="0">
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/CRMC LOGO.png" alt=""
                   loading="lazy"></div>
-              <h4>Library</h4>
-              <p>Books, fines, access</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Library</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Books, fines, access</p>
             </div>
-            <div class="tile alt" data-category="Property Custodian" role="button" tabindex="0"
-              <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/CRMC LOGO.png" alt=""
+            <div class="tile alt" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="Property Custodian" role="button" tabindex="0"
+>
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/CRMC LOGO.png" alt=""
                   loading="lazy"></div>
-              <h4>Property Custodian</h4>
-              <p>Facilities & equipment</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Property Custodian</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Facilities & equipment</p>
             </div>
-            <div class="tile" data-category="Clinic" role="button" tabindex="0" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/CRMC LOGO.png" alt=""
+            <div class="tile" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="Clinic" role="button" tabindex="0">
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/CRMC LOGO.png" alt=""
                   loading="lazy"></div>
-              <h4>Clinic</h4>
-              <p>Medical certificates</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Clinic</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Medical certificates</p>
             </div>
-            <div class="tile alt" data-category="ITCD" role="button" tabindex="0" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/ITCD.png" alt="" loading="lazy">
+            <div class="tile alt" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="ITCD" role="button" tabindex="0">
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/ITCD.png" alt="" loading="lazy">
               </div>
-              <h4>ITCD</h4>
-              <p>Portal & IT support</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>ITCD</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Portal & IT support</p>
             </div>
-            <div class="tile" data-category="Human Resources" role="button" tabindex="0"
-              <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/CRMC LOGO.png" alt=""
+            <div class="tile" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="Human Resources" role="button" tabindex="0"
+>
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/CRMC LOGO.png" alt=""
                   loading="lazy"></div>
-              <h4>Human Resources</h4>
-              <p>Employment inquiries</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Human Resources</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Employment inquiries</p>
             </div>
           </div>
 
-          <div class="section-title">DEPARTMENTS</div>
-          <div class="grid">
-            <div class="tile" data-category="CCS" role="button" tabindex="0" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/CCS.png" alt="" loading="lazy">
+          <div class="section-title" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>DEPARTMENTS</div>
+          <div class="grid" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="tile" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="CCS" role="button" tabindex="0">
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/CCS.png" alt="" loading="lazy">
               </div>
-              <h4>CCS</h4>
-              <p>Computer science dept</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>CCS</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Computer science dept</p>
             </div>
-            <div class="tile alt" data-category="CBE" role="button" tabindex="0" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/CBE.png" alt="" loading="lazy">
+            <div class="tile alt" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="CBE" role="button" tabindex="0">
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/CBE.png" alt="" loading="lazy">
               </div>
-              <h4>CBE</h4>
-              <p>Business education dept</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>CBE</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Business education dept</p>
             </div>
-            <div class="tile" data-category="CTE" role="button" tabindex="0" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/CTE.png" alt="" loading="lazy">
+            <div class="tile" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="CTE" role="button" tabindex="0">
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/CTE.png" alt="" loading="lazy">
               </div>
-              <h4>CTE</h4>
-              <p>Teacher education dept</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>CTE</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Teacher education dept</p>
             </div>
-            <div class="tile alt" data-category="CCJE" role="button" tabindex="0" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-              <div class="ic"><img class="office-logo" src="assets/images/offices_logo/CCJE.png" alt="" loading="lazy">
+            <div class="tile alt" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-category="CCJE" role="button" tabindex="0">
+              <div class="ic" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><img class="office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/offices_logo/CCJE.png" alt="" loading="lazy">
               </div>
-              <h4>CCJE</h4>
-              <p>Criminal justice dept</p>
+              <h4 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>CCJE</h4>
+              <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Criminal justice dept</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div id="concernsView" class="concerns-view" style="display:none;">
-        <div class="concerns-header">
-          <h1>My Concerns</h1>
-          <p>View the current status of your concerns. Select one to open replies from staff.</p>
+      <div id="concernsView" class="concerns-view" <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="display:none;">
+        <div class="concerns-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <h1 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>My Concerns</h1>
+          <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>View the current status of your concerns. Select one to open replies from staff.</p>
         </div>
-        <div class="concerns-container" id="concernsListContainer"></div>
+        <div class="concerns-container" id="concernsListContainer" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
       </div>
 
       <!-- Staff Reply Thread View (Ben-style chat) -->
-      <div id="threadView" style="display:none;">
-        <div class="thread-view-header">
-          <button class="back-btn" type="button" aria-label="Back to concerns" onclick="goBackToConcerns()"><svg
-              class="icon" aria-hidden="true">
-              <use href="#i-back" />
+      <div id="threadView" <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="display:none;">
+        <div class="thread-view-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <button class="back-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="button" aria-label="Back to concerns" onclick="goBackToConcerns()"><svg
+              class="icon" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?> aria-hidden="true">
+              <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-back" />
             </svg></button>
-          <div class="thread-view-info">
-            <h2 id="threadTitle">Concern Title</h2>
-            <div class="thread-view-meta">
-              <img class="thread-office-logo" id="threadOfficeLogo" alt="" hidden>
-              <span id="threadOffice">Office Name</span>
-              <span>•</span>
-              <span class="status-badge" id="threadStatus">On Hold</span>
+          <div class="thread-view-info" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <h2 id="threadTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Concern Title</h2>
+            <div class="thread-view-meta" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <img class="thread-office-logo" id="threadOfficeLogo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> alt="" hidden>
+              <span id="threadOffice" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Office Name</span>
+              <span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>•</span>
+              <span class="status-badge" id="threadStatus" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>On Hold</span>
             </div>
           </div>
         </div>
 
-        <div class="thread-messages-container">
-          <div class="thread-messages-inner" id="threadMessages"></div>
+        <div class="thread-messages-container" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="thread-messages-inner" id="threadMessages" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
         </div>
 
-        <div class="thread-composer-area" id="threadComposer">
+        <div class="thread-composer-area" id="threadComposer" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
           <!-- Reply section (for On Hold) -->
-          <div class="thread-reply-section" id="threadReplySection">
-            <div class="thread-reply-label">Staff is waiting for your response</div>
-            <textarea class="thread-reply-input" id="threadReplyInput" placeholder="Type your reply here..."></textarea>
-            <button class="thread-reply-btn" onclick="sendThreadReply()">Send Reply</button>
+          <div class="thread-reply-section" id="threadReplySection" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="thread-reply-label" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Staff is waiting for your response</div>
+            <textarea class="thread-reply-input" id="threadReplyInput" <?= dev_locator_attributes(__FILE__, __LINE__) ?> placeholder="Type your reply here..."></textarea>
+            <button class="thread-reply-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> onclick="sendThreadReply()">Send Reply</button>
           </div>
 
           <!-- Feedback section (for every status except On Hold) -->
-          <div class="thread-feedback-section" id="threadFeedbackSection" style="display:none;">
-            <div class="thread-feedback-heading">
-              <div>
-                <div class="thread-feedback-label" id="threadFeedbackLabel">How is your concern going so far?</div>
-                <p class="thread-feedback-description" id="threadFeedbackDescription">Your feedback helps us improve
+          <div class="thread-feedback-section" id="threadFeedbackSection" <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="display:none;">
+            <div class="thread-feedback-heading" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <div class="thread-feedback-label" id="threadFeedbackLabel" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>How is your concern going so far?</div>
+                <p class="thread-feedback-description" id="threadFeedbackDescription" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Your feedback helps us improve
                   student support.</p>
               </div>
-              <span class="thread-feedback-optional">Optional</span>
+              <span class="thread-feedback-optional" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Optional</span>
             </div>
-            <div class="thread-feedback-emojis" role="group" aria-label="Choose a feedback rating">
-              <button type="button" class="thread-emoji-btn" data-rating="1" aria-label="Very dissatisfied"
+            <div class="thread-feedback-emojis" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="group" aria-label="Choose a feedback rating">
+              <button type="button" class="thread-emoji-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-rating="1" aria-label="Very dissatisfied"
                 aria-pressed="false" title="Very Dissatisfied" onclick="selectRating(1)">😞</button>
-              <button type="button" class="thread-emoji-btn" data-rating="2" aria-label="Dissatisfied"
+              <button type="button" class="thread-emoji-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-rating="2" aria-label="Dissatisfied"
                 aria-pressed="false" title="Dissatisfied" onclick="selectRating(2)">😐</button>
-              <button type="button" class="thread-emoji-btn" data-rating="3" aria-label="Neutral" aria-pressed="false"
+              <button type="button" class="thread-emoji-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-rating="3" aria-label="Neutral" aria-pressed="false"
                 title="Neutral" onclick="selectRating(3)">😊</button>
-              <button type="button" class="thread-emoji-btn" data-rating="4" aria-label="Satisfied" aria-pressed="false"
+              <button type="button" class="thread-emoji-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-rating="4" aria-label="Satisfied" aria-pressed="false"
                 title="Satisfied" onclick="selectRating(4)">😄</button>
-              <button type="button" class="thread-emoji-btn" data-rating="5" aria-label="Very satisfied"
+              <button type="button" class="thread-emoji-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-rating="5" aria-label="Very satisfied"
                 aria-pressed="false" title="Very Satisfied" onclick="selectRating(5)">🤩</button>
             </div>
-            <div class="thread-feedback-actions">
-              <textarea class="thread-reply-input" id="threadFeedbackInput" placeholder="Add a comment (optional)"
+            <div class="thread-feedback-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <textarea class="thread-reply-input" id="threadFeedbackInput" <?= dev_locator_attributes(__FILE__, __LINE__) ?> placeholder="Add a comment (optional)"
                 aria-label="Optional feedback comment" rows="1"></textarea>
-              <button type="button" class="thread-reply-btn" onclick="submitThreadFeedback()">Submit Feedback</button>
+              <button type="button" class="thread-reply-btn" <?= dev_locator_attributes(__FILE__, __LINE__) ?> onclick="submitThreadFeedback()">Submit Feedback</button>
             </div>
           </div>
-          <p id="threadActionMessage" class="thread-action-message" role="status" aria-live="polite" hidden></p>
+          <p id="threadActionMessage" class="thread-action-message" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="status" aria-live="polite" hidden></p>
         </div>
       </div>
 
-      <div id="chatView">
-        <div class="chat-header">
-          <button class="back-btn" id="backToDashboard"><svg class="icon">
-              <use href="#i-back" />
+      <div id="chatView" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="chat-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <button class="back-btn" id="backToDashboard" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-back" />
             </svg></button>
-          <div class="ic" id="chatCategoryIcon"><svg class="icon">
-              <use href="#i-chat" />
+          <div class="ic" id="chatCategoryIcon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+              <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-chat" />
             </svg></div>
-          <div>
-            <h2 id="chatCategoryName">General</h2>
-            <p id="chatCategoryDesc">Ask your concern</p>
+          <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <h2 id="chatCategoryName" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>General</h2>
+            <p id="chatCategoryDesc" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Ask your concern</p>
           </div>
         </div>
 
-        <div class="chat-thread">
-          <div class="thread-inner" id="chatThreadInner">
-            <div class="day-divider" id="chatDayDivider">Today</div>
+        <div class="chat-thread" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="thread-inner" id="chatThreadInner" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="day-divider" id="chatDayDivider" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Today</div>
           </div>
         </div>
 
-        <div class="composer-wrap">
-          <div class="composer">
-            <button class="attach-btn" id="chatAttachBtn"><svg class="icon">
-                <use href="#i-paperclip" />
+        <div class="composer-wrap" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="composer" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <button class="attach-btn" id="chatAttachBtn" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-paperclip" />
               </svg></button>
-            <input type="text" placeholder="Message Ben…" id="chatInput" />
-            <button class="send-btn" id="chatSendBtn"><svg class="icon">
-                <use href="#i-arrow-up" />
+            <input type="text" placeholder="Message Ben…" id="chatInput" <?= dev_locator_attributes(__FILE__, __LINE__) ?> />
+            <button class="send-btn" id="chatSendBtn" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-arrow-up" />
               </svg></button>
           </div>
-          <div class="composer-hint">Ben can make mistakes. For urgent concerns, visit the office directly.</div>
+          <div class="composer-hint" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Ben can make mistakes. For urgent concerns, visit the office directly.</div>
         </div>
       </div>
     </main>
 
-    <aside class="panel" id="chatHistoryPanel" aria-labelledby="chatHistoryTitle">
-      <div class="panel-head">
-        <h3 id="chatHistoryTitle">Chat history</h3>
-        <button type="button" class="notification-icon-button chat-history-close" id="chatHistoryClose"
-          aria-label="Close chat history" title="Close chat history"><img src="assets/icons/x.svg" alt="" width="18"
+    <aside class="panel" id="chatHistoryPanel" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="chatHistoryTitle">
+      <div class="panel-head" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <h3 id="chatHistoryTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Chat history</h3>
+        <button type="button" class="notification-icon-button chat-history-close" id="chatHistoryClose" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
+          aria-label="Close chat history" title="Close chat history"><img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/icons/x.svg" alt="" width="18"
             height="18"></button>
       </div>
-      <div class="search-mini">
-        <svg class="icon">
-          <use href="#i-search" />
+      <div class="search-mini" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-search" />
         </svg>
-        <input type="search" id="chatHistorySearch" placeholder="Search conversations" aria-label="Search chat history">
+        <input type="search" id="chatHistorySearch" <?= dev_locator_attributes(__FILE__, __LINE__) ?> placeholder="Search conversations" aria-label="Search chat history">
       </div>
-      <div id="chatHistoryList"></div>
+      <div id="chatHistoryList" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></div>
     </aside>
   </div>
 
-  <dialog class="action-confirm-dialog" id="actionConfirmDialog" aria-labelledby="actionConfirmTitle"
-    aria-describedby="actionConfirmMessage" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-    <div class="action-confirm-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 3 3.8 7v5.3c0 4.2 3.5 7.9 8.2 9.2 4.7-1.3 8.2-5 8.2-9.2V7L12 3Z" />
-        <path d="M12 8v4m0 4h.01" />
+  <dialog class="action-confirm-dialog" id="actionConfirmDialog" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-labelledby="actionConfirmTitle"
+    aria-describedby="actionConfirmMessage">
+    <div class="action-confirm-icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-hidden="true">
+      <svg <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24">
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 3 3.8 7v5.3c0 4.2 3.5 7.9 8.2 9.2 4.7-1.3 8.2-5 8.2-9.2V7L12 3Z" />
+        <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 8v4m0 4h.01" />
       </svg>
     </div>
-    <h2 id="actionConfirmTitle">Please confirm</h2>
-    <p id="actionConfirmMessage"></p>
-    <div class="action-confirm-actions">
-      <button type="button" class="action-confirm-continue" id="actionConfirmContinue">Confirm</button>
-      <button type="button" class="action-confirm-cancel" id="actionConfirmCancel">Cancel</button>
+    <h2 id="actionConfirmTitle" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Please confirm</h2>
+    <p id="actionConfirmMessage" <?= dev_locator_attributes(__FILE__, __LINE__) ?>></p>
+    <div class="action-confirm-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <button type="button" class="action-confirm-continue" id="actionConfirmContinue" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Confirm</button>
+      <button type="button" class="action-confirm-cancel" id="actionConfirmCancel" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Cancel</button>
     </div>
   </dialog>
 
@@ -641,12 +641,12 @@ $studentEscalationProfile = [
     function renderMarkdown(text) {
       if (!text) return '';
       let html = escapeHtml(text);
-      html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      html = html.replace(/(?:^|\n)(\d+)\.\s+(.*?)(?=\n|$)/g, '<div style="margin-left:14px;text-indent:-14px;"><strong>$1.</strong> $2</div>');
-      html = html.replace(/(?:^|\n)[-]\s+(.*?)(?=\n|$)/g, '<div style="margin-left:14px;text-indent:-10px;">• $1</div>');
-      html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-      html = html.replace(/\n\n/g, '<div style="height:8px;"></div>');
-      html = html.replace(/\n/g, '<br>');
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>>$1</strong>');
+      html = html.replace(/(?:^|\n)(\d+)\.\s+(.*?)(?=\n|$)/g, '<div <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="margin-left:14px;text-indent:-14px;"><strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>>$1.</strong> $2</div>');
+      html = html.replace(/(?:^|\n)[-]\s+(.*?)(?=\n|$)/g, '<div <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="margin-left:14px;text-indent:-10px;">• $1</div>');
+      html = html.replace(/\*(.*?)\*/g, '<em <?= dev_locator_attributes(__FILE__, __LINE__) ?>>$1</em>');
+      html = html.replace(/\n\n/g, '<div <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="height:8px;"></div>');
+      html = html.replace(/\n/g, '<br <?= dev_locator_attributes(__FILE__, __LINE__) ?>>');
       return html;
     }
 
@@ -694,7 +694,7 @@ $studentEscalationProfile = [
 
     function categoryIconMarkup(category) {
       const logoPath = categoryLogoPaths[category] || defaultCategoryLogoPath;
-      return `<img class="category-logo" src="${escapeHtml(logoPath)}" alt="">`;
+      return `<img class="category-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="${escapeHtml(logoPath)}" alt="">`;
     }
 
     // Nav switching
@@ -824,13 +824,13 @@ $studentEscalationProfile = [
       const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
       msg.innerHTML = `
-    <div class="m-avatar">
-      <img src="assets/images/ben-model.png" alt="Ben">
+    <div class="m-avatar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/ben-model.png" alt="Ben">
     </div>
-    <div class="bubble-wrap">
-      <span class="name">Ben</span>
-      <div class="bubble">${html}</div>
-      <span class="time">${timeStr}</span>
+    <div class="bubble-wrap" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <span class="name" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Ben</span>
+      <div class="bubble" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${html}</div>
+      <span class="time" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${timeStr}</span>
     </div>`;
 
       threadInner.appendChild(msg);
@@ -870,7 +870,7 @@ $studentEscalationProfile = [
       if (escalationLoadingKey === identity) return;
       escalationLoadingKey = identity;
       try {
-        const response = await fetch('assets/components/escalation-form.html?v=<?= md5_file(__DIR__ . '/assets/components/escalation-form.html') ?>');
+        const response = await fetch('assets/components/escalation-form.php?v=<?= md5_file(__DIR__ . '/assets/components/escalation-form.php') ?>');
         if (!response.ok) throw new Error('Form unavailable');
         const formHtml = await response.text();
         if (requestId !== chatLoadRequestId || sessionKey !== currentChatSessionKey) return;
@@ -883,15 +883,15 @@ $studentEscalationProfile = [
         const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
         msg.innerHTML = `
-      <div class="m-avatar">
-        <img src="assets/images/ben-model.png" alt="Ben">
+      <div class="m-avatar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/ben-model.png" alt="Ben">
       </div>
-      <div class="bubble-wrap">
-        <span class="name">Ben</span>
-        <div class="bubble">
+      <div class="bubble-wrap" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <span class="name" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Ben</span>
+        <div class="bubble" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
           ${formHtml}
         </div>
-        <span class="time">${timeStr}</span>
+        <span class="time" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${timeStr}</span>
       </div>`;
 
         threadInner.appendChild(msg);
@@ -966,11 +966,11 @@ $studentEscalationProfile = [
           successDiv.style.display = 'none';
           successDiv.setAttribute('data-success-msg', '');
           successDiv.innerHTML = `
-        <div class="esc-success-icon">✓</div>
-        <h3>Concern Forwarded Successfully!</h3>
-        <p>Your concern was submitted to the selected office. You can follow staff replies in My Concerns.</p>
-        <p class="esc-success-urgency" data-urgency-result></p>
-        <p class="esc-success-note">You can track the status of your concern in the <strong>My Concerns</strong> section.</p>
+        <div class="esc-success-icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>✓</div>
+        <h3 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Concern Forwarded Successfully!</h3>
+        <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Your concern was submitted to the selected office. You can follow staff replies in My Concerns.</p>
+        <p class="esc-success-urgency" <?= dev_locator_attributes(__FILE__, __LINE__) ?> data-urgency-result></p>
+        <p class="esc-success-note" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>You can track the status of your concern in the <strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>>My Concerns</strong> section.</p>
       `;
           card.appendChild(successDiv);
         }
@@ -1232,9 +1232,9 @@ $studentEscalationProfile = [
       const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
       msg.innerHTML = `
-    <div class="bubble-wrap">
-      <div class="bubble">${escapeHtml(text)}</div>
-      <span class="time">${timeStr}</span>
+    <div class="bubble-wrap" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <div class="bubble" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(text)}</div>
+      <span class="time" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${timeStr}</span>
     </div>`;
 
       threadInner.appendChild(msg);
@@ -1255,11 +1255,11 @@ $studentEscalationProfile = [
       msg.id = 'typingIndicator';
 
       msg.innerHTML = `
-    <div class="m-avatar">
-      <img src="assets/images/ben-model.png" alt="Ben">
+    <div class="m-avatar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <img <?= dev_locator_attributes(__FILE__, __LINE__) ?> src="assets/images/ben-model.png" alt="Ben">
     </div>
-    <div class="bubble-wrap">
-      <div class="bubble typing"><span></span><span></span><span></span></div>
+    <div class="bubble-wrap" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+      <div class="bubble typing" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>></span><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>></span><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>></span></div>
     </div>`;
 
       threadInner.appendChild(msg);
@@ -1306,7 +1306,7 @@ $studentEscalationProfile = [
       dayDiv.textContent = new Date().toLocaleDateString();
       threadInner.appendChild(dayDiv);
       const studentFirstName = <?= json_encode($firstName, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
-      const message = addBenMessage(`Hi ${escapeHtml(studentFirstName)}! I see you'd like help with <b>${escapeHtml(category)}</b> concerns. What can I help you with today?`);
+      const message = addBenMessage(`Hi ${escapeHtml(studentFirstName)}! I see you'd like help with <b <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(category)}</b> concerns. What can I help you with today?`);
       showBenActions(message);
     }
 
@@ -1485,12 +1485,12 @@ $studentEscalationProfile = [
 
         if (concernsWithReplies.length === 0) {
           container.innerHTML = `
-        <div class="concerns-empty">
-          <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+        <div class="concerns-empty" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <svg class="empty-icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
           </svg>
-          <h3>No Concerns Yet</h3>
-          <p>You haven't submitted any concerns. Ask Ben or escalate to get started.</p>
+          <h3 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>No Concerns Yet</h3>
+          <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>You haven't submitted any concerns. Ask Ben or escalate to get started.</p>
         </div>`;
           return;
         }
@@ -1530,13 +1530,13 @@ $studentEscalationProfile = [
             `${subject}. Current status: ${statusLabel}.${duplicateRootId > 0 ? ` Similar to concern INQ-${duplicateRootId}.` : ''} Open staff replies.`
           );
           card.innerHTML = `
-        <div class="concern-card-header">
-          <div class="concern-header-left">
-            <h3 class="concern-subject">${escapeHtml(subject)}</h3>
-            ${duplicateRootId > 0 ? `<span class="concern-duplicate-flag">Similar to INQ-${duplicateRootId}</span>` : ''}
+        <div class="concern-card-header" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="concern-header-left" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <h3 class="concern-subject" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(subject)}</h3>
+            ${duplicateRootId > 0 ? `<span class="concern-duplicate-flag" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Similar to INQ-${duplicateRootId}</span>` : ''}
           </div>
-          <div class="concern-card-indicators">
-            <span class="concern-status ${statusClass}">${escapeHtml(statusLabel)}</span>
+          <div class="concern-card-indicators" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <span class="concern-status ${statusClass}" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(statusLabel)}</span>
           </div>
         </div>
       `;
@@ -1555,12 +1555,12 @@ $studentEscalationProfile = [
       } catch (error) {
         console.error('Error loading concerns:', error);
         container.innerHTML = `
-      <div class="concerns-error">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+      <div class="concerns-error" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?> viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle <?= dev_locator_attributes(__FILE__, __LINE__) ?> cx="12" cy="12" r="10"/><path <?= dev_locator_attributes(__FILE__, __LINE__) ?> d="M12 8v4M12 16h.01"/>
         </svg>
-        <h3>Failed to Load Concerns</h3>
-        <p>Please refresh the page to try again.</p>
+        <h3 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Failed to Load Concerns</h3>
+        <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Please refresh the page to try again.</p>
       </div>`;
       }
     }
@@ -1576,7 +1576,7 @@ $studentEscalationProfile = [
       const search = document.getElementById('chatHistorySearch')?.value.trim().toLowerCase() || '';
       const matches = chatSessions.filter(item => `${item.category} ${item.last_message || ''}`.toLowerCase().includes(search));
       if (matches.length === 0) {
-        container.innerHTML = `<div class="empty-state"><svg class="icon"><use href="#i-chat"/></svg><p>${search ? 'No matching conversations' : 'No conversations yet'}</p></div>`;
+        container.innerHTML = `<div class="empty-state" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><svg class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><use <?= dev_locator_attributes(__FILE__, __LINE__) ?> href="#i-chat"/></svg><p <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${search ? 'No matching conversations' : 'No conversations yet'}</p></div>`;
         return;
       }
 
@@ -1586,11 +1586,11 @@ $studentEscalationProfile = [
         row.className = `history-item${item.session_key === currentChatSessionKey ? ' active' : ''}`;
         row.href = '#';
         row.innerHTML = `
-      <div class="ic has-office-logo">${categoryIconMarkup(item.category)}</div>
-      <div>
-        <div class="h-title">${escapeHtml(item.category)}</div>
-        <div class="h-sub">${escapeHtml((item.last_message || '').substring(0, 50))}</div>
-        <time class="h-time">${new Date(item.updated_at * 1000).toLocaleDateString()}</time>
+      <div class="ic has-office-logo" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${categoryIconMarkup(item.category)}</div>
+      <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="h-title" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(item.category)}</div>
+        <div class="h-sub" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml((item.last_message || '').substring(0, 50))}</div>
+        <time class="h-time" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${new Date(item.updated_at * 1000).toLocaleDateString()}</time>
       </div>`;
 
         row.addEventListener('click', e => {
@@ -1759,7 +1759,7 @@ $studentEscalationProfile = [
         const dayDiv = document.createElement('div');
         dayDiv.className = 'thread-day-divider';
         const createdDate = new Date(concern.created_at);
-        dayDiv.innerHTML = `<span>${createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>`;
+        dayDiv.innerHTML = `<span <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>`;
         threadMessages.appendChild(dayDiv);
 
         // Add student's original concern
@@ -1767,11 +1767,11 @@ $studentEscalationProfile = [
         studentMsg.className = 'thread-message student';
         const studentTime = createdDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
         studentMsg.innerHTML = `
-      <div class="thread-avatar">${escapeHtml(STUDENT_INITIALS)}</div>
-      <div class="message-content">
-        <div class="message-sender">You</div>
-        <div class="message-bubble">${escapeHtml(String(concernText))}</div>
-        <div class="message-time">${studentTime}</div>
+      <div class="thread-avatar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(STUDENT_INITIALS)}</div>
+      <div class="message-content" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="message-sender" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>You</div>
+        <div class="message-bubble" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(String(concernText))}</div>
+        <div class="message-time" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${studentTime}</div>
       </div>
     `;
         threadMessages.appendChild(studentMsg);
@@ -1788,11 +1788,11 @@ $studentEscalationProfile = [
             const staffInitials = reply.staff_name ? reply.staff_name.split(' ').map(n => n[0]).join('') : 'ST';
 
             staffMsg.innerHTML = `
-          <div class="thread-avatar">${escapeHtml(isStudentReply ? STUDENT_INITIALS : staffInitials)}</div>
-          <div class="message-content">
-            <div class="message-sender">${escapeHtml(isStudentReply ? 'You' : reply.staff_name || 'Staff')}</div>
-            <div class="message-bubble">${escapeHtml(reply.message).replace(/\n/g, '<br>')}</div>
-            <div class="message-time">${replyDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</div>
+          <div class="thread-avatar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(isStudentReply ? STUDENT_INITIALS : staffInitials)}</div>
+          <div class="message-content" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+            <div class="message-sender" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(isStudentReply ? 'You' : reply.staff_name || 'Staff')}</div>
+            <div class="message-bubble" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(reply.message).replace(/\n/g, '<br <?= dev_locator_attributes(__FILE__, __LINE__) ?>>')}</div>
+            <div class="message-time" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${replyDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</div>
           </div>
         `;
             threadMessages.appendChild(staffMsg);
@@ -1891,11 +1891,11 @@ $studentEscalationProfile = [
         newMsg.className = 'thread-message student';
         const now = new Date();
         newMsg.innerHTML = `
-      <div class="thread-avatar">${escapeHtml(STUDENT_INITIALS)}</div>
-      <div class="message-content">
-        <div class="message-sender">You</div>
-        <div class="message-bubble">${escapeHtml(message).replace(/\n/g, '<br>')}</div>
-        <div class="message-time">${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</div>
+      <div class="thread-avatar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(STUDENT_INITIALS)}</div>
+      <div class="message-content" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+        <div class="message-sender" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>You</div>
+        <div class="message-bubble" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(message).replace(/\n/g, '<br <?= dev_locator_attributes(__FILE__, __LINE__) ?>>')}</div>
+        <div class="message-time" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</div>
       </div>
     `;
         threadMessages.appendChild(newMsg);
@@ -2017,11 +2017,11 @@ $studentEscalationProfile = [
           const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
           studentMsg.innerHTML = `
-        <div class="thread-avatar">${initials}</div>
-        <div class="thread-bubble-wrap">
-          <div class="thread-message-name">You</div>
-          <div class="thread-bubble">${escapeHtml(message)}</div>
-          <div class="thread-message-time">${now.toLocaleDateString()} ${timeStr}</div>
+        <div class="thread-avatar" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${initials}</div>
+        <div class="thread-bubble-wrap" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+          <div class="thread-message-name" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>You</div>
+          <div class="thread-bubble" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${escapeHtml(message)}</div>
+          <div class="thread-message-time" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>${now.toLocaleDateString()} ${timeStr}</div>
         </div>
       `;
           chatThread.appendChild(studentMsg);
@@ -2080,7 +2080,7 @@ $studentEscalationProfile = [
           const result = await res.json();
           if (result.success) {
             alert('Thank you for your feedback!');
-            document.getElementById('feedbackForm').innerHTML = '<p style="text-align: center; color: var(--muted);">Feedback submitted. Thank you!</p>';
+            document.getElementById('feedbackForm').innerHTML = '<p <?= dev_locator_attributes(__FILE__, __LINE__) ?> style="text-align: center; color: var(--muted);">Feedback submitted. Thank you!</p>';
           } else {
             alert('Failed to submit feedback: ' + (result.error || 'Unknown error'));
           }

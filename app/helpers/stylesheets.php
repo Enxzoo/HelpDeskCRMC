@@ -21,5 +21,5 @@ function stylesheet_bundle(string $name): string
         $links[] = '<link rel="stylesheet" href="' . $href . '">';
     }
 
-    return implode("\n", $links) . "\n";
+    return dev_locator_script() . implode("\n", $links) . "\n";
 }

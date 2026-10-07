@@ -61,7 +61,7 @@ $workspacePage = 'student_accounts';
 $workspaceTitle = 'Student accounts';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html <?= dev_locator_attributes(__FILE__, __LINE__) ?> lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -76,112 +76,112 @@ $workspaceTitle = 'Student accounts';
         defer></script>
 </head>
 
-<body class="student-account-page">
-    <div class="workspace-app">
+<body class="student-account-page" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+    <div class="workspace-app" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
         <?php require __DIR__ . '/assets/components/workspace-sidebar.php'; ?>
-        <main class="workspace-main">
+        <main class="workspace-main" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
             <?php require __DIR__ . '/assets/components/workspace-header.php'; ?>
-            <div class="account-shell wide">
-                <h1 class="account-title">Student accounts</h1>
+            <div class="account-shell wide" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                <h1 class="account-title" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Student accounts</h1>
                 <?php if ($notice): ?>
-                    <div class="account-success" role="status"><?= $escape($notice) ?></div><?php endif; ?>
+                    <div class="account-success" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="status"><?= $escape($notice) ?></div><?php endif; ?>
                 <?php if ($error): ?>
-                    <div class="account-error" role="alert"><?= $escape($error) ?></div><?php endif; ?>
+                    <div class="account-error" <?= dev_locator_attributes(__FILE__, __LINE__) ?> role="alert"><?= $escape($error) ?></div><?php endif; ?>
                 <?php if ($profile): ?>
-                    <div class="account-state">
-                        <strong><?= $escape($profile['first_name'] . ' ' . $profile['last_name']) ?></strong>
-                        <p><?= $escape($profile['student_number']) ?> |
+                    <div class="account-state" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($profile['first_name'] . ' ' . $profile['last_name']) ?></strong>
+                        <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($profile['student_number']) ?> |
                             <?= (int) $profile['is_active'] ? 'Enabled' : 'Suspended' ?>
                         </p>
                     </div>
-                    <dl class="account-details">
+                    <dl class="account-details" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                         <?php foreach (['email' => 'Email', 'middle_name' => 'Middle name', 'suffix' => 'Suffix', 'mobile_number' => 'Mobile number', 'college_name' => 'College', 'program_name' => 'Program / Course', 'year_level' => 'Year level', 'section' => 'Section / Block', 'academic_year' => 'Academic year', 'semester' => 'Term', 'enrollment_type' => 'Enrollment classification', 'terms_version' => 'Terms version accepted', 'terms_accepted_at' => 'Terms accepted at', 'privacy_version' => 'Privacy policy version accepted', 'privacy_accepted_at' => 'Privacy consent recorded at'] as $key => $label): ?>
-                            <div>
-                                <dt><?= $label ?></dt>
-                                <dd><?= $escape($profile[$key] ?: 'Not recorded') ?></dd>
+                            <div <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                <dt <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $label ?></dt>
+                                <dd <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($profile[$key] ?: 'Not recorded') ?></dd>
                             </div><?php endforeach; ?>
                     </dl>
                     <?php if ((int) $profile['is_active']): ?>
-                        <details class="account-management account-form">
-                            <summary>Update academic details</summary>
-                            <form method="POST"><?= csrf_field() ?><input type="hidden" name="action" value="academic"><input
-                                    type="hidden" name="user_id" value="<?= $selectedId ?>"><input type="hidden" name="revision"
+                        <details class="account-management account-form" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <summary <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Update academic details</summary>
+                            <form <?= dev_locator_attributes(__FILE__, __LINE__) ?> method="POST"><?= csrf_field() ?><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="hidden" name="action" value="academic"><input <?= dev_locator_attributes(__FILE__, __LINE__) ?>
+                                    type="hidden" name="user_id" value="<?= $selectedId ?>"><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="hidden" name="revision"
                                     value="<?= (int) $profile['revision'] ?>"><?php $academicOnly = true;
                                        $values = $profile;
                                        require __DIR__ . '/assets/components/student-profile-fields.php'; ?>
-                                <div class="profile-grid"><label class="full">Change reason<textarea name="reason" required
+                                <div class="profile-grid" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><label class="full" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Change reason<textarea <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="reason" required
                                             maxlength="1000" rows="3"></textarea></label></div>
-                                <div class="account-actions"><button class="button primary" type="submit">Update academic
+                                <div class="account-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><button class="button primary" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="submit">Update academic
                                         details</button></div>
                             </form>
                         </details>
                     <?php endif; ?>
-                    <form method="POST" class="account-management account-form"><?= csrf_field() ?><input type="hidden"
-                            name="action" value="access"><input type="hidden" name="user_id"
-                            value="<?= $selectedId ?>"><input type="hidden" name="is_active"
+                    <form method="POST" class="account-management account-form" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= csrf_field() ?><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="hidden"
+                            name="action" value="access"><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="hidden" name="user_id"
+                            value="<?= $selectedId ?>"><input <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="hidden" name="is_active"
                             value="<?= (int) $profile['is_active'] ? '0' : '1' ?>">
-                        <div class="profile-grid"><label
-                                class="full"><?= (int) $profile['is_active'] ? 'Suspension' : 'Reinstatement' ?>
-                                reason<textarea name="reason" rows="2" required maxlength="1000"></textarea></label></div>
-                        <div class="account-actions"><button
-                                class="button <?= (int) $profile['is_active'] ? 'danger' : 'primary' ?>"
+                        <div class="profile-grid" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><label
+                                class="full" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>><?= (int) $profile['is_active'] ? 'Suspension' : 'Reinstatement' ?>
+                                reason<textarea <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="reason" rows="2" required maxlength="1000"></textarea></label></div>
+                        <div class="account-actions" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><button
+                                class="button <?= (int) $profile['is_active'] ? 'danger' : 'primary' ?>" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>
                                 type="submit"><?= (int) $profile['is_active'] ? 'Suspend access' : 'Reinstate access' ?></button>
                         </div>
                     </form>
-                    <section class="account-history">
-                        <h2>Account history</h2><?php foreach ($model->history($selectedId) as $event): ?>
-                            <article>
-                                <strong><?= $escape($event['action']) ?></strong><small><?= $escape($event['actor_name'] . ' | ' . $event['created_at']) ?></small>
-                                <p><?= $escape($event['reason']) ?></p>
+                    <section class="account-history" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <h2 <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Account history</h2><?php foreach ($model->history($selectedId) as $event): ?>
+                            <article <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                <strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($event['action']) ?></strong><small <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($event['actor_name'] . ' | ' . $event['created_at']) ?></small>
+                                <p <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($event['reason']) ?></p>
                             </article><?php endforeach; ?>
                     </section>
                 <?php else: ?>
-                    <form method="GET" class="account-filters"><label>Search<input name="search"
+                    <form method="GET" class="account-filters" <?= dev_locator_attributes(__FILE__, __LINE__) ?>><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Search<input <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="search"
                                 value="<?= $escape($search) ?>" maxlength="150"
-                                placeholder="Student ID, name, or email"></label><label>Account access<select name="status">
-                                <option value="">All accounts</option><?php foreach (['Enabled', 'Suspended'] as $item): ?>
-                                    <option <?= $status === $item ? 'selected' : '' ?>><?= $item ?></option><?php endforeach; ?>
-                            </select></label><button class="button" type="submit"><img class="icon"
+                                placeholder="Student ID, name, or email"></label><label <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Account access<select <?= dev_locator_attributes(__FILE__, __LINE__) ?> name="status">
+                                <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> value="">All accounts</option><?php foreach (['Enabled', 'Suspended'] as $item): ?>
+                                    <option <?= dev_locator_attributes(__FILE__, __LINE__) ?> <?= $status === $item ? 'selected' : '' ?>><?= $item ?></option><?php endforeach; ?>
+                            </select></label><button class="button" <?= dev_locator_attributes(__FILE__, __LINE__) ?> type="submit"><img class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                                 src="assets/icons/search.svg" alt="">Search</button></form>
-                    <div class="table-scroll">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Student</th>
-                                    <th>Student ID</th>
-                                    <th>Program</th>
-                                    <th>Access</th>
-                                    <th></th>
+                    <div class="table-scroll" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                        <table <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                            <thead <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                <tr <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Student</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Student ID</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Program</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>>Access</th>
+                                    <th <?= dev_locator_attributes(__FILE__, __LINE__) ?>></th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
                                 <?php foreach ($listing['items'] as $student): ?>
-                                    <tr>
-                                        <td><strong><?= $escape($student['first_name'] . ' ' . $student['last_name']) ?></strong><small><?= $escape($student['email']) ?></small>
+                                    <tr <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                        <td <?= dev_locator_attributes(__FILE__, __LINE__) ?>><strong <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($student['first_name'] . ' ' . $student['last_name']) ?></strong><small <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($student['email']) ?></small>
                                         </td>
-                                        <td><?= $escape($student['student_number'] ?: 'Not provided') ?></td>
-                                        <td><?= $escape($student['program_name'] ?: 'Not provided') ?></td>
-                                        <td><?= (int) $student['is_active'] ? 'Enabled' : 'Suspended' ?></td>
-                                        <td><a class="icon-button"
+                                        <td <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($student['student_number'] ?: 'Not provided') ?></td>
+                                        <td <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $escape($student['program_name'] ?: 'Not provided') ?></td>
+                                        <td <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= (int) $student['is_active'] ? 'Enabled' : 'Suspended' ?></td>
+                                        <td <?= dev_locator_attributes(__FILE__, __LINE__) ?>><a class="icon-button" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                                                 href="student_accounts.php?user_id=<?= (int) $student['user_id'] ?>"
                                                 title="View student account"
                                                 aria-label="View <?= $escape($student['first_name'] . ' ' . $student['last_name']) ?>"><img
-                                                    class="icon" src="assets/icons/eye.svg" alt=""></a></td>
+                                                    class="icon" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?> src="assets/icons/eye.svg" alt=""></a></td>
                                     </tr><?php endforeach; ?>
                                 <?php if (!$listing['items']): ?>
-                                    <tr>
-                                        <td colspan="5" class="empty-cell">No student accounts match these filters.</td>
+                                    <tr <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
+                                        <td colspan="5" class="empty-cell" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>No student accounts match these filters.</td>
                                     </tr><?php endif; ?>
                             </tbody>
                         </table>
                     </div>
-                    <nav class="pagination" aria-label="Student pages"><span><?= $listing['total'] ?>
+                    <nav class="pagination" <?= dev_locator_attributes(__FILE__, __LINE__) ?> aria-label="Student pages"><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $listing['total'] ?>
                             students</span><?php foreach ([-1 => 'chevron-left', 1 => 'chevron-right'] as $step => $icon): ?><?php $target = $listing['page'] + $step; ?><?php if ($target >= 1 && $target <= $listing['pages']): ?><a
-                                    class="icon-button"
+                                    class="icon-button" <?= dev_locator_attributes(__FILE__, __LINE__ - 1) ?>
                                     href="?<?= $escape(http_build_query(['search' => $search, 'status' => $status, 'page' => $target])) ?>"
-                                    aria-label="<?= $step < 0 ? 'Previous' : 'Next' ?> page"><img class="icon"
+                                    aria-label="<?= $step < 0 ? 'Previous' : 'Next' ?> page"><img class="icon" <?= dev_locator_attributes(__FILE__, __LINE__) ?>
                                         src="assets/icons/<?= $icon ?>.svg"
-                                        alt=""></a><?php endif; ?><?php endforeach; ?><span><?= $listing['page'] ?> /
+                                        alt=""></a><?php endif; ?><?php endforeach; ?><span <?= dev_locator_attributes(__FILE__, __LINE__) ?>><?= $listing['page'] ?> /
                             <?= $listing['pages'] ?></span></nav>
                 <?php endif; ?>
             </div>

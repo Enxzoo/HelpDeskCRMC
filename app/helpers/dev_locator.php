@@ -34,6 +34,19 @@ function dev_locator_attributes(string $file, int $line): string
         . '" data-php-line="' . $line . '"';
 }
 
+function dev_locator_script(): string
+{
+    static $included = false;
+    if ($included || !dev_locator_enabled()) {
+        return '';
+    }
+    $included = true;
+    $root = realpath(__DIR__ . '/../../public');
+    $source = htmlspecialchars(str_replace('\\', '/', $root), ENT_QUOTES, 'UTF-8');
+    $version = md5_file($root . '/assets/js/dev_locator.js');
+    return '<script src="assets/js/dev_locator.js?v=' . $version . '" data-source-root="' . $source . '"></script>' . "\n";
+}
+
 function enable_dev_locator(): void
 {
     static $enabled = false;

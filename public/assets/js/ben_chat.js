@@ -72,25 +72,25 @@ const BenChatUI = (() => {
   function render(message, choices, onSelect) {
     clear();
     if (!message || !Array.isArray(choices)) return;
-    const controls = document.createElement('div');
+    const controls = (globalThis.HelpdeskLocator || document).createElement('div');
     controls.className = 'ben-actions';
     controls.setAttribute('role', 'group');
     controls.setAttribute('aria-label', 'Suggested replies');
     for (const choice of choices.slice(0, 3)) {
       if (!choice || typeof choice.label !== 'string' || (typeof choice.message !== 'string' && choice.kind !== 'staff')) continue;
-      const button = document.createElement('button');
+      const button = (globalThis.HelpdeskLocator || document).createElement('button');
       button.type = 'button';
       button.className = 'ben-quick-reply';
       button.dataset.chatAction = choice.kind === 'staff' ? 'staff' : 'reply';
       if (choice.kind === 'staff') {
-        const icon = document.createElement('img');
+        const icon = (globalThis.HelpdeskLocator || document).createElement('img');
         icon.src = 'assets/icons/users.svg';
         icon.alt = '';
         icon.width = 13;
         icon.height = 13;
         button.appendChild(icon);
       }
-      const label = document.createElement('span');
+      const label = (globalThis.HelpdeskLocator || document).createElement('span');
       label.textContent = choice.label.slice(0, 60);
       button.appendChild(label);
       button.addEventListener('click', () => {

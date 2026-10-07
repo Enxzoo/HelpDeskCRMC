@@ -69,6 +69,8 @@ foreach ($conversationHistory as $entry) {
     }
 }
 session_write_close();
+// Allow the bounded primary wait plus one fallback without PHP ending the request early.
+set_time_limit(50);
 
 // Call Gemini AI
 $controller = new GeminiAiController();
