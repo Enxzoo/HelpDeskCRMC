@@ -20,10 +20,54 @@
   color: var(--ink);
 }
 
+.queue-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .filter-group {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+}
+
+.sort-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.sort-select {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sort-select:hover {
+  border-color: var(--amber-dk);
+  background: var(--hover-bg);
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--amber-dk);
+  box-shadow: 0 0 0 3px rgba(236, 201, 75, 0.15);
 }
 
 .filter-btn {

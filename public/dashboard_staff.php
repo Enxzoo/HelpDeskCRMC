@@ -225,14 +225,25 @@ foreach ($inquiries as $inquiry) {
         <div class="queue-panel">
           <div class="queue-header">
             <h3 class="queue-title">Active Concerns</h3>
-            <div class="filter-group" role="group" aria-label="Filter concerns">
-              <button class="filter-btn active" type="button" data-status="all" aria-pressed="true">All</button>
-              <button class="filter-btn" type="button" data-status="pending" aria-pressed="false">Pending</button>
-              <button class="filter-btn" type="button" data-status="in_progress" aria-pressed="false">In
-                Progress</button>
-              <button class="filter-btn" type="button" data-status="resolved" aria-pressed="false">Resolved</button>
-              <button class="filter-btn" type="button" data-status="needs_triage" aria-pressed="false">Needs
-                triage</button>
+            <div class="queue-controls">
+              <div class="filter-group" role="group" aria-label="Filter concerns">
+                <button class="filter-btn active" type="button" data-status="all" aria-pressed="true">All</button>
+                <button class="filter-btn" type="button" data-status="pending" aria-pressed="false">Pending</button>
+                <button class="filter-btn" type="button" data-status="in_progress" aria-pressed="false">In
+                  Progress</button>
+                <button class="filter-btn" type="button" data-status="resolved" aria-pressed="false">Resolved</button>
+                <button class="filter-btn" type="button" data-status="needs_triage" aria-pressed="false">Needs
+                  triage</button>
+              </div>
+              <div class="sort-group">
+                <label for="sortSelect" class="sort-label">Sort by:</label>
+                <select id="sortSelect" class="sort-select" aria-label="Sort concerns">
+                  <option value="urgency">Urgency (High to Low)</option>
+                  <option value="time-newest">Time (Newest First)</option>
+                  <option value="time-oldest">Time (Oldest First)</option>
+                  <option value="status">Status</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -827,6 +838,54 @@ foreach ($inquiries as $inquiry) {
       if (emptyNotice) emptyNotice.hidden = visibleCount > 0;
     }
 
+    function sortConcernCards() {
+      const sortBy = document.getElementById('sortSelect').value;
+      const list = document.getElementById('concernsList');
+      if (!list) return;
+
+      const cards = [...list.querySelectorAll('.concern-card')];
+      const emptyNotice = document.getElementById('queueEmptyNotice');
+
+      cards.sort((a, b) => {
+        switch (sortBy) {
+          case 'urgency':
+            const priorityOrder = {
+              'critical-urgent': 0,
+              'high': 1,
+              'normal': 2,
+              'low': 3,
+              'needs-triage': 4
+            };
+            const aPriority = priorityOrder[a.dataset.priority] ?? 4;
+            const bPriority = priorityOrder[b.dataset.priority] ?? 4;
+            return aPriority - bPriority;
+
+          case 'time-newest':
+            return new Date(b.dataset.createdAt).getTime() - new Date(a.dataset.createdAt).getTime();
+
+          case 'time-oldest':
+            return new Date(a.dataset.createdAt).getTime() - new Date(b.dataset.createdAt).getTime();
+
+          case 'status':
+            const statusOrder = {
+              'pending': 0,
+              'in_progress': 1,
+              'resolved': 2
+            };
+            const aStatus = statusOrder[a.dataset.status] ?? 999;
+            const bStatus = statusOrder[b.dataset.status] ?? 999;
+            return aStatus - bStatus;
+
+          default:
+            return 0;
+        }
+      });
+
+      // Reorder the DOM elements
+      cards.forEach(card => list.appendChild(card));
+      if (emptyNotice) list.appendChild(emptyNotice);
+    }
+
     function setQueueFilter(status) {
       activeStatusFilter = status;
       document.querySelectorAll('.filter-btn').forEach(button => {
@@ -852,6 +911,10 @@ foreach ($inquiries as $inquiry) {
     });
     document.querySelectorAll('.filter-btn').forEach(button => {
       button.addEventListener('click', () => setQueueFilter(button.dataset.status));
+    });
+    document.getElementById('sortSelect').addEventListener('change', () => {
+      sortConcernCards();
+      applyQueueFilters();
     });
     document.querySelectorAll('[data-filter-status]').forEach(button => {
       button.addEventListener('click', () => {
@@ -899,7 +962,7 @@ foreach ($inquiries as $inquiry) {
     });
 
     applyQueueFilters();
-    reorderConcernCards();
+    sortConcernCards();
     const notificationInquiry = Number(new URLSearchParams(window.location.search).get('inquiry_id'));
     const notificationCard = Number.isSafeInteger(notificationInquiry) && notificationInquiry > 0
       ? document.querySelector(`.concern-card[data-inquiry-id="${notificationInquiry}"]`) : null;
