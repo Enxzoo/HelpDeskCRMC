@@ -9,16 +9,18 @@ function studentAccountThrows(Closure $operation, int $status = 400): void
 $profiles = new StudentProfile();
 $details = ['first_name' => 'Defense', 'last_name' => 'Student', 'middle_name' => 'Optional', 'suffix' => '',
     'student_number' => '000123-DEFENSE', 'email' => 'defense.student@example.test',
-    'password' => 'defense-passphrase-test', 'confirm_password' => 'defense-passphrase-test',
+    'password' => 'TestPass', 'confirm_password' => 'TestPass',
     'mobile_number' => '+63 912 345 6789'] + $academic;
 foreach ([['first_name', []], ['college_id', []], ['college_id', '99999'], ['year_level', '8'], ['term_id', '99999'],
     ['terms_accepted', '0'], ['privacy_accepted', '0'], ['terms_accepted', []], ['privacy_accepted', []],
     ['terms_version', 'old'], ['privacy_version', []],
-    ['enrollment_type', 'Unknown'], ['password', 'short'], ['confirm_password', 'different'],
+    ['enrollment_type', 'Unknown'], ['password', 'short'], ['password', '1234567'],
+    ['password', str_repeat('a', 73)], ['confirm_password', 'different'],
     ['mobile_number', 'not a phone'], ['student_number', '<script>']] as [$key, $invalid]) {
     studentAccountThrows(fn() => $profiles->register(array_replace($details, [$key => $invalid])));
 }
 $caseId = $profiles->register($details + ['role' => 'admin', 'office_id' => 1]);
+checkRegression(password_verify($details['password'], $users->findById($caseId)['password_hash']), 'An eight-character registration password was not stored correctly.');
 checkRegression($users->findById($caseId)['role'] === 'student' && $users->findById($caseId)['office_id'] === null, 'Registration permits role or office injection.');
 checkRegression($profiles->find($caseId)['student_number'] === '000123-DEFENSE', 'Registration lost leading zeroes.');
 checkRegression($auth->dashboardFor('student') === 'dashboard_student.php', 'Student access is still approval-gated.');

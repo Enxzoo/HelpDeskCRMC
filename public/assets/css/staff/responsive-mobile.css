@@ -107,7 +107,7 @@
     flex: 1;
     min-height: 0;
     overflow: hidden;
-    padding-bottom: 64px;
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
   }
 
   .queue-panel {
@@ -145,15 +145,15 @@
   }
 
   .filter-group {
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    flex-wrap: wrap;
     padding-bottom: 2px;
   }
 
   .filter-btn {
     flex: none;
     padding: 6px 9px;
-    font-size: 9px;
+    font-size: 12px;
+    min-height: 36px;
   }
 
   .queue-list {
@@ -270,11 +270,12 @@
   }
 
   .reply-input {
+    min-width: 0;
     height: 84px;
     min-height: 84px;
     padding: 12px;
     border-radius: 10px;
-    font-size: 13px;
+    font-size: 16px;
   }
 
   .reply-actions {
@@ -294,7 +295,7 @@
     display: flex;
     align-items: stretch;
     justify-content: space-around;
-    height: 64px;
+    height: calc(64px + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
     border-top: 1px solid var(--line);
     background: #fff;
@@ -379,5 +380,18 @@
   .mobile-profile-logout .icon {
     width: 14px;
     height: 14px;
+  }
+}
+
+@media (max-width:768px) and (max-height:740px) {
+  .content-area[data-view="detail"] .detail-panel {
+    display: block;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .detail-panel .thread {
+    min-height: 160px;
+    overflow: visible;
   }
 }

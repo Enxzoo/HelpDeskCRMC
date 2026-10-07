@@ -7,6 +7,8 @@ storage/sessions/
 vendor/
 storage/notification-worker.pid
 storage/composer-cache/
+storage/attachments/*
+!storage/attachments/.htaccess
 
 # Logs — keep folder, ignore contents
 logs/*.log

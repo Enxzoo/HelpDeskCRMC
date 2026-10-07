@@ -1,10 +1,10 @@
 'use strict';
 (() => {
-  const sidebar = document.getElementById('workspaceSidebar');
-  const menu = document.getElementById('workspaceMenuToggle');
-  const backdrop = document.getElementById('workspaceBackdrop');
+  const sidebar = document.getElementById('workspaceSidebar') || document.getElementById('studentSidebar');
+  const menu = document.getElementById('workspaceMenuToggle') || document.getElementById('studentMenuToggle');
+  const backdrop = document.getElementById('workspaceBackdrop') || document.getElementById('studentSidebarBackdrop');
   if (sidebar && menu && backdrop) {
-    const mobile = window.matchMedia('(max-width: 900px)');
+    const mobile = window.matchMedia(menu.dataset.mobileQuery || '(max-width: 900px)');
     const toggle = open => {
       sidebar.classList.toggle('open', open);
       sidebar.inert = mobile.matches && !open;
@@ -16,10 +16,17 @@
     menu.addEventListener('click', () => {
       const open = !sidebar.classList.contains('open');
       toggle(open);
-      if (open) sidebar.querySelector('a[aria-current="page"]')?.focus();
+      if (open) sidebar.querySelector('a[aria-current="page"], a.active')?.focus();
     });
     backdrop.addEventListener('click', () => { toggle(false); menu.focus(); });
-    document.getElementById('workspaceClose')?.addEventListener('click', () => { toggle(false); menu.focus(); });
+    const close = document.getElementById('workspaceClose') || document.getElementById('studentMenuClose');
+    close?.addEventListener('click', () => { toggle(false); menu.focus(); });
+    sidebar.addEventListener('click', event => {
+      if (mobile.matches && event.target.closest('a[href]')) {
+        toggle(false);
+        menu.focus();
+      }
+    });
     document.addEventListener('keydown', event => {
       if (!mobile.matches || !sidebar.classList.contains('open') || document.querySelector('dialog[open]')) return;
       if (event.key === 'Escape') {

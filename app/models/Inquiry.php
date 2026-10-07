@@ -39,6 +39,16 @@ class Inquiry
         $aiPriorityConfidence = $data['ai_priority_confidence'] ?? null;
 
         $studentId = (int) $data['student_id'];
+        $attachmentIds = $data['attachment_ids'] ?? [];
+        if (!is_array($attachmentIds) || !array_is_list($attachmentIds) || count($attachmentIds) > 5
+            || count(array_unique($attachmentIds, SORT_REGULAR)) !== count($attachmentIds)) {
+            throw new InvalidArgumentException('Select up to five valid attachments.');
+        }
+        foreach ($attachmentIds as $attachmentId) {
+            if (!is_int($attachmentId) || $attachmentId < 1) {
+                throw new InvalidArgumentException('Select valid attachments.');
+            }
+        }
         $duplicateRootId = $duplicateOfInquiryId;
         $this->db->begin_transaction();
 
@@ -52,6 +62,17 @@ class Inquiry
             $studentLock->execute();
             if (!$studentLock->get_result()->fetch_assoc()) {
                 throw new RuntimeException('Cannot create an inquiry for an unknown student.');
+            }
+
+            // Lock owned, unlinked uploads so a file cannot be reused by concurrent submissions.
+            foreach ($attachmentIds as $attachmentId) {
+                $attachmentLock = $this->db->prepare('SELECT attachment_id FROM inquiry_attachments
+                    WHERE attachment_id = ? AND uploaded_by = ? AND inquiry_id IS NULL AND response_id IS NULL FOR UPDATE');
+                $attachmentLock->bind_param('ii', $attachmentId, $studentId);
+                $attachmentLock->execute();
+                if (!$attachmentLock->get_result()->fetch_assoc()) {
+                    throw new InvalidArgumentException('An attachment is no longer available. Remove it and attach it again.');
+                }
             }
 
             if ($duplicateRootId !== null) {
@@ -114,6 +135,11 @@ class Inquiry
             }
 
             $inquiryId = $stmt->insert_id;
+            foreach ($attachmentIds as $attachmentId) {
+                $link = $this->db->prepare('UPDATE inquiry_attachments SET inquiry_id = ? WHERE attachment_id = ?');
+                $link->bind_param('ii', $inquiryId, $attachmentId);
+                $link->execute();
+            }
             $snapshot = (new StudentProfile())->snapshot($studentId);
             if ($snapshot !== null) {
                 $snapshotJson = json_encode($snapshot, JSON_THROW_ON_ERROR);
@@ -133,6 +159,15 @@ class Inquiry
             $this->db->rollback();
             throw $exception;
         }
+    }
+
+    public function getAttachments(int $inquiryId): array
+    {
+        $stmt = $this->db->prepare('SELECT attachment_id, file_name, file_type, file_size
+            FROM inquiry_attachments WHERE inquiry_id = ? AND response_id IS NULL ORDER BY attachment_id');
+        $stmt->bind_param('i', $inquiryId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function findRecentDuplicateCandidates(int $studentId, int $officeId): array

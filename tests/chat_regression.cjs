@@ -5,7 +5,7 @@ const vm = require('node:vm');
 const source = fs.readFileSync(path.resolve(__dirname, '../public/dashboard_student.php'), 'utf8')
   .replace(/<\?=[\s\S]*?\?>/g, 'null');
 function extract(name) {
-  const match = source.match(new RegExp('^(?:async )?function ' + name + '\\([^]*?^}', 'm'));
+  const match = source.match(new RegExp('^([ \\t]*)(?:async )?function ' + name + '\\([^]*?^\\1}', 'm'));
   assert.ok(match, 'Missing function: ' + name);
   return match[0];
 }
@@ -25,19 +25,20 @@ function element() {
   };
 }
 const context = {
-  console, Date, currentCategory: 'Registrar', chatLoadRequestId: 1,
+  console, Date, AbortSignal, currentCategory: 'Registrar', chatLoadRequestId: 1,
   currentChatSessionKey: firstKey, chatSessions: [], crypto: require('node:crypto').webcrypto,
   categoryMeta: {}, categoryIconMarkup: category => category, hideThreadView() {}, closeChatHistory() {},
   conversationHistory: [], chatSaveQueue: Promise.resolve(), CSRF_TOKEN: 'test',
   showBenActions() {},
   BenChatUI: {
-    clear() {}, suggestions: () => []
+    clear() {}, suggestions: () => [],
+    readResponse: vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '../public/assets/js/ben_chat.js'), 'utf8') + '\nBenChatUI;', { TextDecoder }).readResponse
   },
   escapeHtml: value => value, renderMarkdown: value => value,
   addBenMessage() {}, scrollChatToBottom() {},
   document: {
     getElementById(id) { if (!elements.has(id)) elements.set(id, element()); return elements.get(id); },
-    createElement: element, querySelectorAll: () => []
+    createElement: element, querySelectorAll: () => [], querySelector: () => null
   },
   async fetch(url, options) {
     if (url.includes('load_chat_session')) {
@@ -106,6 +107,13 @@ new vm.Script(['addUserMessage', 'saveChatHistory', 'loadChatHistory', 'newChatS
   let submitted;
   let escalationCount = 0;
   context.chatSending = false;
+  const displayed = [];
+  context.addBenMessage = html => {
+    const bubble = { innerHTML: html, textContent: '' };
+    const message = { querySelector: () => bubble };
+    displayed.push(message);
+    return message;
+  };
   context.currentCategory = 'Registrar';
   context.currentChatSessionKey = firstKey;
   context.chatLoadRequestId = 2;
@@ -145,5 +153,41 @@ new vm.Script(['addUserMessage', 'saveChatHistory', 'loadChatHistory', 'newChatS
   controls.chatInput.value = 'What documents are normally required?';
   await vm.runInContext('sendChatMessage()', context);
   assert.equal(escalationCount, 0, 'Normal wording triggered escalation.');
-  console.log('Chat regression checks passed: 26');
+  const encoder = new TextEncoder();
+  let stream;
+  context.currentCategory = 'Registrar';
+  context.currentChatSessionKey = firstKey;
+  context.chatLoadRequestId = 4;
+  context.conversationHistory = [];
+  context.fetch = async (url, options) => {
+    if (!url.includes('ai_chat')) return originalFetch(url, options);
+    assert.equal(JSON.parse(options.body).stream, true, 'The UI did not request streaming.');
+    return new Response(new ReadableStream({ start(controller) { stream = controller; } }), { headers: { 'Content-Type': 'text/event-stream' } });
+  };
+  const beforeStream = writes.length;
+  const streamedReply = vm.runInContext('sendChatMessage(\'Dili ko ka-login\')', context);
+  await new Promise(resolve => setImmediate(resolve));
+  stream.enqueue(encoder.encode('event: delta\ndata: {"text":"Sige, "}\n\n'));
+  await new Promise(resolve => setImmediate(resolve));
+  const streamingBubble = displayed.at(-1).querySelector('.bubble');
+  assert.equal(streamingBubble.innerHTML, 'Sige, ', 'Partial text was not displayed before completion.');
+  assert.equal(writes.length, beforeStream + 1, 'A partial answer was saved in addition to the user message.');
+  assert.equal(writes.at(-1).conversationHistory.at(-1).role, 'user', 'A partial answer reached saved history.');
+  stream.enqueue(encoder.encode('event: delta\ndata: {"text":"tabangan tika."}\n\nevent: done\ndata: {"success":true,"answer":"Sige, tabangan tika."}\n\n'));
+  stream.close();
+  await streamedReply;
+  assert.equal(streamingBubble.innerHTML, 'Sige, tabangan tika.');
+  assert.equal(writes.at(-1).conversationHistory.at(-1).message, 'Sige, tabangan tika.');
+  assert.equal(writes.length, beforeStream + 2, 'Completed stream was saved more than once.');
+  const beforeFailure = writes.length;
+  const failedReply = vm.runInContext('sendChatMessage(\'Explain further\')', context);
+  await new Promise(resolve => setImmediate(resolve));
+  stream.enqueue(encoder.encode('event: delta\ndata: {"text":"Unfinished"}\n\nevent: error\ndata: {"error":"Please try again."}\n\n'));
+  stream.close();
+  await failedReply;
+  assert.equal(writes.length, beforeFailure + 1, 'A failed stream was saved in addition to the user message.');
+  assert.equal(writes.at(-1).conversationHistory.at(-1).role, 'user', 'A failed stream reached saved history.');
+  assert.equal(displayed.at(-1).querySelector('.bubble').textContent, 'Please try again.');
+  assert.equal(controls.chatSendBtn.disabled, false, 'Failed stream left sending disabled.');
+  console.log('Chat history, race isolation, streaming display, and failed-reply regression checks passed.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

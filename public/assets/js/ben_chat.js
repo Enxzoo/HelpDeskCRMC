@@ -12,7 +12,7 @@ const BenChatUI = (() => {
   };
 
   function language(text) {
-    if (/\b(unsay|imong|nakatabang|nawagtang|naka|palihog|pangutana)\b/i.test(text)) return 'ceb';
+    if (/\b(unsa|unsay|unsaon|asa|akong|imong|nakatabang|nasulbad|nawagtang|dili|wala|gihapon|palihog|pangutana|mobayad|kwarta)\b/i.test(text)) return 'ceb';
     if (/\b(hindi|anong|mong|nakatulong|tanong|kailangan|puwede)\b/i.test(text)) return 'taglish';
     return 'en';
   }
@@ -46,13 +46,21 @@ const BenChatUI = (() => {
         taglish: [['Check balance', 'Saan ko makikita ang tuition balance ko?'], ['Payment options', 'Ano ang available na payment options?']]
       }[lang];
     } else if (category === 'Registrar') {
-      choices = [['Lost student ID', 'I lost my student ID.'], ['School documents', 'I need help requesting a school document.']];
+      choices = lang === 'ceb'
+        ? [['Nawala nga student ID', 'Nawala akong student ID. Unsa akong buhaton?'], ['School documents', 'Unsaon nako pag-request og school document?']]
+        : [['Lost student ID', 'I lost my student ID.'], ['School documents', 'I need help requesting a school document.']];
     } else if (category === 'Library') {
-      choices = [['Library clearance', 'How do I get library clearance?'], ['Borrowing books', 'How can I borrow library books?']];
+      choices = lang === 'ceb'
+        ? [['Library clearance', 'Unsaon nako pagkuha og library clearance?'], ['Manghulam og libro', 'Unsaon nako paghulam og libro?']]
+        : [['Library clearance', 'How do I get library clearance?'], ['Borrowing books', 'How can I borrow library books?']];
     } else if (category === 'Guidance') {
-      choices = [['Counseling request', 'I would like to request a counseling appointment.']];
+      choices = lang === 'ceb'
+        ? [['Counseling request', 'Gusto ko magpa-appointment sa Guidance para sa counseling.']]
+        : [['Counseling request', 'I would like to request a counseling appointment.']];
     } else {
-      choices = [['School documents', 'I need help requesting a school document.'], ['Portal access', 'I cannot access my student portal.']];
+      choices = lang === 'ceb'
+        ? [['School documents', 'Kinahanglan ko og tabang sa pag-request og school document.'], ['Portal access', 'Dili ko ka-login sa akong student portal.']]
+        : [['School documents', 'I need help requesting a school document.'], ['Portal access', 'I cannot access my student portal.']];
     }
     return [...choices.map(([label, message]) => ({ label, message })), staff];
   }
@@ -97,5 +105,59 @@ const BenChatUI = (() => {
     if (wrapper) wrapper.insertBefore(controls, wrapper.querySelector('.time'));
   }
 
-  return { suggestions, clear, render };
+  async function readResponse(response, onDelta) {
+    if (!response.headers?.get('content-type')?.includes('text/event-stream')) return response.json();
+    if (!response.ok || !response.body) throw new Error('Ben could not start a reply.');
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let answer = '';
+    let result;
+    const consume = () => {
+      let boundary;
+      while ((boundary = /\r?\n\r?\n/.exec(buffer))) {
+        const frame = buffer.slice(0, boundary.index);
+        buffer = buffer.slice(boundary.index + boundary[0].length);
+        let event = 'message';
+        const data = [];
+        for (const line of frame.split(/\r?\n/)) {
+          if (line.startsWith('event:')) event = line.slice(6).trim();
+          if (line.startsWith('data:')) data.push(line.slice(5).replace(/^ /, ''));
+        }
+        if (!data.length) continue;
+        const payload = JSON.parse(data.join('\n'));
+        if (event === 'delta' && typeof payload.text === 'string' && !result) {
+          answer += payload.text;
+          if (answer.length > 32000) throw new Error('Ben reply is too large.');
+          onDelta(answer);
+        } else if (event === 'done') {
+          if (payload.success !== true || typeof payload.answer !== 'string' || !payload.answer.trim()) throw new Error('Invalid completed reply.');
+          result = payload;
+        } else if (event === 'error') {
+          result = { success: false, error: payload.error || 'Ben could not finish this reply. Please try again.' };
+        }
+      }
+      if (buffer.length > 1048576) throw new Error('Ben stream event is too large.');
+    };
+    try {
+      while (!result) {
+        const { value, done } = await reader.read();
+        if (done) {
+          buffer += decoder.decode();
+          if (buffer.trim()) buffer += '\n\n';
+          consume();
+          break;
+        }
+        buffer += decoder.decode(value, { stream: true });
+        consume();
+      }
+      if (!result) throw new Error('Ben reply was interrupted. Please try again.');
+      return result;
+    } finally {
+      await reader.cancel().catch(() => {});
+      reader.releaseLock();
+    }
+  }
+
+  return { suggestions, clear, render, readResponse };
 })();

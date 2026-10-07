@@ -144,8 +144,8 @@ $escape = static fn($value): string => htmlspecialchars((string) ($value ?? ''),
                                     autocomplete="email" value="<?= $escape($values['email']) ?>">
                             </label>
                             <label for="password" class="profile-password">
-                                Password (12+ characters)
-                                <input type="password" id="password" name="password" required minlength="12"
+                                Password (8+ characters)
+                                <input type="password" id="password" name="password" required minlength="8"
                                     maxlength="72" autocomplete="new-password">
                                 <button type="button" class="password-toggle" data-password-toggle="password"
                                     title="Show password" aria-label="Show password" aria-controls="password">
@@ -155,7 +155,7 @@ $escape = static fn($value): string => htmlspecialchars((string) ($value ?? ''),
                             <label for="confirm_password" class="profile-password">
                                 Confirm password
                                 <input type="password" id="confirm_password" name="confirm_password" required
-                                    minlength="12" maxlength="72" autocomplete="new-password">
+                                    minlength="8" maxlength="72" autocomplete="new-password">
                                 <button type="button" class="password-toggle" data-password-toggle="confirm_password"
                                     title="Show password" aria-label="Show password" aria-controls="confirm_password">
                                     <img src="assets/icons/eye.svg" alt="">

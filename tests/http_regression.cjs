@@ -155,6 +155,12 @@ async function main() {
     await request('/api/save_chat_session.php', student, { category: 'Finance', session_key: newChatKey, conversationHistory: [] }, { status: 400 });
     await request('/api/save_chat_session.php', student, { category: [], conversationHistory: [] }, { status: 400 });
     await request('/api/ai_chat.php', student, { message: 'Hello', history: [null] }, { status: 400 });
+    await request('/api/ai_chat_stream.php', null, { message: 'Hello' }, { status: 401 });
+    await request('/api/ai_chat_stream.php', staff, { message: 'Hello' }, { status: 403 });
+    await request('/api/ai_chat_stream.php', student, { message: 'Hello', history: [null] }, { status: 400 });
+    await request('/api/ai_chat.php', student, { message: 'Hello', stream: 'yes' }, { status: 400 });
+    await request('/api/ai_chat.php', student, { message: 'x'.repeat(4001) }, { status: 400 });
+    await request('/api/ai_chat.php', student, { message: 'Hello', history: [{ role: 'user', message: 'x'.repeat(131073) }] }, { status: 413 });
     await request('/api/staff_action.php', staff, { action: 'assign', inquiry_id: [] }, { status: 400 });
     await request('/api/staff_action.php', staff, { action: 'respond', inquiry_id: fixtures.inquiry, message: [] }, { status: 400 });
     await request('/api/submit_feedback.php', student, { inquiry_id: fixtures.inquiry, rating: 5, comment: 'x'.repeat(501) }, { status: 400 });

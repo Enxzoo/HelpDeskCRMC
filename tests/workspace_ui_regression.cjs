@@ -100,6 +100,7 @@ module.exports = ({ pages, registrationFixture }) => {
         window.HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); };
         window.eval(profileSource);
         const form = $('studentRegistration');
+        check($('password').minLength === 8 && $('confirm_password').minLength === 8, 'Registration does not use the eight-character password minimum.');
         check(window.getComputedStyle($('password')).paddingRight === '48px', 'Password toggle overlaps the input text.');
         check(document.querySelector('.login-card') && form.closest('.register-container'), 'Registration does not reuse the sign-in card layout.');
         check(document.querySelector('header .navbar') && document.querySelector('.navbar-cta a[href="login.php"]'), 'Registration does not reuse the public sign-in navigation.');

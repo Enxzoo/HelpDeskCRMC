@@ -10,8 +10,23 @@
 }
 
 @media (max-width:820px) {
+  .navbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
   nav.links {
-    display: none;
+    display: flex;
+    flex-wrap: wrap;
+    order: 3;
+    width: 100%;
+    gap: 4px 18px;
+  }
+
+  nav.links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
 
   h1 {
@@ -28,5 +43,26 @@
 
   .orbit-field {
     display: none;
+  }
+}
+
+@media (max-width:600px) {
+  .navbar-cta {
+    width: 100%;
+  }
+
+  .navbar-cta .btn {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .how-grid,.footer-grid {
+    grid-template-columns: minmax(0,1fr);
   }
 }

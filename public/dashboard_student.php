@@ -65,17 +65,22 @@ foreach ($nameParts as $part) {
 $initials = mb_substr($initials, 0, 2);
 $firstName = $nameParts[0] ?? 'Student';
 
-// User info for escalation prefill
-$studentFullName = trim((string) ($_SESSION['name'] ?? ''));
-$studentEmail = '';
-$userRow = $dbConn->query("SELECT email FROM users WHERE user_id = {$studentId} LIMIT 1")->fetch_assoc();
-if ($userRow) {
-  $studentEmail = $userRow['email'];
-}
 if (!isset($studentProfileView)) {
   $profileModel = new StudentProfile();
   $studentProfileView = student_profile_view($profileModel, $studentId, $profileModel->find($studentId));
 }
+$profile = $studentProfileView['profile'];
+$studentEscalationProfile = [
+  'fullName' => trim(implode(' ', array_filter([
+    $profile['first_name'] ?? '', $profile['middle_name'] ?? '',
+    $profile['last_name'] ?? '', $profile['suffix'] ?? '',
+  ]))) ?: trim((string) ($_SESSION['name'] ?? '')),
+  'studentNumber' => $profile['student_number'] ?? '',
+  'email' => $profile['email'] ?? '',
+  'phone' => $profile['mobile_number'] ?? '',
+  'program' => $profile['program_name'] ?? '',
+  'yearLevel' => empty($profile['year_level']) ? '' : 'Year ' . (int) $profile['year_level'],
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -225,10 +230,11 @@ if (!isset($studentProfileView)) {
   </svg>
 
   <div class="app" <?= dev_locator_attributes(__FILE__, __LINE__) ?>>
-    <aside class="sidebar">
+    <aside class="sidebar" id="studentSidebar" aria-label="Student navigation">
       <div class="brand">
         <img src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
         <div class="brand-name">Helpdesk<span>CRMC</span></div>
+        <button type="button" class="student-menu-close" id="studentMenuClose" aria-label="Close navigation" title="Close navigation"><img src="assets/icons/x.svg" alt="" width="20" height="20"></button>
       </div>
 
       <a class="nav-item<?= $studentInitialView === 'home' ? ' active' : '' ?>" id="navAskBen"
@@ -327,10 +333,14 @@ if (!isset($studentProfileView)) {
         </div>
       </div>
     </aside>
+    <button type="button" class="student-nav-backdrop" id="studentSidebarBackdrop" aria-label="Close navigation" hidden></button>
 
     <main class="main" id="mainView" data-initial-view="<?= $studentInitialView ?>">
       <?php require __DIR__ . '/assets/components/student-profile-view.php'; ?>
       <div class="student-notification-bar">
+        <button type="button" class="notification-icon-button student-menu-toggle" id="studentMenuToggle"
+          data-mobile-query="(max-width: 960px)" aria-label="Open navigation" title="Navigation"
+          aria-controls="studentSidebar" aria-expanded="false"><img src="assets/icons/menu.svg" alt="" width="20" height="20"></button>
         <button type="button" class="notification-icon-button chat-history-toggle" id="chatHistoryToggle"
           aria-label="Chat history" title="Chat history" aria-controls="chatHistoryPanel" aria-expanded="false"><img
             src="assets/icons/history.svg" alt="" width="20" height="20"></button>
@@ -594,7 +604,9 @@ if (!isset($studentProfileView)) {
     </div>
   </dialog>
 
+  <script src="assets/js/workspace.js?v=<?= md5_file(__DIR__ . '/assets/js/workspace.js') ?>"></script>
   <script src="assets/js/ben_chat.js?v=<?= md5_file(__DIR__ . '/assets/js/ben_chat.js') ?>"></script>
+  <script src="assets/js/inquiry_attachments.js?v=<?= md5_file(__DIR__ . '/assets/js/inquiry_attachments.js') ?>"></script>
   <script>
     const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content || '';
     const STUDENT_INITIALS = <?= json_encode($initials) ?>;
@@ -656,6 +668,7 @@ if (!isset($studentProfileView)) {
     let chatLoadRequestId = 0;
     let chatSending = false;
     let escalationLoadingKey = null;
+    const studentEscalationProfile = <?= json_encode($studentEscalationProfile, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
     let chatSaveQueue = Promise.resolve();
     let activeThreadInquiryId = null;
     let threadLoadRequestId = 0;
@@ -857,7 +870,7 @@ if (!isset($studentProfileView)) {
       if (escalationLoadingKey === identity) return;
       escalationLoadingKey = identity;
       try {
-        const response = await fetch('assets/components/escalation-form.html');
+        const response = await fetch('assets/components/escalation-form.html?v=<?= md5_file(__DIR__ . '/assets/components/escalation-form.html') ?>');
         if (!response.ok) throw new Error('Form unavailable');
         const formHtml = await response.text();
         if (requestId !== chatLoadRequestId || sessionKey !== currentChatSessionKey) return;
@@ -883,32 +896,33 @@ if (!isset($studentProfileView)) {
 
         threadInner.appendChild(msg);
 
-        if (prefillOffice) {
-          const officeSelect = msg.querySelector('#esc-office');
-          if (officeSelect) officeSelect.value = prefillOffice;
+        const officeSelect = msg.querySelector('#esc-office');
+        if (officeSelect) {
+          const categoryOffice = Array.from(officeSelect.options).find(option => option.value && (
+            getOfficeName(option.value) === currentCategory
+            || (currentCategory === 'General' && option.value === 'main')
+          ));
+          officeSelect.value = prefillOffice || (categoryOffice ? categoryOffice.value : '');
         }
         if (prefillSubject) {
           const subjectInput = msg.querySelector('#esc-subject');
           if (subjectInput) subjectInput.value = prefillSubject;
         }
 
-        // Auto-prefill student info if available
-        const fullNameInput = msg.querySelector('#esc-fullname');
-        const emailInput = msg.querySelector('#esc-email');
-        if (fullNameInput) fullNameInput.value = <?= json_encode($studentFullName) ?>;
-        if (emailInput) emailInput.value = <?= json_encode($studentEmail) ?>;
-
         // Set up form submission - ensure it fires
         const form = msg.querySelector('[data-escalation-form]');
         if (form) {
-          const suffix = `-${sessionKey}-${conversationHistory.length}`;
+          for (const [name, value] of Object.entries(studentEscalationProfile)) {
+            const field = form.elements.namedItem(name);
+            if (field) field.value = value;
+          }
+          const suffix = `-${sessionKey}-${threadInner.querySelectorAll('.escalation-msg').length}`;
           msg.querySelectorAll('[id]').forEach(field => {
             const label = msg.querySelector(`label[for="${field.id}"]`);
             field.id += suffix;
             if (label) label.htmlFor = field.id;
           });
-          msg.querySelector('.esc-file-btn').removeAttribute('onclick');
-          msg.querySelector('.esc-file-btn').addEventListener('click', () => form.elements.attachment.click());
+          InquiryAttachments.bindForm(form);
           form.addEventListener('submit', function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -941,7 +955,7 @@ if (!isset($studentProfileView)) {
       if (!submitBtn || submitBtn.disabled) return;
       const errorAlert = form.querySelector('[data-error-msg]');
       const duplicateNotice = form.querySelector('[data-duplicate-notice]');
-      let successDiv = form.querySelector('[data-success-msg]');
+      let successDiv = formContainer.querySelector('[data-success-msg]');
 
       // If success div doesn't exist, create it (for older cached forms)
       if (!successDiv) {
@@ -1009,10 +1023,12 @@ if (!isset($studentProfileView)) {
         confirmLabel: 'Continue to checks'
       });
       if (!confirmed) return;
+      if (submitBtn.disabled) return;
 
       // Disable submit button
       submitBtn.disabled = true;
       submitBtn.setAttribute('aria-busy', 'true');
+      InquiryAttachments.setBusy(form, true);
       const submitLabel = submitBtn.querySelector('[data-submit-label]');
       const submitSpinner = submitBtn.querySelector('[data-submit-spinner]');
       const analysisStatus = form.querySelector('[data-analysis-status]');
@@ -1029,6 +1045,12 @@ if (!isset($studentProfileView)) {
       }
 
       try {
+        const attachmentIds = await InquiryAttachments.upload(form, CSRF_TOKEN, status => {
+          if (submitLabel) submitLabel.textContent = 'Uploading files...';
+          if (analysisStatus) analysisStatus.textContent = status;
+        });
+        if (submitLabel) submitLabel.textContent = 'Checking concern...';
+        if (analysisStatus) analysisStatus.textContent = 'Checking for a similar concern and reviewing urgency before submission.';
         const response = await fetch('api/submit_inquiry.php', {
           method: 'POST',
           headers: {
@@ -1037,6 +1059,7 @@ if (!isset($studentProfileView)) {
           },
           body: JSON.stringify({
             ...formData,
+            attachment_ids: attachmentIds,
             confirmed_duplicate_of: confirmedDuplicateOf
           })
         });
@@ -1066,6 +1089,7 @@ if (!isset($studentProfileView)) {
           // Hide form, show success
           form.style.display = 'none';
           if (successDiv) {
+            successDiv.append(InquiryAttachments.create(InquiryAttachments.selected(form)));
             successDiv.style.display = 'block';
             successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           }
@@ -1094,6 +1118,7 @@ if (!isset($studentProfileView)) {
         errorAlert.style.display = 'block';
         errorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       } finally {
+        InquiryAttachments.setBusy(form, false);
         submitBtn.disabled = false;
         submitBtn.removeAttribute('aria-busy');
         if (submitLabel) {
@@ -1180,14 +1205,19 @@ if (!isset($studentProfileView)) {
     function getOfficeName(officeCode) {
       const officeMap = {
         'registrar': 'Registrar',
-        'cashier': 'Cashier',
+        'cashier': 'Finance',
         'guidance': 'Guidance',
         'saso': 'SASO',
+        'library': 'Library',
+        'property': 'Property Custodian',
+        'clinic': 'Clinic',
+        'itcd': 'ITCD',
+        'hr': 'Human Resources',
         'cte': 'CTE',
         'cbe': 'CBE',
         'ccs': 'CCS',
-        'cje': 'CJE',
-        'psychology': 'Psychology',
+        'cje': 'CCJE',
+        'psychology': 'Psychology Department',
         'main': 'Main Office'
       };
       return officeMap[officeCode] || 'General';
@@ -1202,7 +1232,6 @@ if (!isset($studentProfileView)) {
       const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
       msg.innerHTML = `
-    <div class="m-avatar"><?= htmlspecialchars($initials) ?></div>
     <div class="bubble-wrap">
       <div class="bubble">${escapeHtml(text)}</div>
       <span class="time">${timeStr}</span>
@@ -1354,6 +1383,8 @@ if (!isset($studentProfileView)) {
       const sessionKey = currentChatSessionKey;
       const requestId = chatLoadRequestId;
       const history = conversationHistory;
+      let streamedMessage = null;
+      const isCurrent = () => requestId === chatLoadRequestId && currentCategory === category && currentChatSessionKey === sessionKey;
       chatSending = true;
       document.getElementById('chatSendBtn').disabled = true;
       BenChatUI.clear();
@@ -1361,7 +1392,7 @@ if (!isset($studentProfileView)) {
       if (typeof messageOverride !== 'string') input.value = '';
       input.focus();
 
-      const shouldEscalate = /\b(escalate|talk to a person|real person|human assistance|speak to someone|staff member)\b/i.test(text);
+      const shouldEscalate = /\b(escalate|talk to (?:a person|staff)|real person|human assistance|speak to someone|staff member|istorya sa staff|tabang sa staff|tawo akong kaistorya)\b/i.test(text);
       const lastBenMsg = history.filter(msg => msg.role === 'model').pop();
       const isNoToDidThatAnswer = text.toLowerCase().trim() === 'no' &&
         lastBenMsg && lastBenMsg.message.includes('Did that answer your concern?');
@@ -1377,27 +1408,40 @@ if (!isset($studentProfileView)) {
             'Content-Type': 'application/json',
             'X-CSRF-Token': CSRF_TOKEN
           },
+          signal: AbortSignal.timeout(40000),
           body: JSON.stringify({
             message: text,
             category,
-            history: history.slice(0, -1)
+            stream: true,
+            history: history.slice(0, -1).slice(-24)
           })
         });
 
-        const data = await res.json();
-        const isCurrentChat = requestId === chatLoadRequestId && currentCategory === category;
+        const data = await BenChatUI.readResponse(res, partial => {
+          if (!isCurrent()) return;
+          removeTypingIndicator();
+          if (!streamedMessage) streamedMessage = addBenMessage('');
+          const thread = document.querySelector('.chat-thread');
+          const follow = !thread || thread.scrollHeight - thread.scrollTop - thread.clientHeight < 100;
+          streamedMessage.querySelector('.bubble').innerHTML = renderMarkdown(partial);
+          if (follow) scrollChatToBottom();
+        });
+        const isCurrentChat = isCurrent();
         if (isCurrentChat) removeTypingIndicator();
 
         if (data.success && data.answer) {
           history.push({ role: 'model', message: data.answer });
-          const message = isCurrentChat ? addBenMessage(renderMarkdown(data.answer)) : null;
+          const message = isCurrentChat ? (streamedMessage || addBenMessage(renderMarkdown(data.answer))) : null;
+          if (message) message.querySelector('.bubble').innerHTML = renderMarkdown(data.answer);
           await saveChatHistory(category, history, data.answer, sessionKey);
           if (requestId !== chatLoadRequestId || currentChatSessionKey !== sessionKey) return;
           chatSending = false;
           if (shouldEscalate || isNoToDidThatAnswer) await addEscalationFormMessage();
           else showBenActions(message, data.answer, history.filter(entry => entry.role === 'user').slice(-3).map(entry => entry.message).join(' '));
         } else if (isCurrentChat) {
-          const message = addBenMessage(escapeHtml(data.error || 'Ben is temporarily unavailable. Please try again shortly or submit your concern to staff.'));
+          const notice = data.error || 'Ben is temporarily unavailable. Please try again shortly or submit your concern to staff.';
+          const message = streamedMessage || addBenMessage(escapeHtml(notice));
+          message.querySelector('.bubble').textContent = notice;
           if (shouldEscalate || isNoToDidThatAnswer) await addEscalationFormMessage();
           else {
             showBenActions(message, '', '', true);
@@ -1407,7 +1451,9 @@ if (!isset($studentProfileView)) {
         console.error(err);
         if (requestId === chatLoadRequestId && currentCategory === category) {
           removeTypingIndicator();
-          const message = addBenMessage("Sorry, I'm having connection issues. Please try again in a moment.");
+          const notice = "Sorry, I couldn't finish that reply. Please try again in a moment.";
+          const message = streamedMessage || addBenMessage(escapeHtml(notice));
+          message.querySelector('.bubble').textContent = notice;
           if (shouldEscalate || isNoToDidThatAnswer) await addEscalationFormMessage();
           else {
             showBenActions(message, '', '', true);
@@ -1729,6 +1775,7 @@ if (!isset($studentProfileView)) {
       </div>
     `;
         threadMessages.appendChild(studentMsg);
+        studentMsg.querySelector('.message-bubble').append(InquiryAttachments.create(concern.attachments || []));
 
         // Add staff replies
         if (concern.replies && concern.replies.length > 0) {

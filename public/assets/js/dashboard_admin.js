@@ -290,10 +290,6 @@
     dialog.addEventListener('cancel', event => { if (dialog.querySelector('form')?.dataset.busy === 'true') event.preventDefault(); });
     dialog.addEventListener('close', () => { if (dialog.id === 'concernDialog') ++state.concernRequest; if (dialog.id === 'staffDialog') $('staffForm').elements.password.value = ''; });
   });
-  const logoutForm = $('logoutForm');
-  logoutForm.addEventListener('submit', event => { if (logoutForm.dataset.confirmed !== 'true') { event.preventDefault(); $('logoutConfirm').showModal(); } });
-  $('cancelLogout').addEventListener('click', () => $('logoutConfirm').close());
-  $('confirmLogout').addEventListener('click', () => { logoutForm.dataset.confirmed = 'true'; $('logoutConfirm').close(); logoutForm.requestSubmit(); });
   document.addEventListener('helpdesk:open-notification', event => { if (event.detail?.inquiry_id) { event.preventDefault(); location.hash = 'concerns'; void openConcern(event.detail.inquiry_id); } });
   document.addEventListener('helpdesk:notification', () => {
     clearTimeout(refreshTimer); refreshTimer = setTimeout(() => { if (document.querySelector('.admin-dialog[open]')) return; void loadView('overview'); if (state.view === 'concerns' || state.view === 'staff') void loadView(); }, 600);

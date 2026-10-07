@@ -32,7 +32,8 @@ class InquiryController
         string $message,
         ?int $office = null,
         ?string $subject = null,
-        ?int $confirmedDuplicateOf = null
+        ?int $confirmedDuplicateOf = null,
+        array $attachmentIds = []
     ): array {
         $message = trim($message);
 
@@ -132,6 +133,7 @@ class InquiryController
             'ai_priority' => $urgencyPriority,
             'ai_priority_reason' => $urgency['reason'] ?? 'Automated urgency review is unavailable. Please assess this concern during triage.',
             'ai_priority_confidence' => $urgency['confidence'] ?? null,
+            'attachment_ids' => $attachmentIds,
         ];
 
         try {

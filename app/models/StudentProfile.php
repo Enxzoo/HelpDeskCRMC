@@ -125,7 +125,7 @@ class StudentProfile
                 throw new StudentAccountException('The legal documents have changed or their versions are missing. Read the current Terms of Service and Privacy Policy and accept them again.');
             }
             $password = $input['password'] ?? null;
-            if (!is_string($password) || strlen($password) < 12 || strlen($password) > 72) throw new StudentAccountException('Password must contain 12 to 72 bytes.');
+            if (!is_string($password) || strlen($password) < 8 || strlen($password) > 72) throw new StudentAccountException('Password must contain 8 to 72 bytes.');
             if (!is_string($input['confirm_password'] ?? null) || $password !== $input['confirm_password']) throw new StudentAccountException('Password confirmation does not match.');
             $data['password_hash'] = password_hash($password, PASSWORD_DEFAULT);
         }

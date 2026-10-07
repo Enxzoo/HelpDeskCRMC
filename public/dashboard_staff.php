@@ -80,6 +80,7 @@ foreach ($inquiries as $inquiry) {
     rel="stylesheet">
   <?= stylesheet_bundle('dashboard_staff') ?>
   <script src="assets/js/notifications.js?v=1" defer></script>
+  <script src="assets/js/workspace.js?v=<?= md5_file(__DIR__ . '/assets/js/workspace.js') ?>" defer></script>
 </head>
 
 <body>
@@ -161,23 +162,21 @@ foreach ($inquiries as $inquiry) {
 
       <div class="sidebar-spacer"></div>
 
-      <div class="staff-section">
-        <div class="staff-profile">
+      <a href="logout.php" class="nav-item student-logout-link" style="margin-top:8px;">
+        <svg class="icon">
+          <use href="#i-logout" />
+        </svg>
+        Logout
+      </a>
+
+      <div class="sidebar-foot">
+        <div class="sidebar-profile">
           <div class="avatar"><?= htmlspecialchars($initials) ?></div>
-          <div class="staff-info">
-            <div class="staff-name"><?= htmlspecialchars($_SESSION['name']) ?></div>
-            <div class="staff-role">Staff Member</div>
+          <div>
+            <div class="user-name"><?= htmlspecialchars($_SESSION['name']) ?></div>
+            <div class="user-sub">Staff Member</div>
           </div>
         </div>
-        <form method="POST" action="logout.php" class="staff-logout-form">
-          <?= csrf_field() ?>
-          <button type="submit" class="logout-btn">
-            <svg class="icon">
-              <use href="#i-logout" />
-            </svg>
-            Logout
-          </button>
-        </form>
       </div>
     </aside>
 
@@ -462,22 +461,7 @@ foreach ($inquiries as $inquiry) {
     </form>
   </div>
 
-  <dialog class="action-confirm-dialog" id="actionConfirmDialog" aria-labelledby="actionConfirmTitle"
-    aria-describedby="actionConfirmMessage">
-    <div class="action-confirm-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 3 3.8 7v5.3c0 4.2 3.5 7.9 8.2 9.2 4.7-1.3 8.2-5 8.2-9.2V7L12 3Z" />
-        <path d="M12 8v4m0 4h.01" />
-      </svg>
-    </div>
-    <h2 id="actionConfirmTitle">Please confirm</h2>
-    <p id="actionConfirmMessage"></p>
-    <div class="action-confirm-actions">
-      <button type="button" class="action-confirm-continue" id="actionConfirmContinue">Confirm</button>
-      <button type="button" class="action-confirm-cancel" id="actionConfirmCancel">Cancel</button>
-    </div>
-  </dialog>
-
+  <script src="assets/js/inquiry_attachments.js?v=<?= md5_file(__DIR__ . '/assets/js/inquiry_attachments.js') ?>"></script>
   <script>
     const inquiriesData = <?= json_encode($inquiries, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) ?>;
     let currentInquiryId = inquiriesData.length ? Number(inquiriesData[0].inquiry_id) : null;
@@ -487,49 +471,6 @@ foreach ($inquiries as $inquiry) {
     let staffResolving = false;
     const workspace = document.querySelector('.content-area');
     const thread = document.getElementById('messageThread');
-
-    function confirmImportantAction({ title, message, confirmLabel, destructive = false }) {
-      const dialog = document.getElementById('actionConfirmDialog');
-      const cancelButton = document.getElementById('actionConfirmCancel');
-      const continueButton = document.getElementById('actionConfirmContinue');
-      document.getElementById('actionConfirmTitle').textContent = title;
-      document.getElementById('actionConfirmMessage').textContent = message;
-      continueButton.textContent = confirmLabel;
-      continueButton.classList.toggle('destructive', destructive);
-      dialog.returnValue = 'cancel';
-      cancelButton.onclick = () => dialog.close('cancel');
-      continueButton.onclick = () => dialog.close('confirm');
-      dialog.onclick = event => {
-        if (event.target === dialog) dialog.close('cancel');
-      };
-
-      return new Promise(resolve => {
-        dialog.addEventListener('close', () => resolve(dialog.returnValue === 'confirm'), { once: true });
-        dialog.showModal();
-        cancelButton.focus();
-      });
-    }
-
-    document.querySelectorAll('.staff-logout-form').forEach(form => {
-      form.addEventListener('submit', async event => {
-        if (form.dataset.confirmedLogout === 'true') return;
-        event.preventDefault();
-        if (form.dataset.confirmingLogout === 'true') return;
-        form.dataset.confirmingLogout = 'true';
-
-        const confirmed = await confirmImportantAction({
-          title: 'Log out?',
-          message: 'Are you sure you want to log out of your staff account?',
-          confirmLabel: 'Log out',
-          destructive: true
-        });
-        form.dataset.confirmingLogout = 'false';
-        if (confirmed) {
-          form.dataset.confirmedLogout = 'true';
-          form.submit();
-        }
-      });
-    });
 
     function statusKey(status) {
       return String(status || '').toLowerCase().replace(/\s+/g, '_');
@@ -713,6 +654,11 @@ foreach ($inquiries as $inquiry) {
         if (!response.ok) throw new Error('Failed to load responses');
         const data = await response.json();
         if (requestId !== responseRequestId || Number(currentInquiryId) !== inquiryId) return;
+        const originalBubble = thread.querySelector('.message.student .message-bubble');
+        if (originalBubble) {
+          originalBubble.querySelector('.inquiry-attachments')?.remove();
+          originalBubble.append(InquiryAttachments.create(data.attachments || []));
+        }
         (data.responses || []).forEach(item => thread.appendChild(createMessage(item.sender_role === 'student' ? 'student' : 'staff', item.staff_name, item.message, item.created_at)));
         thread.scrollTop = thread.scrollHeight;
       } catch (error) {
@@ -960,6 +906,24 @@ foreach ($inquiries as $inquiry) {
     if (notificationCard) selectConcern(notificationCard, notificationInquiry);
     else if (currentInquiryId) renderSelectedInquiry(inquiriesData[0]);
   </script>
+
+  <dialog class="action-confirm-dialog" id="actionConfirmDialog" aria-labelledby="actionConfirmTitle"
+    aria-describedby="actionConfirmMessage">
+    <div class="action-confirm-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 3 3.8 7v5.3c0 4.2 3.5 7.9 8.2 9.2 4.7-1.3 8.2-5 8.2-9.2V7L12 3Z" />
+        <path d="M12 8v4m0 4h.01" />
+      </svg>
+    </div>
+    <h2 id="actionConfirmTitle">Please confirm</h2>
+    <p id="actionConfirmMessage"></p>
+    <div class="action-confirm-actions">
+      <button type="button" class="action-confirm-continue" id="actionConfirmContinue">Confirm</button>
+      <button type="button" class="action-confirm-cancel" id="actionConfirmCancel">Cancel</button>
+    </div>
+  </dialog>
+
+  <script src="assets/js/student_account_actions.js?v=<?= md5_file(__DIR__ . '/assets/js/student_account_actions.js') ?>" defer></script>
 
 </body>
 

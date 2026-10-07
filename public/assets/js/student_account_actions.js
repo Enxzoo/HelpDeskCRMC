@@ -21,6 +21,7 @@ function confirmImportantAction({ title, message, confirmLabel, destructive = fa
   });
 }
 
+// Handle logout links
 document.querySelectorAll('.student-logout-link').forEach(link => {
   link.addEventListener('click', async event => {
     if (link.dataset.confirmingLogout === 'true') return;
@@ -28,7 +29,7 @@ document.querySelectorAll('.student-logout-link').forEach(link => {
     link.dataset.confirmingLogout = 'true';
     const confirmed = await confirmImportantAction({
       title: 'Log out?',
-      message: 'Are you sure you want to log out of your student account?',
+      message: 'Are you sure you want to log out of your account?',
       confirmLabel: 'Log out',
       destructive: true
     });
@@ -36,3 +37,21 @@ document.querySelectorAll('.student-logout-link').forEach(link => {
     if (confirmed) window.location.assign(link.href);
   });
 });
+
+// Handle logout forms
+document.querySelectorAll('#logoutForm').forEach(form => {
+  form.addEventListener('submit', async event => {
+    if (form.dataset.confirmingLogout === 'true') return;
+    event.preventDefault();
+    form.dataset.confirmingLogout = 'true';
+    const confirmed = await confirmImportantAction({
+      title: 'Log out?',
+      message: 'Are you sure you want to log out of your account?',
+      confirmLabel: 'Log out',
+      destructive: true
+    });
+    form.dataset.confirmingLogout = 'false';
+    if (confirmed) form.requestSubmit();
+  });
+});
+

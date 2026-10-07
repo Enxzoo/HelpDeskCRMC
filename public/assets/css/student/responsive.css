@@ -51,25 +51,233 @@
   }
 }
 
+.student-menu-toggle.notification-icon-button,
+.student-menu-close {
+  display: none;
+}
+
 @media (max-width:960px) {
+  html,body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    padding: 0;
+  }
+
   .app {
     flex-direction: column;
-    height: auto;
+    height: 100dvh;
+    min-height: 0;
   }
 
   .main {
-    height: auto;
-    min-height: 100vh;
+    height: 100%;
+    min-height: 0;
+    padding-top: calc(64px + env(safe-area-inset-top));
   }
 
-  .sidebar,.panel {
+  .sidebar {
+    position: fixed;
+    z-index: 120;
+    inset: 0 auto 0 0;
+    display: flex;
+    width: min(288px,calc(100vw - 32px));
+    height: 100dvh;
+    padding-top: calc(14px + env(safe-area-inset-top));
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateX(-100%);
+    visibility: hidden;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .panel:not(.history-open) {
     display: none;
   }
 
-  #threadView {
+  .sidebar > * {
+    flex-shrink: 0;
+  }
+
+  .sidebar .staff-replies-list,.sidebar .empty-replies {
+    flex: none;
+    overflow: visible;
+  }
+
+  .sidebar .nav-item,.sidebar .channel,.sidebar .urgent-btn {
+    min-height: 44px;
+  }
+
+  .student-nav-backdrop:not([hidden]) {
     position: fixed;
+    z-index: 110;
     inset: 0;
-    height: 100dvh;
+    border: 0;
+    background: rgba(28,27,24,.38);
+  }
+
+  .student-menu-close,.student-menu-toggle.notification-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+  }
+
+  .student-menu-close {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .main > .student-notification-bar {
+    position: absolute;
+    inset: 0 0 auto;
+    height: calc(64px + env(safe-area-inset-top));
+    padding: calc(10px + env(safe-area-inset-top)) 12px 10px;
+    align-items: center;
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .student-menu-toggle {
+    margin-right: auto;
+  }
+
+  #heroView,#concernsView,.student-profile-view {
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+
+  #profileView .profile-heading-row,.main .concerns-header {
+    padding-right: 0;
+  }
+
+  #chatView,#threadView {
+    position: absolute;
+    inset: calc(64px + env(safe-area-inset-top)) 0 0;
+    height: auto;
+    min-height: 0;
+  }
+
+  .main .chat-header,.main .thread-view-header {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .chat-header > div:not(.ic),.thread-view-info {
+    min-width: 0;
+  }
+
+  .chat-header h2,.chat-header p {
+    overflow-wrap: anywhere;
+  }
+
+  .chat-header .back-btn,.thread-view-header .back-btn {
+    width: 44px;
+    height: 44px;
+    flex: none;
+  }
+
+  .composer-wrap {
+    padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
+  }
+
+  .composer input,.thread-reply-input,.esc-group input,.esc-group select,.esc-group textarea,
+  .student-profile-view input,.student-profile-view select,.student-profile-view textarea {
+    font-size: 16px;
+  }
+
+  .composer .send-btn,.thread-reply-btn,.esc-btn,.esc-file-btn {
+    min-height: 44px;
+  }
+
+  .composer .send-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .action-confirm-dialog {
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+  }
+
+  .action-confirm-actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width:960px) and (max-height:650px) {
+  #threadView {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .thread-messages-container {
+    flex: none;
+    min-height: 180px;
+    overflow: visible;
+  }
+}
+
+@media (max-width:600px) {
+  #heroView,#concernsView {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+
+  .tile {
+    width: auto;
+    min-width: 0;
+    padding: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  .general-card {
+    width: 100%;
+    max-width: none;
+  }
+
+  .thread-inner {
+    padding: 0 12px;
+  }
+
+  .msg {
+    max-width: 94%;
+    gap: 6px;
+  }
+
+  .escalation-msg {
+    max-width: 100%;
+  }
+
+  .escalation-msg .bubble {
+    padding: 8px;
+  }
+
+  .escalation-card {
+    padding: 12px;
+  }
+
+  .thread-view-header #threadTitle {
+    font-size: 18px;
   }
 }
 

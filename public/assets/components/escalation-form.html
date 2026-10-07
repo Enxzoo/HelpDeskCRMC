@@ -14,7 +14,23 @@
 
     <div class="esc-row">
       <div class="esc-group">
-        <label for="esc-email">Email <span class="esc-req">*</span></label>
+        <label for="esc-student-number">Student ID number</label>
+        <input type="text" id="esc-student-number" name="studentNumber" readonly placeholder="Not provided">
+      </div>
+      <div class="esc-group">
+        <label for="esc-year-level">Year level</label>
+        <input type="text" id="esc-year-level" name="yearLevel" readonly placeholder="Not provided">
+      </div>
+    </div>
+
+    <div class="esc-group">
+      <label for="esc-program">Program / Course</label>
+      <input type="text" id="esc-program" name="program" readonly placeholder="Not provided">
+    </div>
+
+    <div class="esc-row">
+      <div class="esc-group">
+        <label for="esc-email">Email address <span class="esc-req">*</span></label>
         <input type="email" id="esc-email" name="email" required>
       </div>
       <div class="esc-group">
@@ -24,26 +40,31 @@
     </div>
 
     <div class="esc-group">
-      <label for="esc-office">Which office can help you? <span class="esc-req">*</span></label>
+      <label for="esc-office">Category / Office <span class="esc-req">*</span></label>
       <select id="esc-office" name="office" required>
         <option value="">Select an office...</option>
         <optgroup label="Academic Services">
           <option value="registrar">Registrar's Office</option>
-          <option value="cashier">Cashier's Office</option>
+          <option value="cashier">Finance</option>
         </optgroup>
         <optgroup label="Student Support">
           <option value="guidance">Guidance Office</option>
           <option value="saso">SASO - Student Affairs</option>
+          <option value="library">Library</option>
+          <option value="clinic">Clinic</option>
         </optgroup>
         <optgroup label="Departments">
           <option value="cte">College of Teacher Education (CTE)</option>
           <option value="cbe">College of Business Education (CBE)</option>
           <option value="ccs">College of Computer Studies (CCS)</option>
-          <option value="cje">College of Justice Education (CJE)</option>
+          <option value="cje">College of Justice Education (CCJE)</option>
           <option value="psychology">Psychology Department</option>
         </optgroup>
         <optgroup label="Other">
-          <option value="main">Main Office</option>
+          <option value="property">Property Custodian</option>
+          <option value="itcd">ITCD</option>
+          <option value="hr">Human Resources</option>
+          <option value="main">General / Main Office</option>
         </optgroup>
       </select>
     </div>
@@ -59,16 +80,16 @@
     </div>
 
     <div class="esc-group">
-      <label>Attach files (optional)</label>
+      <label for="esc-file">Attach files (optional)</label>
       <div class="esc-file-upload">
-        <input type="file" id="esc-file" name="attachment" multiple accept="image/*,.pdf,.doc,.docx" style="display: none;">
+        <input type="file" id="esc-file" name="attachment" multiple accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx" style="display: none;">
         <button type="button" class="esc-file-btn" onclick="document.getElementById('esc-file').click()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M8 12.5l6-6a3 3 0 0 1 4.2 4.2l-8 8a5 5 0 1 1-7-7l7-7"/>
           </svg>
           Choose files
         </button>
-        <div class="esc-file-list" id="esc-file-list"></div>
+        <div class="esc-file-list" id="esc-file-list" role="status" aria-live="polite"></div>
       </div>
     </div>
 

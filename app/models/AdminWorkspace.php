@@ -193,16 +193,53 @@ class AdminWorkspace
             throw new AdminRequestException('Knowledge entry not found.', 404);
     }
 
+    public static function knowledgeSearchTerms(string $question): string
+    {
+        $aliases = [
+            'bayad|mobayad|mubayad|pagbayad|gibayad|kwarta' => 'payment tuition cashier balance',
+            'grado|grades|marka|hagbong' => 'grades academic records',
+            'iskolar|scholar|scholarship' => 'scholarship financial assistance',
+            'enrol|enroll|enrolment|paenrol|pa-enrol|magpaenrol' => 'enrollment registration admission',
+            'tor|transcript' => 'transcript records request processing',
+            'dokumento|papeles' => 'documents certificate requirements',
+            'libro|library|librohan' => 'library books borrowing clearance',
+            'nawala|nawagtang' => 'lost replacement',
+            'login|log-in|password|pasword' => 'portal login password access reset',
+            'oras|kanus-a|kanusa|adlaw|dugay' => 'hours schedule processing time',
+        ];
+        $terms = [mb_substr($question, 0, 4000)];
+        foreach ($aliases as $pattern => $english) {
+            if (preg_match('/(?<![\p{L}\p{N}_])(?:' . $pattern . ')(?![\p{L}\p{N}_])/ui', $question)) $terms[] = $english;
+        }
+        return implode(' ', $terms);
+    }
+
     public function publishedKnowledge(string $question): array
     {
-        return $this->query('SELECT title, content, o.office_name FROM knowledge_entries k
+        $terms = self::knowledgeSearchTerms($question);
+        $entries = $this->query('SELECT title, content, o.office_name FROM knowledge_entries k
             LEFT JOIN offices o ON o.office_id = k.office_id WHERE k.status = "Published"
             AND (k.office_id IS NULL OR o.is_active = 1)
             AND MATCH(k.title, k.content) AGAINST (? IN NATURAL LANGUAGE MODE) > 0
-            ORDER BY MATCH(k.title, k.content) AGAINST (? IN NATURAL LANGUAGE MODE) DESC, k.entry_id DESC LIMIT 8',
+            ORDER BY MATCH(k.title, k.content) AGAINST (? IN NATURAL LANGUAGE MODE) DESC, k.entry_id DESC LIMIT 4',
             'ss',
-            [$question, $question]
+            [$terms, $terms]
         )->fetch_all(MYSQLI_ASSOC);
+        $keywords = preg_split('/[^\p{L}\p{N}]+/u', mb_strtolower($terms), -1, PREG_SPLIT_NO_EMPTY);
+        foreach ($entries as &$entry) {
+            if (mb_strlen($entry['content']) <= 1800) continue;
+            $best = $score = 0;
+            foreach (array_unique($keywords) as $keyword) {
+                if (mb_strlen($keyword) < 4) continue;
+                $position = mb_stripos($entry['content'], $keyword);
+                if ($position !== false && mb_strlen($keyword) > $score) {
+                    $best = max(0, $position - 250);
+                    $score = mb_strlen($keyword);
+                }
+            }
+            $entry['content'] = ($best > 0 ? '[Excerpt] ' : '') . mb_substr($entry['content'], $best, 1750) . ' [Excerpt ends]';
+        }
+        return $entries;
     }
 
     public function assign(int $id, ?int $staff): void

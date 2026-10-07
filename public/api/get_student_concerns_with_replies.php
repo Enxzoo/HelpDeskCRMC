@@ -7,6 +7,7 @@
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../app/config/database.php';
 require_once __DIR__ . '/../../app/middleware/AuthMiddleware.php';
+require_once __DIR__ . '/../../app/models/Inquiry.php';
 
 session_start();
 
@@ -16,6 +17,7 @@ $studentId = (int) $_SESSION['user_id'];
 
 try {
     $db = getDbConnection();
+    $inquiryModel = new Inquiry();
 
     // Get all inquiries for this student with their replies
     $query = "
@@ -81,7 +83,8 @@ try {
             'office' => $inq['office_name'],
             'created_at' => $inq['created_at'],
             'reply_count' => $inq['reply_count'],
-            'replies' => $replies
+            'replies' => $replies,
+            'attachments' => $inquiryModel->getAttachments((int)$inq['inquiry_id']),
         ];
     }
 

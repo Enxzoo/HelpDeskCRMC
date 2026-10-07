@@ -31,7 +31,9 @@ if (!csrf_verify_header()) {
 $filepath = null;
 try {
     // Check if file was uploaded
-    if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+    if (!isset($_FILES['file']) || !is_array($_FILES['file'])
+        || !is_int($_FILES['file']['error'] ?? null) || $_FILES['file']['error'] !== UPLOAD_ERR_OK
+        || !is_string($_FILES['file']['name'] ?? null) || !is_string($_FILES['file']['tmp_name'] ?? null)) {
         throw new Exception('No file uploaded or upload error');
     }
 
@@ -40,7 +42,7 @@ try {
 
     // Validate file size (5MB max)
     $maxSize = 5 * 1024 * 1024; // 5MB
-    if ($file['size'] > $maxSize) {
+    if ($file['size'] < 1 || $file['size'] > $maxSize) {
         throw new Exception('File too large. Maximum size is 5MB');
     }
 
@@ -60,12 +62,27 @@ try {
     ];
 
     $fileType = mime_content_type($file['tmp_name']);
+    $originalExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    if ($fileType === 'application/zip' && in_array($originalExtension, ['docx', 'xlsx'], true)) {
+        try {
+            $zip = new PharData($file['tmp_name'], 0, null, Phar::ZIP);
+            $documentPart = $originalExtension === 'docx' ? 'word/document.xml' : 'xl/workbook.xml';
+            if (isset($zip['[Content_Types].xml'], $zip[$documentPart])) {
+                $fileType = $originalExtension === 'docx'
+                    ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                    : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+            }
+            unset($zip);
+        } catch (UnexpectedValueException $error) {
+            // Invalid archives remain unsupported; no contents are extracted.
+        }
+    }
     if (!isset($allowedTypes[$fileType])) {
         throw new Exception('File type not allowed. Allowed: images, PDF, Word, Excel, text files');
     }
 
     // Create uploads directory if it doesn't exist
-    $uploadDir = __DIR__ . '/../../uploads/';
+    $uploadDir = __DIR__ . '/../../storage/attachments/';
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0755, true);
     }
@@ -91,8 +108,8 @@ try {
     $inquiryId = null;
     $responseId = null;
 
-    $originalName = mb_substr(basename($file['name']), 0, 255);
-    $storedPath = 'uploads/' . $filename;
+    $originalName = mb_substr(basename(str_replace('\\', '/', $file['name'])), 0, 255);
+    $storedPath = 'storage/attachments/' . $filename;
     $stmt->bind_param(
         'iiisssi',
         $inquiryId,
@@ -116,7 +133,7 @@ try {
         'success' => true,
         'attachment_id' => $attachmentId,
         'filename' => $filename,
-        'original_name' => $file['name'],
+        'original_name' => $originalName,
         'file_size' => $file['size'],
         'file_type' => $fileType
     ]);

@@ -360,15 +360,24 @@ $schoolPrograms = (new StudentProfile())->catalog(true)['programs'];
             </div>
         </form>
     </dialog>
-    <dialog class="admin-dialog confirm-dialog logout-confirm" id="logoutConfirm" aria-labelledby="logoutConfirmTitle"
-        aria-describedby="logoutConfirmMessage">
-        <h2 id="logoutConfirmTitle">Log out?</h2>
-        <p id="logoutConfirmMessage">Are you sure you want to log out of your administrator account?</p>
-        <div class="dialog-actions"><button type="button" class="button" id="cancelLogout">Stay signed
-                in</button><button type="button" class="button danger" id="confirmLogout">Log out</button></div>
+    <dialog class="action-confirm-dialog" id="actionConfirmDialog" aria-labelledby="actionConfirmTitle"
+        aria-describedby="actionConfirmMessage">
+        <div class="action-confirm-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 3 3.8 7v5.3c0 4.2 3.5 7.9 8.2 9.2 4.7-1.3 8.2-5 8.2-9.2V7L12 3Z" />
+                <path d="M12 8v4m0 4h.01" />
+            </svg>
+        </div>
+        <h2 id="actionConfirmTitle">Please confirm</h2>
+        <p id="actionConfirmMessage"></p>
+        <div class="action-confirm-actions">
+            <button type="button" class="action-confirm-continue" id="actionConfirmContinue">Confirm</button>
+            <button type="button" class="action-confirm-cancel" id="actionConfirmCancel">Cancel</button>
+        </div>
     </dialog>
     <div class="admin-toast" id="adminToast" role="status" aria-live="polite" hidden></div>
     <script>window.ADMIN_BOOTSTRAP = <?= json_encode(['offices' => $offices, 'overview' => $overview], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE) ?>;</script>
+    <script src="assets/js/student_account_actions.js?v=<?= md5_file(__DIR__ . '/assets/js/student_account_actions.js') ?>" defer></script>
 </body>
 
 </html>

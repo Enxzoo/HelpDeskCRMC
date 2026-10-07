@@ -70,6 +70,7 @@ try {
     echo json_encode([
         'success' => true,
         'responses' => $responses,
+        'attachments' => $inquiryModel->getAttachments($inquiryId),
         'inquiry' => $inquiry
     ]);
 

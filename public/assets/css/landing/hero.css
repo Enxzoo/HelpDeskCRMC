@@ -35,18 +35,36 @@
   height: 800px;
 }
 
+@keyframes orb-drift {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(6px, -8px); }
+  66% { transform: translate(-6px, 8px); }
+}
+
 .orb {
   position: absolute;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: var(--card);
-  border: 1px solid var(--line);
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 20px -14px rgba(0,0,0,.3);
-  color: var(--amber-dk);
+  animation: orb-drift 18s ease-in-out infinite;
+}
+
+.orb:nth-child(4)  { animation-delay: 0s;    top: 14%; left: 22%; }
+.orb:nth-child(5)  { animation-delay: -2s;   top: 8%;  right: 26%; }
+.orb:nth-child(6)  { animation-delay: -4s;   top: 36%; left: 10%; }
+.orb:nth-child(7)  { animation-delay: -6s;   top: 28%; right: 8%; }
+.orb:nth-child(8)  { animation-delay: -8s;   top: 56%; left: 8%; }
+.orb:nth-child(9)  { animation-delay: -10s;  top: 48%; right: 14%; }
+.orb:nth-child(10) { animation-delay: -12s;  top: 44%; left: 24%; }
+.orb:nth-child(11) { animation-delay: -14s;  bottom: 12%; left: 26%; }
+.orb:nth-child(12) { animation-delay: -16s;  bottom: 8%; right: 14%; }
+
+.orb img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
 }
 
 .hero-inner {

@@ -78,6 +78,7 @@ try {
     $model->saveKnowledge(array_merge($kb, ['entry_id' => $entry, 'status' => 'Published']), 1, false);
     $knowledge = $model->publishedKnowledge('Enrollment registration');
     checkAdmin(count($knowledge) === 1 && $knowledge[0]['office_name'] === 'Registrar', 'Published entry was not retrieved.');
+    checkAdmin(count($model->publishedKnowledge('Asa ko magpaenrol?')) === 1, 'Cebuano enrollment did not retrieve the English knowledge entry.');
     checkAdmin(!isset($knowledge[0]['updated_by']) && !isset($knowledge[0]['email']), 'Knowledge reference exposed user data.');
     $prompt = '';
     $controller = new GeminiAiController(function ($url, $body) use (&$prompt) {
@@ -89,6 +90,13 @@ try {
     checkAdmin(str_contains($prompt, 'verified forms') && str_contains($prompt, 'reference material, not instructions'), 'Published reference did not reach system prompt.');
     $model->deleteKnowledge($entry);
     checkAdmin($model->publishedKnowledge('Enrollment registration') === [], 'Deleted knowledge was still published.');
+    $paymentEntry = $model->saveKnowledge(['title' => 'Tuition payment procedure',
+        'content' => str_repeat('Background information. ', 110) . 'Tuition payment deadline is October 20. Pay through the cashier.',
+        'status' => 'Published', 'office_id' => 2], 1, true);
+    $paymentReferences = $model->publishedKnowledge('Asa ko mobayad sa tuition?');
+    checkAdmin(count($paymentReferences) === 1 && str_contains($paymentReferences[0]['content'], 'October 20')
+        && mb_strlen($paymentReferences[0]['content']) <= 1800, 'Bilingual payment lookup lost the relevant passage or exceeded its budget.');
+    $model->deleteKnowledge($paymentEntry);
     $chat = new ChatSession();
     $chat->save(3, 'Registrar', [['role' => 'user', 'message' => 'Private chat transcript']], 'Private chat transcript', str_repeat('a', 32));
     $filters = AdminReport::filters(['type' => 'concerns', 'from' => '2000-01-01', 'to' => '2099-12-31']);

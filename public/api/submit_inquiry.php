@@ -43,6 +43,14 @@ $messageValue = $input['concern'] ?? $input['message'] ?? '';
 $officeValue = $input['office'] ?? '';
 $subjectValue = $input['subject'] ?? '';
 $confirmedDuplicateValue = $input['confirmed_duplicate_of'] ?? null;
+$attachmentIds = $input['attachment_ids'] ?? [];
+if (!is_array($attachmentIds) || !array_is_list($attachmentIds) || count($attachmentIds) > 5
+    || count(array_unique($attachmentIds, SORT_REGULAR)) !== count($attachmentIds)
+    || array_filter($attachmentIds, static fn($id) => !is_int($id) || $id < 1 || $id > 4294967295)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Select up to five valid attachments.']);
+    exit;
+}
 if (
     !is_string($messageValue)
     || !is_string($officeValue)
@@ -86,6 +94,11 @@ $officeOptions = [
     'cashier' => ['Finance', 'Cashier'],
     'guidance' => ['Guidance', 'Guidance Office'],
     'saso' => ['SASO'],
+    'library' => ['Library'],
+    'property' => ['Property Custodian'],
+    'clinic' => ['Clinic'],
+    'itcd' => ['ITCD'],
+    'hr' => ['Human Resources'],
     'cte' => ['CTE'],
     'cbe' => ['CBE'],
     'ccs' => ['CCS'],
@@ -131,7 +144,8 @@ try {
         $message,
         $officeId,
         $subject,
-        $confirmedDuplicateOf
+        $confirmedDuplicateOf,
+        $attachmentIds
     );
 
     if (!$result['success']) {
@@ -163,6 +177,9 @@ try {
         'urgency_source' => $result['urgency_source'] ?? 'ai',
         'duplicate_of_inquiry_id' => $result['duplicate_of_inquiry_id'] ?? null,
     ]);
+} catch (InvalidArgumentException $exception) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => $exception->getMessage()]);
 } catch (Throwable $exception) {
     error_log('Inquiry submission failed: ' . $exception->getMessage());
     http_response_code(500);

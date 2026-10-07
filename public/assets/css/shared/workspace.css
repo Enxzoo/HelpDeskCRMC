@@ -4,7 +4,8 @@
   min-height: 100dvh;
 }
 
-.workspace-sidebar,.admin-sidebar {
+/* Admin sidebar should match student sidebar styling exactly */
+.sidebar, .workspace-sidebar,.admin-sidebar {
   position: sticky;
   top: 0;
   z-index: 110;
@@ -12,38 +13,42 @@
   flex-direction: column;
   gap: 0;
   height: 100dvh;
-  padding: 22px 16px;
-  border-right: 1px solid var(--line);
+  flex: 0 0 230px;
+  width: 230px;
   background: var(--sidebar-bg);
+  border-right: 1px solid var(--line);
+  padding: 14px 12px;
   overflow-y: auto;
 }
 
-.workspace-brand,.admin-brand {
+/* Brand section matching student sidebar */
+.brand, .workspace-brand,.admin-brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 0;
+  margin-bottom: 16px;
   padding: 0 6px;
-  margin-bottom: 28px;
-  font-family: var(--heading-font);
-  font-size: 14px;
-  font-weight: 700;
-  text-decoration: none;
 }
 
-.workspace-brand img,.admin-brand img {
+.brand img, .workspace-brand img,.admin-brand img {
+  height: 28px;
+  width: auto;
   flex: none;
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
 }
 
-.workspace-brand strong,.admin-brand strong {
+.brand-name, .workspace-brand strong,.admin-brand strong {
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.2;
+  flex: 1;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.workspace-brand span,.admin-brand span {
+.brand-name span, .workspace-brand span,.admin-brand span {
   color: var(--amber-dk);
 }
 
@@ -82,94 +87,126 @@
   font-size: 12px;
 }
 
-.workspace-nav-label {
-  margin: 0 10px 8px;
-  color: var(--muted);
+/* Nav section styling to match student sidebar */
+.nav-section {
+  margin-bottom: 16px;
+}
+
+.nav-label, .workspace-nav-label {
   font-size: 10px;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a89f8c;
+  margin: 10px 4px 6px;
 }
 
-.workspace-nav,.admin-nav {
-  display: grid;
-  gap: 3px;
-}
-
-.workspace-nav a,.admin-nav a {
+.nav-item, .workspace-nav a,.admin-nav a {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 38px;
-  padding: 9px 10px;
+  padding: 6px 8px;
   border-radius: 8px;
   color: #5c5648;
-  font-size: 12px;
-  font-weight: 500;
   text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 1px;
 }
 
-.workspace-nav a:hover,.admin-nav a:hover {
+.nav-item .icon, .workspace-nav .icon,.admin-nav .icon {
+  color: #9a9182;
+}
+
+.nav-item:hover, .workspace-nav a:hover,.admin-nav a:hover {
   background: var(--hover-bg);
 }
 
-.workspace-nav a[aria-current=page],.admin-nav a[aria-current=page] {
+.nav-item.active, .workspace-nav a[aria-current=page],.admin-nav a[aria-current=page] {
   background: var(--active-bg);
   color: var(--amber-dk);
   font-weight: 600;
 }
 
-.workspace-nav .icon,.admin-nav .icon {
-  width: 17px;
-  height: 17px;
-  opacity: .7;
+.nav-item.active .icon, .workspace-nav a[aria-current=page] .icon,.admin-nav a[aria-current=page] .icon {
+  color: var(--amber-dk);
 }
 
-.workspace-account,.admin-account {
+/* Sidebar spacer */
+.sidebar-spacer {
+  flex: 1;
+}
+
+/* Logout as nav-item to match student sidebar */
+.student-logout-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: #5c5648;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 1px;
+  border: 0;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.student-logout-link:hover {
+  background: var(--hover-bg);
+}
+
+.student-logout-link .icon {
+  color: #9a9182;
+  width: 18px;
+  height: 18px;
+}
+
+/* Footer section - profile only, no button */
+.sidebar-foot {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  margin-top: 6px;
+}
+
+.sidebar-profile {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 14px 4px 0;
-  margin-top: auto;
-  border-top: 1px solid var(--line);
+  padding: 6px 8px;
+  border-radius: 8px;
 }
 
-.workspace-avatar,.admin-account .avatar {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 28px;
-  height: 28px;
+.avatar {
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  background: linear-gradient(135deg,var(--amber),var(--amber-dk));
+  background: linear-gradient(135deg, var(--amber), var(--amber-dk));
   color: var(--ink);
-  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 700;
+  font-size: 11px;
+  flex: none;
 }
 
-.workspace-account-name,.account-name {
-  flex: 1;
-  min-width: 0;
+.user-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
 }
 
-.workspace-account-name strong,.account-name strong {
-  display: block;
-  font-size: 12px;
-  overflow-wrap: anywhere;
-}
-
-.workspace-account-name small,.account-name small {
-  display: block;
-  margin-top: 3px;
+.user-sub {
+  font-size: 10.5px;
   color: var(--muted);
-  font-size: 10px;
-}
-
-.workspace-account form,.admin-account form {
-  margin: 0;
-}
-
-.workspace-account .icon-button,.admin-account .icon-button {
-  border: 0;
-  background: transparent;
+  line-height: 1.2;
 }
 
 .workspace-main {

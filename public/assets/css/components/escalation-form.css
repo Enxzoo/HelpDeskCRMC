@@ -1,3 +1,17 @@
+.escalation-msg {
+  max-width: 100%;
+  width: 100%;
+}
+
+.escalation-msg .bubble-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.escalation-msg .bubble {
+  width: 100%;
+}
+
 .escalation-card {
   background: var(--card);
   border: 1px solid var(--line);
@@ -45,7 +59,7 @@
 
 .esc-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
 }
 
@@ -53,6 +67,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .esc-group label {
@@ -68,10 +83,12 @@
 .esc-group input,
 .esc-group select,
 .esc-group textarea {
+  width: 100%;
+  min-width: 0;
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--cream);
+  background-color: var(--cream);
   color: var(--ink);
   font-family: inherit;
   font-size: 13px;

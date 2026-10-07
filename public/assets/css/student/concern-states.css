@@ -7,6 +7,13 @@
   color: var(--muted);
 }
 
+.concerns-empty .empty-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  color: #d9d1c3;
+}
+
 .concerns-empty h3 {
   font-size: 18px;
   font-weight: 700;

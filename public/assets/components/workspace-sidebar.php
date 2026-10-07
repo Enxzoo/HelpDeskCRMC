@@ -21,18 +21,34 @@ $sidebarLinks = $sidebarAdmin ? [
     'privacy' => ['book-open', 'Privacy Policy', 'student_privacy.php'],
 ];
 ?>
-<aside class="workspace-sidebar<?= $sidebarAdmin ? ' admin-sidebar' : '' ?>" id="<?= $sidebarId ?>" aria-label="<?= $sidebarAdmin ? 'Administration' : 'Student' ?> navigation">
+<aside class="sidebar<?= $sidebarAdmin ? ' admin-sidebar' : '' ?>" id="<?= $sidebarId ?>" aria-label="<?= $sidebarAdmin ? 'Administration' : 'Student' ?> navigation">
     <?php if (!$sidebarDashboard): ?><button type="button" class="icon-button workspace-close" id="workspaceClose" aria-label="Close navigation" title="Close navigation"><?= $sidebarIcon('x') ?></button><?php endif; ?>
-    <a class="workspace-brand" href="<?= $sidebarHome ?>"><img src="assets/images/helpdesk-logo.png" alt="CRMC" width="30" height="30"><strong>HELPDESK<span>CRMC</span></strong></a>
-    <div class="workspace-identity"><img src="assets/images/offices_logo/CRMC LOGO.png" alt="" width="34" height="34"><div><small><?= $sidebarAdmin ? 'ADMINISTRATION' : 'STUDENT PORTAL' ?></small><strong><?= $sidebarAdmin ? 'System Control' : 'Student Account' ?></strong></div></div>
-    <p class="workspace-nav-label">WORKSPACE</p>
-    <nav class="workspace-nav<?= $sidebarAdmin ? ' admin-nav' : '' ?>">
+    <div class="brand">
+        <img src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
+        <div class="brand-name">Helpdesk<span>CRMC</span></div>
+    </div>
+<div class="nav-section">
+        <div class="nav-label">Workspace</div>
         <?php foreach ($sidebarLinks as $sidebarKey => [$sidebarGlyph, $sidebarLabel, $sidebarHref]): ?>
         <?php $sidebarView = $sidebarDashboard && in_array($sidebarKey, ['overview', 'staff', 'knowledge', 'concerns', 'reports'], true); ?>
-        <a href="<?= $sidebarView ? '#' . $sidebarKey : $sidebarHref ?>"<?= $sidebarView ? ' data-view="' . $sidebarKey . '"' : '' ?><?= $workspacePage === $sidebarKey ? ' aria-current="page"' : '' ?>><?= $sidebarIcon($sidebarGlyph) ?><span><?= $sidebarLabel ?></span><?php if ($sidebarDashboard && $sidebarKey === 'concerns'): ?><span class="nav-count" id="navConcernCount"><?= (int)$stats['unassigned'] ?></span><?php endif; ?></a>
+        <a class="nav-item<?= $workspacePage === $sidebarKey ? ' active' : '' ?>" href="<?= $sidebarView ? '#' . $sidebarKey : $sidebarHref ?>"<?= $sidebarView ? ' data-view="' . $sidebarKey . '"' : '' ?>><?= $sidebarIcon($sidebarGlyph) ?><?= $sidebarLabel ?><?php if ($sidebarDashboard && $sidebarKey === 'concerns'): ?><span class="nav-count" id="navConcernCount"><?= (int)$stats['unassigned'] ?></span><?php endif; ?></a>
         <?php endforeach; ?>
-    </nav>
-    <div class="workspace-account"><div class="workspace-avatar"><?= $sidebarEscape($sidebarInitials) ?></div><div class="workspace-account-name"><strong><?= $sidebarEscape($sidebarName) ?></strong><small><?= $sidebarAdmin ? 'Administrator' : 'Student' ?></small></div><form method="POST" action="logout.php"<?= $sidebarDashboard ? ' id="logoutForm"' : ' data-workspace-logout' ?>><?= csrf_field() ?><button type="submit" class="icon-button" aria-label="Sign out" title="Sign out"><?= $sidebarIcon('log-out') ?></button></form></div>
+    </div>
+    <div class="sidebar-spacer"></div>
+
+    <form method="post" action="logout.php" id="logoutForm">
+        <button type="submit" class="nav-item student-logout-link" style="margin-top:8px;width:100%;text-align:left;border:none;background:none;cursor:pointer;"><?= $sidebarIcon('log-out') ?>Logout</button>
+    </form>
+
+    <div class="sidebar-foot">
+        <div class="sidebar-profile">
+            <div class="avatar"><?= $sidebarEscape($sidebarInitials) ?></div>
+            <div>
+                <div class="user-name"><?= $sidebarEscape($sidebarName) ?></div>
+                <div class="user-sub"><?= $sidebarAdmin ? 'Administrator' : 'Student' ?></div>
+            </div>
+        </div>
+    </div>
 </aside>
 <?php if (!$sidebarDashboard): ?>
 <button type="button" id="workspaceBackdrop" class="workspace-backdrop" aria-label="Close navigation" hidden></button>
