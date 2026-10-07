@@ -292,15 +292,15 @@ $schoolPrograms = (new StudentProfile())->catalog(true)['programs'];
             </div><input type="hidden" name="user_id">
             <div class="form-grid"><label>First name<input name="first_name" required maxlength="100"
                         autocomplete="given-name"></label><label>Last name<input name="last_name" required
-                        maxlength="100" autocomplete="family-name"></label><label class="full">Email<input type="email"
+                        maxlength="100" autocomplete="family-name"></label><label class="full">Email address<input type="email"
                         name="email" required maxlength="150" autocomplete="email"></label><label
-                    class="full">Office<select name="office_id" required>
+                    class="full">Office assignment<select name="office_id" required>
                         <option value="">Select office</option><?php foreach ($offices as $office): ?>
                             <option value="<?= (int) $office['office_id'] ?>"><?= $escape($office['office_name']) ?></option>
                         <?php endforeach; ?>
-                    </select></label><label class="full"><span id="staffPasswordLabel">Password</span><input
-                        type="password" name="password" minlength="12" maxlength="72"
-                        autocomplete="new-password"></label><label class="checkbox-label full"><input type="checkbox"
+                    </select></label><label class="full"><span id="staffPasswordLabel">Password (8+ characters)</span><input
+                        type="password" name="password" minlength="8" maxlength="72"
+                        autocomplete="new-password" placeholder="Minimum 8 characters"></label><label class="checkbox-label full"><input type="checkbox"
                         name="is_active" checked>Active account</label></div>
             <p class="form-error" role="alert" hidden></p>
             <div class="dialog-actions"><button type="button" class="button"

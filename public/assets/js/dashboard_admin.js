@@ -135,7 +135,7 @@
     for (const key of ['first_name', 'last_name', 'email', 'office_id']) form.elements[key].value = item ? item[key] ?? '' : '';
     form.elements.is_active.checked = item ? Boolean(Number(item.is_active)) : true;
     form.elements.password.required = !item;
-    $('staffPasswordLabel').textContent = item ? 'New password (optional)' : 'Password (12+ characters)';
+    $('staffPasswordLabel').textContent = item ? 'New password (optional)' : 'Password (8+ characters)';
     $('staffDialogTitle').textContent = item ? 'Edit staff account' : 'Add staff account';
     $('staffDialog').showModal();
   }
