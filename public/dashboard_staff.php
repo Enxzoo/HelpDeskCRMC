@@ -152,13 +152,13 @@ foreach ($inquiries as $inquiry) {
 
       <div class="nav-section">
         <div class="nav-label">Workspace</div>
-        <a class="nav-item active" href="#concerns">
+        <a class="nav-item active" href="#concerns" id="navConcerns">
           <svg class="icon">
             <use href="#i-chat" />
           </svg>
           Concerns Queue
         </a>
-        <a class="nav-item" href="#history">
+        <a class="nav-item" href="#history" id="navHistory">
           <svg class="icon">
             <use href="#i-clock" />
           </svg>
@@ -191,8 +191,8 @@ foreach ($inquiries as $inquiry) {
         <div class="header-top">
           <div class="header-title">
             <div>
-              <h1>Concerns Queue</h1>
-              <div class="header-subtitle">Manage and respond to student inquiries</div>
+              <h1 id="mainTitle">Concerns Queue</h1>
+              <div class="header-subtitle" id="mainSubtitle">Manage and respond to student inquiries</div>
             </div>
             <img class="mobile-header-logo" src="assets/images/helpdesk-logo.png" alt="Helpdesk CRMC">
           </div>
@@ -228,7 +228,7 @@ foreach ($inquiries as $inquiry) {
         <!-- Queue Panel -->
         <div class="queue-panel">
           <div class="queue-header">
-            <h3 class="queue-title">Active Concerns</h3>
+            <h3 class="queue-title" id="queueTitle">Active Concerns</h3>
             <div class="queue-controls">
               <div class="filter-group" role="group" aria-label="Filter concerns">
                 <button class="filter-btn active" type="button" data-status="all" aria-pressed="true">All</button>
@@ -295,6 +295,40 @@ foreach ($inquiries as $inquiry) {
                 <p>No concerns match this filter.</p>
               </div>
             <?php endif; ?>
+          </div>
+        </div>
+
+        <!-- History Panel -->
+        <div class="history-panel" id="historyPanel" hidden>
+          <div class="queue-header">
+            <h3 class="queue-title">Resolved Concerns</h3>
+            <div class="queue-controls">
+              <div class="history-search">
+                <svg class="icon" aria-hidden="true">
+                  <use href="#i-search" />
+                </svg>
+                <input type="search" placeholder="Search resolved concerns..." id="historySearch"
+                  aria-label="Search resolved concerns by subject, student, or inquiry ID">
+              </div>
+              <div class="sort-group">
+                <label for="historySortSelect" class="sort-label">Sort by:</label>
+                <select id="historySortSelect" class="sort-select" aria-label="Sort resolved concerns">
+                  <option value="resolved-newest">Recently Resolved</option>
+                  <option value="resolved-oldest">Oldest First</option>
+                  <option value="subject">Subject A-Z</option>
+                  <option value="student">Student Name</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="queue-list" id="historyList">
+            <div class="empty-state" id="historyEmptyNotice">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p>No resolved concerns found</p>
+            </div>
           </div>
         </div>
 
@@ -446,12 +480,12 @@ foreach ($inquiries as $inquiry) {
   </div>
 
   <nav class="mobile-nav" aria-label="Mobile navigation">
-    <button class="mobile-nav-item active" type="button" data-mobile-view="queue">
+    <button class="mobile-nav-item active" type="button" data-mobile-view="queue" id="mobileQueueBtn">
       <svg class="icon" aria-hidden="true">
         <use href="#i-chat" />
       </svg><span>Queue</span>
     </button>
-    <button class="mobile-nav-item" type="button" data-filter-status="resolved" data-mobile-view="list">
+    <button class="mobile-nav-item" type="button" data-mobile-view="history" id="mobileHistoryBtn">
       <svg class="icon" aria-hidden="true">
         <use href="#i-clock" />
       </svg><span>History</span>
@@ -932,10 +966,16 @@ foreach ($inquiries as $inquiry) {
         document.body.classList.remove('detail-open');
       });
     });
-    document.querySelector('[data-mobile-view="queue"]')?.addEventListener('click', () => {
-      setQueueFilter('all');
-      workspace.dataset.view = 'list';
-      document.body.classList.remove('detail-open');
+    document.getElementById('mobileQueueBtn')?.addEventListener('click', () => {
+      switchToQueue();
+      document.querySelector('#mobileQueueBtn')?.classList.add('active');
+      document.querySelector('#mobileHistoryBtn')?.classList.remove('active');
+    });
+
+    document.getElementById('mobileHistoryBtn')?.addEventListener('click', () => {
+      switchToHistory();
+      document.querySelector('#mobileQueueBtn')?.classList.remove('active');
+      document.querySelector('#mobileHistoryBtn')?.classList.add('active');
     });
     document.getElementById('mobileProfileToggle')?.addEventListener('click', event => {
       const button = event.currentTarget;
@@ -960,6 +1000,176 @@ foreach ($inquiries as $inquiry) {
     document.getElementById('backToQueue')?.addEventListener('click', () => {
       workspace.dataset.view = 'list';
       document.body.classList.remove('detail-open');
+    });
+
+    // Navigation between Queue and History views
+    let currentView = 'queue';
+    let historyData = [];
+    let filteredHistoryData = [];
+
+    function createHistoryCard(inquiry) {
+      const historyCard = document.createElement('button');
+      historyCard.className = 'history-card';
+      historyCard.type = 'button';
+      historyCard.dataset.inquiryId = inquiry.inquiry_id;
+
+      const resolvedDate = new Date(inquiry.resolved_at || inquiry.updated_at || inquiry.created_at);
+      const formattedDate = resolvedDate.toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric'
+      });
+
+      historyCard.innerHTML = `
+        <div class="history-card-header">
+          <div class="history-status-badge">
+            <svg class="icon">
+              <use href="#i-check" />
+            </svg>
+            Resolved
+          </div>
+          <div class="history-date">${formattedDate}</div>
+        </div>
+        <div class="history-subject">${inquiry.subject || 'No subject'}</div>
+        <div class="history-meta">
+          <div class="history-student">${inquiry.student_name || 'Unknown Student'}</div>
+          <div class="history-id">INQ-${inquiry.inquiry_id}</div>
+        </div>
+        <div class="history-resolved-by">
+          <svg class="icon">
+            <use href="#i-user" />
+          </svg>
+          Resolved by ${inquiry.resolved_by || 'Staff'}
+        </div>
+      `;
+
+      historyCard.addEventListener('click', () => selectHistoryItem(historyCard, inquiry.inquiry_id));
+      return historyCard;
+    }
+
+    function selectHistoryItem(element, inquiryId) {
+      document.querySelectorAll('.history-card').forEach(el => {
+        el.classList.remove('selected');
+      });
+      element.classList.add('selected');
+
+      currentInquiryId = Number(inquiryId);
+      const inquiry = historyData.find(item => Number(item.inquiry_id) === currentInquiryId);
+      if (inquiry) {
+        renderSelectedInquiry(inquiry);
+        workspace.dataset.view = 'detail';
+        document.body.classList.add('detail-open');
+      }
+    }
+
+    function populateHistoryView() {
+      const historyList = document.getElementById('historyList');
+      const emptyNotice = document.getElementById('historyEmptyNotice');
+
+      // Clear existing cards
+      historyList.innerHTML = '';
+
+      if (filteredHistoryData.length === 0) {
+        emptyNotice.hidden = false;
+        historyList.appendChild(emptyNotice);
+        return;
+      }
+
+      emptyNotice.hidden = true;
+      filteredHistoryData.forEach(inquiry => {
+        historyList.appendChild(createHistoryCard(inquiry));
+      });
+    }
+
+    function filterHistoryData() {
+      const searchTerm = document.getElementById('historySearch')?.value.toLowerCase() || '';
+
+      filteredHistoryData = historyData.filter(inquiry => {
+        const matchesSearch = !searchTerm ||
+          (inquiry.subject || '').toLowerCase().includes(searchTerm) ||
+          (inquiry.student_name || '').toLowerCase().includes(searchTerm) ||
+          `inq-${inquiry.inquiry_id}`.includes(searchTerm);
+
+        return matchesSearch;
+      });
+
+      sortHistoryData();
+      populateHistoryView();
+    }
+
+    function sortHistoryData() {
+      const sortBy = document.getElementById('historySortSelect')?.value || 'resolved-newest';
+
+      filteredHistoryData.sort((a, b) => {
+        switch (sortBy) {
+          case 'resolved-newest':
+            return new Date(b.resolved_at || b.updated_at || b.created_at).getTime() -
+                   new Date(a.resolved_at || a.updated_at || a.created_at).getTime();
+
+          case 'resolved-oldest':
+            return new Date(a.resolved_at || a.updated_at || a.created_at).getTime() -
+                   new Date(b.resolved_at || b.updated_at || b.created_at).getTime();
+
+          case 'subject':
+            return (a.subject || '').localeCompare(b.subject || '');
+
+          case 'student':
+            return (a.student_name || '').localeCompare(b.student_name || '');
+
+          default:
+            return 0;
+        }
+      });
+    }
+
+    function switchToQueue() {
+      currentView = 'queue';
+      document.getElementById('mainTitle').textContent = 'Concerns Queue';
+      document.getElementById('mainSubtitle').textContent = 'Manage and respond to student inquiries';
+      document.querySelector('#navConcerns')?.classList.add('active');
+      document.querySelector('#navHistory')?.classList.remove('active');
+
+      // Show queue panel, hide history panel
+      document.querySelector('.queue-panel').hidden = false;
+      document.getElementById('historyPanel').hidden = true;
+
+      setQueueFilter('all');
+      workspace.dataset.view = 'list';
+      document.body.classList.remove('detail-open');
+    }
+
+    function switchToHistory() {
+      currentView = 'history';
+      document.getElementById('mainTitle').textContent = 'Concern History';
+      document.getElementById('mainSubtitle').textContent = 'View resolved and archived inquiries';
+      document.querySelector('#navConcerns')?.classList.remove('active');
+      document.querySelector('#navHistory')?.classList.add('active');
+
+      // Hide queue panel, show history panel
+      document.querySelector('.queue-panel').hidden = true;
+      document.getElementById('historyPanel').hidden = false;
+
+      // Load resolved inquiries into history
+      historyData = inquiriesData.filter(inquiry => inquiry.status === 'Resolved');
+      filterHistoryData();
+
+      workspace.dataset.view = 'list';
+      document.body.classList.remove('detail-open');
+    }
+
+    document.getElementById('navConcerns')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchToQueue();
+    });
+
+    document.getElementById('navHistory')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchToHistory();
+    });
+
+    // History search and sort handlers
+    document.getElementById('historySearch')?.addEventListener('input', filterHistoryData);
+    document.getElementById('historySortSelect')?.addEventListener('change', () => {
+      sortHistoryData();
+      populateHistoryView();
     });
 
     applyQueueFilters();

@@ -52,6 +52,7 @@ return [
         'staff/sidebar.css',
         'staff/header.css',
         'staff/queue.css',
+        'staff/history.css',
         'staff/detail.css',
         'staff/thread.css',
         'components/inquiry-attachments.css',
