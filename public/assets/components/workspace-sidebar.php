@@ -37,7 +37,7 @@ $sidebarLinks = $sidebarAdmin ? [
     <div class="sidebar-spacer"></div>
 
     <form method="post" action="logout.php" id="logoutForm">
-        <button type="submit" class="nav-item student-logout-link" style="margin-top:8px;width:100%;text-align:left;border:none;background:none;cursor:pointer;"><?= $sidebarIcon('log-out') ?>Logout</button>
+        <button type="submit" class="nav-item" style="margin-top:8px;width:100%;text-align:left;border:none;background:none;cursor:pointer;"><?= $sidebarIcon('log-out') ?>Logout</button>
     </form>
 
     <div class="sidebar-foot">
