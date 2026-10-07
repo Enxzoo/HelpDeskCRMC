@@ -168,12 +168,10 @@ foreach ($inquiries as $inquiry) {
 
       <div class="sidebar-spacer"></div>
 
-      <a href="logout.php" class="nav-item student-logout-link" style="margin-top:8px;">
-        <svg class="icon">
+      <form method="post" action="logout.php" class="logout-form"><button type="submit" class="nav-item student-logout-link" style="margin-top:8px;width:100%;text-align:left;border:none;background:none;cursor:pointer;"><svg class="icon">
           <use href="#i-logout" />
         </svg>
-        Logout
-      </a>
+        Logout</button></form>
 
       <div class="sidebar-foot">
         <div class="sidebar-profile">
@@ -468,9 +466,8 @@ foreach ($inquiries as $inquiry) {
   <div class="mobile-profile-menu" id="mobileProfileMenu" hidden>
     <div class="mobile-profile-name"><?= htmlspecialchars($_SESSION['name'], ENT_QUOTES, 'UTF-8') ?></div>
     <div class="mobile-profile-role">Staff Member · <?= htmlspecialchars($officeName, ENT_QUOTES, 'UTF-8') ?></div>
-    <form method="POST" action="logout.php" class="staff-logout-form">
-      <?= csrf_field() ?>
-      <button class="mobile-profile-logout" type="submit">
+    <form method="POST" action="logout.php" class="logout-form">
+      <button class="mobile-profile-logout student-logout-link" type="submit">
         <svg class="icon" aria-hidden="true">
           <use href="#i-logout" />
         </svg>Logout

@@ -39,7 +39,7 @@ document.querySelectorAll('.student-logout-link').forEach(link => {
 });
 
 // Handle logout forms
-document.querySelectorAll('#logoutForm').forEach(form => {
+document.querySelectorAll('#logoutForm, .logout-form').forEach(form => {
   form.addEventListener('submit', async event => {
     if (form.dataset.confirmingLogout === 'true') return;
     event.preventDefault();
