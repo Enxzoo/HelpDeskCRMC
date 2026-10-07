@@ -24,14 +24,20 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'staff' && $_SESSION[
 
 $staffId = (int) $_SESSION['user_id'];
 $currentUser = (new User())->findById($staffId);
-$officeId = $_SESSION['role'] === 'staff' && $currentUser && !empty($currentUser['office_id'])
-  ? (int) $currentUser['office_id']
-  : null;
-$_SESSION['office_id'] = $officeId;
-if ($_SESSION['role'] === 'staff' && $officeId === null) {
-  http_response_code(403);
-  exit('Your staff account is not assigned to an office.');
+
+// For admin users, show all inquiries. For staff, show only their office's inquiries.
+$officeId = null;
+if ($_SESSION['role'] === 'staff') {
+  $officeId = $currentUser && !empty($currentUser['office_id'])
+    ? (int) $currentUser['office_id']
+    : null;
+  if ($officeId === null) {
+    http_response_code(403);
+    exit('Your staff account is not assigned to an office.');
+  }
 }
+
+$_SESSION['office_id'] = $officeId;
 
 $inquiryModel = new Inquiry();
 $officeModel = new Office();
