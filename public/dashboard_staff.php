@@ -168,7 +168,7 @@ foreach ($inquiries as $inquiry) {
 
       <div class="sidebar-spacer"></div>
 
-      <form method="post" action="logout.php" class="logout-form"><button type="submit" class="nav-item student-logout-link" style="margin-top:8px;width:100%;text-align:left;border:none;background:none;cursor:pointer;"><svg class="icon">
+      <form method="post" action="logout.php" class="logout-form"><button type="submit" class="nav-item" style="margin-top:8px;width:100%;text-align:left;border:none;background:none;cursor:pointer;"><svg class="icon">
           <use href="#i-logout" />
         </svg>
         Logout</button></form>
@@ -467,7 +467,7 @@ foreach ($inquiries as $inquiry) {
     <div class="mobile-profile-name"><?= htmlspecialchars($_SESSION['name'], ENT_QUOTES, 'UTF-8') ?></div>
     <div class="mobile-profile-role">Staff Member · <?= htmlspecialchars($officeName, ENT_QUOTES, 'UTF-8') ?></div>
     <form method="POST" action="logout.php" class="logout-form">
-      <button class="mobile-profile-logout student-logout-link" type="submit">
+      <button class="mobile-profile-logout" type="submit">
         <svg class="icon" aria-hidden="true">
           <use href="#i-logout" />
         </svg>Logout
